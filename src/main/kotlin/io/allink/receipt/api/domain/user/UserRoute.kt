@@ -1,0 +1,79 @@
+package io.allink.receipt.api.domain.user
+
+import io.allink.receipt.api.common.*
+import io.github.smiley4.ktoropenapi.get
+import io.github.smiley4.ktoropenapi.post
+import io.ktor.http.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+/**
+ * Package: io.allink.receipt.admin.domain.user
+ * Created: Devonshin
+ * Date: 15/04/2025
+ */
+
+fun Route.userRoutes(
+  userService: UserService
+) {
+
+  val logger: Logger = LoggerFactory.getLogger(this.javaClass.name)
+
+  route("/users") {
+
+    post("", {
+      operationId = "users"
+      tags = listOf("사용자 관리")
+      summary = "사용자 목록 조회"
+      description = "사용자 목록을 조회합니다."
+      securitySchemeNames = listOf("auth-jwt")
+      request {
+        body<UserFilter>(userListRequest())
+      }
+      response {
+        code(HttpStatusCode.OK, userListResponse())
+        code(HttpStatusCode.BadRequest, errorResponse())
+      }
+    }) {
+
+      val filter = call.receive<UserFilter>()
+      call.respond(
+        HttpStatusCode.OK,
+        Response(
+          data = userService.findAllUser(filter)
+        )
+      )
+    }
+
+    get("/detail/{userId}", {
+      operationId = "user-detail"
+      tags = listOf("사용자 관리")
+      summary = "사용자 상세 조회"
+      description = "사용자 상세 정보를 조회합니다."
+      securitySchemeNames = listOf("auth-jwt")
+      request {
+        pathParameter<String>("userId") {
+          description = "사용자 id"
+        }
+      }
+
+      response {
+        code(HttpStatusCode.OK, userDetailResponse())
+        code(HttpStatusCode.BadRequest, errorResponse())
+      }
+    }) {
+
+      val id = call.request.pathVariables["userId"] ?: ""
+      call.respond(
+        HttpStatusCode.OK,
+        Response(
+          data = userService.findUser(id)
+        )
+      )
+    }
+  }
+
+}
