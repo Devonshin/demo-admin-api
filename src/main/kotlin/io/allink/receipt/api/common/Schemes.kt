@@ -5,12 +5,17 @@ import io.allink.receipt.api.domain.login.Jwt
 import io.allink.receipt.api.domain.login.VerificationCheckRequest
 import io.allink.receipt.api.domain.login.VerificationCode
 import io.allink.receipt.api.domain.login.VerificationCodeRequest
+import io.allink.receipt.api.domain.receipt.PeriodFilter
+import io.allink.receipt.api.domain.receipt.ReceiptFilter
+import io.allink.receipt.api.domain.receipt.SimpleIssueReceiptModel
+import io.allink.receipt.api.domain.store.SimpleStoreModel
 import io.allink.receipt.api.domain.store.StoreFilter
 import io.allink.receipt.api.domain.store.StoreModel
 import io.allink.receipt.api.domain.user.*
 import io.github.smiley4.ktoropenapi.config.ResponseConfig
 import io.github.smiley4.ktoropenapi.config.SimpleBodyConfig
 import java.time.LocalDateTime
+import java.time.Period
 
 /**
  * Package: io.allink.receipt.admin.common
@@ -227,3 +232,61 @@ fun franchiseCodeListResponse(): ResponseConfig.() -> Unit = {
   }
 }
 
+
+fun issueReceiptListRequest(): SimpleBodyConfig.() -> Unit = {
+  description = "전자영수증 목록 조회 요청"
+  example("issue-receipt-list-request") {
+    value = ReceiptFilter(
+      storeId = "store-id",
+      phone = "1234567890",
+      period = PeriodFilter(
+        from = LocalDateTime.parse("2025-03-17T12:00:00"),
+        to = LocalDateTime.parse("2025-04-17T12:00:00"),
+      ),
+      userName = "전자용",
+      tagUid = "tag-uid",
+      storeName = "김밥천국",
+      userNickName = "돼지국밥",
+      businessNo = "1234567890",
+      franchiseCode = "FRANCHISE_CODE",
+      page = Page(1, 10),
+      sort = listOf(
+        Sorter("field", "ASC")
+      )
+    )
+  }
+}
+
+
+fun issueReceiptListResponse(): ResponseConfig.() -> Unit = {
+  description = "성공 응답"
+  body<Response<PagedResult<SimpleIssueReceiptModel>>> {
+    example("전자영수증 목록 응답") {
+      value = Response(
+        data = PagedResult(
+          items = listOf(SimpleIssueReceiptModel(
+            id = "receipt-id",
+            store = SimpleStoreModel(
+              id = "store-id",
+              storeName = "김밥천국",
+              franchiseCode = "FRANCHISE_CODE",
+              businessNo = "1234567890"
+            ),
+            tagId = "tag-id",
+            issueDate = LocalDateTime.now(),
+            user = SimpleUserModel(
+              id = "user-id",
+              name = "정조준"
+            ),
+            receiptType = "PAYMENT",
+            receiptAmount = 10000,
+            originIssueId = "origin-issue-id"
+          )),
+          totalPages = 1000,
+          totalCount = 20000,
+          currentPage = 1
+        )
+      )
+    }
+  }
+}

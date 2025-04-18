@@ -14,6 +14,11 @@ import io.allink.receipt.api.domain.login.LoginInfoRepositoryImpl
 import io.allink.receipt.api.domain.login.LoginInfoTable
 import io.allink.receipt.api.domain.login.LoginService
 import io.allink.receipt.api.domain.login.LoginServiceImpl
+import io.allink.receipt.api.domain.receipt.IssueReceiptRepository
+import io.allink.receipt.api.domain.receipt.IssueReceiptRepositoryImpl
+import io.allink.receipt.api.domain.receipt.IssueReceiptService
+import io.allink.receipt.api.domain.receipt.IssueReceiptServiceImpl
+import io.allink.receipt.api.domain.receipt.IssueReceiptTable
 import io.allink.receipt.api.domain.sns.SMSVerificationServiceImpl
 import io.allink.receipt.api.domain.sns.VerificationService
 import io.allink.receipt.api.domain.store.StoreRepository
@@ -49,6 +54,9 @@ fun Application.configureFrameworks() {
       single<ServiceCodeRepository> {
         ServiceCodeRepositoryImpl(ServiceCodeTable)
       }
+      single<IssueReceiptRepository> {
+        IssueReceiptRepositoryImpl(IssueReceiptTable)
+      }
       single<AdminService> {
         AdminServiceImpl(get())
       }
@@ -63,6 +71,9 @@ fun Application.configureFrameworks() {
       }
       single<StoreService> {
         StoreServiceImpl(get())
+      }
+      single<IssueReceiptService> {
+        IssueReceiptServiceImpl(get())
       }
     })
   }

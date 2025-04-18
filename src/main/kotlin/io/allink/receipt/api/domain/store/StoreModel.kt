@@ -17,7 +17,7 @@ import java.time.LocalDateTime
  * Date: 16/04/2025
  */
 @Serializable
-@Schema(name = "store", title = "가맹점", description = "가맹점")
+@Schema(name = "store", title = "가맹점", description = "가맹점 등록 정보")
 data class StoreModel(
   @Schema(title = "고유아이디", description = "가맹점 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String?,
@@ -72,12 +72,25 @@ data class StoreModel(
   @Schema(title = "가맹점 로그인 패스워드", description = "가맹점 로그인 패스워드", hidden = true)
   @Transient
   val partnerLoginPassword: String? = null,
-  @Schema(title = "등록일시", description = "등록일시")
+  @Schema(title = "등록일시", description = "등록일시", example = "2025-04-17 12:00:00.213123")
   val regDate: @Contextual LocalDateTime?,
-  @Schema(title = "수정일시", description = "수정일시")
+  @Schema(title = "수정일시", description = "수정일시", example = "2025-04-17 12:00:00.213123")
   val modDate: @Contextual LocalDateTime?,
-  @Schema(title = "삭제일시", description = "삭제일시")
+  @Schema(title = "삭제일시", description = "삭제일시", example = "2025-04-17 12:00:00.213123")
   val deleteDate: @Contextual LocalDateTime?
+) : BaseModel<String>
+
+@Serializable
+@Schema(name = "simpleStore", title = "가맹점", description = "가맹점 약식 정보")
+data class SimpleStoreModel(
+  @Schema(title = "고유아이디", description = "가맹점 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  override var id: String?,
+  @Schema(title = "가맹점명", description = "가맹점명", requiredMode = RequiredMode.REQUIRED)
+  val storeName: String,
+  @Schema(title = "프랜차이즈코드", description = "프랜차이즈 코드")
+  val franchiseCode: String?,
+  @Schema(title = "사업자 등록번호", description = "사업자 등록번호")
+  val businessNo: String?,
 ) : BaseModel<String>
 
 
@@ -125,7 +138,7 @@ data class StoreFilter(
   @Schema(title = "가맹점명", description = "Start with 검색", requiredMode = RequiredMode.NOT_REQUIRED)
   val name: String? = null,
   @Schema(title = "프랜차이즈 코드", description = "EQ 검색, 서비스코드 조회에서 가져온 프랜차이즈 코드", example = "EDIYA", requiredMode = RequiredMode.NOT_REQUIRED)
-  val franchiseCode: String?,
+  val franchiseCode: String? = null,
   @Schema(title = "정렬", requiredMode = RequiredMode.NOT_REQUIRED, exampleClasses = [Sorter::class])
   val sort: List<Sorter>? = null,
   @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)

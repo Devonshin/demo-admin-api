@@ -19,37 +19,7 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
   override val table: StoreTable
 
   override fun toModel(row: ResultRow): StoreModel {
-    return StoreModel(
-      id = row[table.id],
-      storeName = row[table.storeName],
-      zoneCode = row[table.zoneCode],
-      addr1 = row[table.addr1],
-      addr2 = row[table.addr2],
-      regDate = row[table.regDate],
-      deleteDate = row[table.deleteDate],
-      franchiseCode = row[table.franchiseCode],
-      mapUrl = row[table.mapUrl],
-      lat = row[table.lat],
-      lon = row[table.lon],
-      tel = row[table.tel],
-      mobile = row[table.mobile],
-      managerName = row[table.managerName],
-      siteLink = row[table.siteLink],
-      workType = row[table.workType],
-      businessNo = row[table.businessNo],
-      ceoName = row[table.ceoName],
-      businessType = row[table.businessType],
-      eventType = row[table.eventType],
-      email = row[table.email],
-      businessNoLaw = row[table.businessNoLaw],
-      modDate = row[table.modDate],
-      storeType = row[table.storeType],
-      iconUrl = row[table.iconUrl],
-      logoUrl = row[table.logoUrl],
-      receiptWidthInch = row[table.receiptWidthInch],
-      partnerLoginId = row[table.partnerLoginId],
-      partnerLoginPassword = row[table.partnerLoginPword]
-    )
+    return Companion.toModel(row)
   }
 
   override fun toRow(model: StoreModel): StoreTable.(InsertStatement<EntityID<String>>) -> Unit = {
@@ -141,4 +111,40 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
         else -> null
         }
     }
+
+  companion object {
+    fun toModel(row: ResultRow): StoreModel {
+      return StoreModel(
+        id = row[StoreTable.id],
+        storeName = row[StoreTable.storeName],
+        zoneCode = row[StoreTable.zoneCode],
+        addr1 = row[StoreTable.addr1],
+        addr2 = row[StoreTable.addr2],
+        regDate = row[StoreTable.regDate],
+        deleteDate = row[StoreTable.deleteDate],
+        franchiseCode = row[StoreTable.franchiseCode],
+        mapUrl = row[StoreTable.mapUrl],
+        lat = row[StoreTable.lat],
+        lon = row[StoreTable.lon],
+        tel = row[StoreTable.tel],
+        mobile = row[StoreTable.mobile],
+        managerName = row[StoreTable.managerName],
+        siteLink = row[StoreTable.siteLink],
+        workType = row[StoreTable.workType],
+        businessNo = row[StoreTable.businessNo],
+        ceoName = row[StoreTable.ceoName],
+        businessType = row[StoreTable.businessType],
+        eventType = row[StoreTable.eventType],
+        email = row[StoreTable.email],
+        businessNoLaw = row[StoreTable.businessNoLaw],
+        modDate = row[StoreTable.modDate],
+        storeType = row[StoreTable.storeType],
+        iconUrl = row[StoreTable.iconUrl],
+        logoUrl = row[StoreTable.logoUrl],
+        receiptWidthInch = row[StoreTable.receiptWidthInch],
+        partnerLoginId = row[StoreTable.partnerLoginId],
+        partnerLoginPassword = row[StoreTable.partnerLoginPword]
+      )
+    }
+  }
 }

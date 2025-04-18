@@ -56,6 +56,15 @@ data class UserModel(
   val modDate: @Contextual LocalDateTime?
 ) : BaseModel<String>
 
+@Serializable
+@Schema(title = "사용자 객체", description = "모영 회원 가입자 약식 정보")
+data class SimpleUserModel(
+  @Schema(title = "고유아이디", description = "사용자 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  override var id: String?,
+  @Schema(title = "이름", description = "사용자 이름", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  val name: String?,
+) : BaseModel<String>
+
 object UserTable : Table("user") {
   val id = varchar("uuid", 36)
   val name = varchar("name", 255).nullable()

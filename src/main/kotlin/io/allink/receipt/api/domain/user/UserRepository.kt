@@ -41,25 +41,7 @@ interface UserRepository : ExposedRepository<UserTable, String, UserModel> {
   }
 
   override fun toModel(row: ResultRow): UserModel {
-    return UserModel(
-      id = row[table.id],
-      name = row[table.name],
-      status = row[table.status],
-      phone = AES256Util.decrypt(row[table.phone], AES256_KEY),
-      gender = row[table.gender],
-      ci = "***",/*AES256Util.decrypt(row[table.ci], AES256_KEY)*/
-      birthday = row[table.birthday],
-      localYn = row[table.localYn],
-      email = AES256Util.decrypt(row[table.email], AES256_KEY),
-      role = row[table.role],
-      joinSocialType = row[table.joinSocialType],
-      nickname = AES256Util.decrypt(row[table.nickname], AES256_KEY),
-      mtchgId = row[table.mtchgId],
-      cpointRegType = row[table.cpointRegType],
-      cpointRegDate = row[table.cpointRegDate],
-      regDate = row[table.regDate],
-      modDate = row[table.modDate],
-    )
+    return Companion.toModel(row)
   }
 
   override fun toRow(model: UserModel): UserTable.(InsertStatement<EntityID<String>>) -> Unit = {
@@ -97,6 +79,30 @@ interface UserRepository : ExposedRepository<UserTable, String, UserModel> {
     it[cpointRegType] = model.cpointRegType
     it[cpointRegDate] = model.cpointRegDate
     it[modDate] = model.modDate
+  }
+
+  companion object {
+    fun toModel(row: ResultRow): UserModel {
+      return UserModel(
+        id = row[UserTable.id],
+        name = row[UserTable.name],
+        status = row[UserTable.status],
+        phone = AES256Util.decrypt(row[UserTable.phone], AES256_KEY),
+        gender = row[UserTable.gender],
+        ci = "***",/*AES256Util.decrypt(row[UserTable.ci], AES256_KEY)*/
+        birthday = row[UserTable.birthday],
+        localYn = row[UserTable.localYn],
+        email = AES256Util.decrypt(row[UserTable.email], AES256_KEY),
+        role = row[UserTable.role],
+        joinSocialType = row[UserTable.joinSocialType],
+        nickname = AES256Util.decrypt(row[UserTable.nickname], AES256_KEY),
+        mtchgId = row[UserTable.mtchgId],
+        cpointRegType = row[UserTable.cpointRegType],
+        cpointRegDate = row[UserTable.cpointRegDate],
+        regDate = row[UserTable.regDate],
+        modDate = row[UserTable.modDate],
+      )
+    }
   }
 
 }

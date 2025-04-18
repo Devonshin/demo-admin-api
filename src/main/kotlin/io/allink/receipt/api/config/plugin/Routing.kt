@@ -3,6 +3,7 @@ package io.allink.receipt.api.config.plugin
 import io.allink.receipt.api.domain.admin.adminRoutes
 import io.allink.receipt.api.domain.code.serviceCodeRoutes
 import io.allink.receipt.api.domain.login.loginRoutes
+import io.allink.receipt.api.domain.receipt.issueReceiptRoutes
 import io.allink.receipt.api.domain.store.storeRoutes
 import io.allink.receipt.api.domain.user.userRoutes
 import io.ktor.server.application.*
@@ -32,6 +33,7 @@ fun Application.configureRouting() {
       userRoutes(get())
       storeRoutes(get())
       serviceCodeRoutes(get())
+      issueReceiptRoutes(get())
     }
 
     sse("/hello") {
