@@ -14,4 +14,8 @@ class IssueReceiptServiceImpl(
   override suspend fun findAllReceipt(filter: ReceiptFilter): PagedResult<SimpleIssueReceiptModel> {
     return issueReceiptRepository.findAll(filter)
   }
+
+  override suspend fun findReceipt(userId: String, receiptId: String): IssueReceiptModel? {
+    return issueReceiptRepository.findByIdAndUserId(userId, receiptId)
+  }
 }

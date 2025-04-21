@@ -10,4 +10,6 @@ import io.allink.receipt.api.common.PagedResult
 
 interface IssueReceiptService {
   suspend fun findAllReceipt(filter: ReceiptFilter): PagedResult<SimpleIssueReceiptModel>
+
+  suspend fun findReceipt(userId: String, receiptId: String): IssueReceiptModel?
 }

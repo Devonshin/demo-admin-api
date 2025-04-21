@@ -1,21 +1,31 @@
 package io.allink.receipt.api.common
 
+import io.allink.receipt.api.domain.advertisement.SimpleAdvertisementModel
 import io.allink.receipt.api.domain.code.ServiceCodeModel
 import io.allink.receipt.api.domain.login.Jwt
 import io.allink.receipt.api.domain.login.VerificationCheckRequest
 import io.allink.receipt.api.domain.login.VerificationCode
 import io.allink.receipt.api.domain.login.VerificationCodeRequest
+import io.allink.receipt.api.domain.merchant.MerchantTagModel
+import io.allink.receipt.api.domain.merchant.SimpleMerchantTagModel
+import io.allink.receipt.api.domain.receipt.IssueReceiptModel
 import io.allink.receipt.api.domain.receipt.PeriodFilter
 import io.allink.receipt.api.domain.receipt.ReceiptFilter
 import io.allink.receipt.api.domain.receipt.SimpleIssueReceiptModel
+import io.allink.receipt.api.domain.receipt.edoc.SimpleEdocModel
 import io.allink.receipt.api.domain.store.SimpleStoreModel
 import io.allink.receipt.api.domain.store.StoreFilter
 import io.allink.receipt.api.domain.store.StoreModel
 import io.allink.receipt.api.domain.user.*
+import io.allink.receipt.api.domain.user.review.SimpleUserPointReviewModel
+import io.allink.receipt.api.domain.user.review.UserReviewStatus
 import io.github.smiley4.ktoropenapi.config.ResponseConfig
 import io.github.smiley4.ktoropenapi.config.SimpleBodyConfig
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
+import kotlinx.serialization.Contextual
 import java.time.LocalDateTime
-import java.time.Period
+import java.util.UUID
 
 /**
  * Package: io.allink.receipt.admin.common
@@ -264,27 +274,76 @@ fun issueReceiptListResponse(): ResponseConfig.() -> Unit = {
     example("전자영수증 목록 응답") {
       value = Response(
         data = PagedResult(
-          items = listOf(SimpleIssueReceiptModel(
-            id = "receipt-id",
-            store = SimpleStoreModel(
-              id = "store-id",
-              storeName = "김밥천국",
-              franchiseCode = "FRANCHISE_CODE",
-              businessNo = "1234567890"
-            ),
-            tagId = "tag-id",
-            issueDate = LocalDateTime.now(),
-            user = SimpleUserModel(
-              id = "user-id",
-              name = "정조준"
-            ),
-            receiptType = "PAYMENT",
-            receiptAmount = 10000,
-            originIssueId = "origin-issue-id"
-          )),
+          items = listOf(
+            SimpleIssueReceiptModel(
+              id = "receipt-id",
+              store = SimpleStoreModel(
+                id = "store-id",
+                storeName = "김밥천국",
+                franchiseCode = "FRANCHISE_CODE",
+                businessNo = "1234567890",
+                ceoName = "강감찬"
+              ),
+              tagId = "tag-id",
+              issueDate = LocalDateTime.now(),
+              user = SimpleUserModel(
+                id = "user-id",
+                name = "정조준"
+              ),
+              receiptType = "PAYMENT",
+              receiptAmount = 10000,
+              originIssueId = "origin-issue-id"
+            )
+          ),
           totalPages = 1000,
           totalCount = 20000,
           currentPage = 1
+        )
+      )
+    }
+  }
+}
+
+fun issueReceiptDetailResponse(): ResponseConfig.() -> Unit = {
+  description = "성공 응답"
+  body<Response<IssueReceiptModel>> {
+    example("전자영수증 상세 응답") {
+      value = Response(
+        IssueReceiptModel(
+           id = "ed6843f8-67cd-454e-a843-f867cd454ee5",
+           store = SimpleStoreModel(
+             id = "ed6843f8-67cd-454e-a843-f867cd454ee1",
+             storeName = "전자영수증 가맹점",
+             franchiseCode = "EDIYA",
+             businessNo = "123-12-12312",
+             ceoName = "정관장"
+           ),
+           tag = SimpleMerchantTagModel(
+             id = "E00123041234123",
+             deviceId = "01",
+           ),
+           issueDate = LocalDateTime.now(),
+           user = SimpleUserModel(
+             id = "35f787d0-b983-4df8-b787-d0b9830df8ed",
+             name = "나승소",
+           ),
+           receiptType = "PAYMENT",
+           receiptAmount = 10000,
+           originIssueId = "35f787d0-b983-4df8-b787-d0b9830df8ed",
+           userPointReview = SimpleUserPointReviewModel(
+             id = "35f787d0-b983-4df8-b787-d0b9830df8ed",
+             status = UserReviewStatus.APPLIED
+           ),
+           edoc = SimpleEdocModel(
+             id = "kakao",
+             envelopId = "envelop-id-envelop-id-envelop-id",
+             regDate = LocalDateTime.now(),
+           ),
+           advertisement = SimpleAdvertisementModel(
+             id = UUID.randomUUID(),
+             title = "불고기세트",
+             merchantGroupId = "merchant-group-id",
+           )
         )
       )
     }

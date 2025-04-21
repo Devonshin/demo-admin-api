@@ -27,6 +27,9 @@ class DateUtil {
     fun nowLocalDateTimeStr(): String {
       return LocalDateTime.now(zoneId).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
     }
+    fun nowLocalDateTimeStrMs(): String {
+      return LocalDateTime.now(zoneId).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
+    }
 
     fun nowLocalDateTimeFormat(dateTime: LocalDateTime): String {
       return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))

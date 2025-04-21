@@ -69,8 +69,8 @@ data class StoreModel(
   val receiptWidthInch: String?,
   @Schema(title = "가맹점 로그인 아이디", description = "가맹점 로그인 아이디")
   val partnerLoginId: String?,
-  @Schema(title = "가맹점 로그인 패스워드", description = "가맹점 로그인 패스워드", hidden = true)
   @Transient
+  @Schema(title = "가맹점 로그인 패스워드", description = "가맹점 로그인 패스워드", hidden = true)
   val partnerLoginPassword: String? = null,
   @Schema(title = "등록일시", description = "등록일시", example = "2025-04-17 12:00:00.213123")
   val regDate: @Contextual LocalDateTime?,
@@ -83,7 +83,7 @@ data class StoreModel(
 @Serializable
 @Schema(name = "simpleStore", title = "가맹점", description = "가맹점 약식 정보")
 data class SimpleStoreModel(
-  @Schema(title = "고유아이디", description = "가맹점 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @Schema(title = "가맹점 고유아이디", description = "가맹점 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String?,
   @Schema(title = "가맹점명", description = "가맹점명", requiredMode = RequiredMode.REQUIRED)
   val storeName: String,
@@ -91,6 +91,8 @@ data class SimpleStoreModel(
   val franchiseCode: String?,
   @Schema(title = "사업자 등록번호", description = "사업자 등록번호")
   val businessNo: String?,
+  @Schema(title = "대표자명", description = "대표자명")
+  val ceoName: String?,
 ) : BaseModel<String>
 
 

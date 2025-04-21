@@ -61,6 +61,11 @@ dependencies {
   implementation("org.codehaus.janino:janino:3.1.12")
 
   implementation("software.amazon.awssdk:sns:2.20.+")
+  implementation("software.amazon.awssdk:dynamodb:2.20.+")
+  implementation("software.amazon.awssdk:s3:2.20.+")
+
+  implementation("com.github.4sh:retable:-SNAPSHOT")
+
   implementation("io.github.smiley4:ktor-openapi:5.0.2")
   implementation("io.github.smiley4:ktor-redoc:5.0.2")
   implementation("io.swagger.core.v3:swagger-core:2.2.30")

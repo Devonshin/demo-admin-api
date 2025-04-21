@@ -18,7 +18,13 @@ import java.time.LocalDateTime
 @Serializable
 @Schema(name = "MerchantTag", title = "머천트 태그", description = "실물 태그의 등록 정보")
 data class MerchantTagModel(
-  @Schema(title = "태그아이디", description = "태그의 고유아이디", example = "E001234567890", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @Schema(
+    title = "태그아이디",
+    description = "태그의 고유아이디",
+    example = "E001234567890",
+    nullable = false,
+    requiredMode = RequiredMode.REQUIRED
+  )
   override var id: String?,
   @Schema(title = "머천트 소유 가맹점 아이디", description = "머천트가 관리하는 가맹점 아이디", example = "1234567890")
   val merchantStoreId: String,
@@ -37,14 +43,22 @@ data class MerchantTagModel(
 @Serializable
 @Schema(name = "simpleMerchantTag", title = "머천트 태그", description = "실물 태그의 약식 등록 정보")
 data class SimpleMerchantTagModel(
-  @Schema(title = "태그아이디", description = "태그의 고유아이디", example = "E001234567890", nullable = false, requiredMode = RequiredMode.REQUIRED)
-  override var id: String?
+  @Schema(
+    title = "태그아이디",
+    description = "태그의 고유아이디",
+    example = "E001234567890",
+    nullable = false,
+    requiredMode = RequiredMode.REQUIRED
+  )
+  override var id: String?,
+  @Schema(title = "단말기 아이디", description = "포스, 결제 단말기 고유 아이디", example = "1234567890")
+  val deviceId: String?,
 ) : BaseModel<String>
 
-object MerchantTagTable: Table("merchant_tag") {
+object MerchantTagTable : Table("merchant_tag") {
   val id = varchar("tag_id", 36)
   val merchantStoreId = varchar("merchant_store_id", 36)
-  val merchantGroupId = varchar("merchant_group_id", 36)
+  val merchantGroupId = reference("merchant_group_id", MerchantGroupTable.id)
   val deviceId = varchar("device_id", 50)
   val storeUid = varchar("store_uid", 36)
   val regDate = datetime("reg_date")
