@@ -1,15 +1,15 @@
 package io.allink.receipt.api.common
 
+import io.allink.receipt.api.domain.*
 import io.allink.receipt.api.domain.advertisement.SimpleAdvertisementModel
 import io.allink.receipt.api.domain.code.ServiceCodeModel
 import io.allink.receipt.api.domain.login.Jwt
 import io.allink.receipt.api.domain.login.VerificationCheckRequest
 import io.allink.receipt.api.domain.login.VerificationCode
 import io.allink.receipt.api.domain.login.VerificationCodeRequest
-import io.allink.receipt.api.domain.merchant.MerchantTagModel
 import io.allink.receipt.api.domain.merchant.SimpleMerchantTagModel
 import io.allink.receipt.api.domain.receipt.IssueReceiptModel
-import io.allink.receipt.api.domain.receipt.PeriodFilter
+import io.allink.receipt.api.domain.PeriodFilter
 import io.allink.receipt.api.domain.receipt.ReceiptFilter
 import io.allink.receipt.api.domain.receipt.SimpleIssueReceiptModel
 import io.allink.receipt.api.domain.receipt.edoc.SimpleEdocModel
@@ -21,11 +21,8 @@ import io.allink.receipt.api.domain.user.review.SimpleUserPointReviewModel
 import io.allink.receipt.api.domain.user.review.UserReviewStatus
 import io.github.smiley4.ktoropenapi.config.ResponseConfig
 import io.github.smiley4.ktoropenapi.config.SimpleBodyConfig
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
-import kotlinx.serialization.Contextual
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 /**
  * Package: io.allink.receipt.admin.common
@@ -108,7 +105,7 @@ fun userListResponse(): ResponseConfig.() -> Unit = {
   body<Response<PagedResult<UserModel>>>() {
     example("사용자 목록 응답") {
       value = Response(
-        data = PagedResult<UserModel>(
+        data = PagedResult(
           items = listOf(exampleUser),
           totalPages = 1000,
           totalCount = 20000,
@@ -204,6 +201,10 @@ fun storeListRequest(): SimpleBodyConfig.() -> Unit = {
       id = "store-id",
       businessNo = "1234567890",
       franchiseCode = "FRANCHISE_CODE",
+      period = PeriodFilter(
+        from = LocalDateTime.parse("2025-03-17T12:00:00"),
+        to = LocalDateTime.parse("2025-04-17T12:00:00"),
+      ),
       page = Page(1, 10),
       sort = listOf(
         Sorter("field", "ASC")

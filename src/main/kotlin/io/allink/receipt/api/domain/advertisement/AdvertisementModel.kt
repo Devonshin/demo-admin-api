@@ -1,6 +1,6 @@
 package io.allink.receipt.api.domain.advertisement
 
-import io.allink.receipt.api.common.BaseModel
+import io.allink.receipt.api.domain.BaseModel
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable

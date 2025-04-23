@@ -1,26 +1,19 @@
 package io.allink.receipt.api.domain.receipt
 
-import io.allink.receipt.api.common.BaseModel
-import io.allink.receipt.api.common.Page
-import io.allink.receipt.api.common.Sorter
-import io.allink.receipt.api.domain.advertisement.AdvertisementModel
+import io.allink.receipt.api.domain.BaseModel
+import io.allink.receipt.api.domain.Page
+import io.allink.receipt.api.domain.PeriodFilter
+import io.allink.receipt.api.domain.Sorter
 import io.allink.receipt.api.domain.advertisement.AdvertisementTable
 import io.allink.receipt.api.domain.advertisement.SimpleAdvertisementModel
-import io.allink.receipt.api.domain.code.ServiceCodeTable
-import io.allink.receipt.api.domain.merchant.MerchantTagModel
 import io.allink.receipt.api.domain.merchant.MerchantTagTable
 import io.allink.receipt.api.domain.merchant.SimpleMerchantTagModel
-import io.allink.receipt.api.domain.receipt.edoc.EdocModel
 import io.allink.receipt.api.domain.receipt.edoc.SimpleEdocModel
 import io.allink.receipt.api.domain.store.SimpleStoreModel
-import io.allink.receipt.api.domain.store.StoreModel
 import io.allink.receipt.api.domain.store.StoreTable
 import io.allink.receipt.api.domain.user.SimpleUserModel
-import io.allink.receipt.api.domain.user.UserModel
 import io.allink.receipt.api.domain.user.UserTable
 import io.allink.receipt.api.domain.user.review.SimpleUserPointReviewModel
-import io.allink.receipt.api.domain.user.review.UserPointReviewModel
-import io.allink.receipt.api.domain.user.review.UserPointReviewTable
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
@@ -28,7 +21,6 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
 import java.time.LocalDateTime
-import java.util.UUID
 
 /**
  * Package: io.allink.receipt.api.domain.receipt
@@ -138,17 +130,10 @@ data class ReceiptFilter(
   val storeName: String? = null,
   @Schema(title = "프랜차이즈 코드", description = "서비스코드 조회에서 가져온 프랜차이즈 코드, EQ 검색", example = "EDIYA")
   val franchiseCode: String? = null,
-  @Schema(title = "정렬", exampleClasses = [Sorter::class])
+  @Schema(title = "정렬", exampleClasses = [Sorter::class], ref = "", description = """
+    정렬 필드: phone, userId, userName, userNickName, tagUid, storeId, storeBusinessNo, storeName, franchiseCode, issueDate, receiptType, receiptAmount
+  """, example = "{\"field\": \"issueDate\", \"direction\": \"DESC\"}")
   val sort: List<Sorter>? = null,
   @Schema(title = "페이징")
   val page: Page = Page(1, 10)
-)
-
-@Serializable
-@Schema(title = "검색 기간", description = "검색할 기간의 시작과 끝의 범위", example = """{"from: "2025-04-17 12:00:00", "to: "2025-05-17 12:00:00"}""", requiredMode = RequiredMode.REQUIRED)
-data class PeriodFilter(
-  @Schema(title = "시작일시", description = "검색을 시작할 년월일시", example = "2025-04-17 12:00:00", requiredMode = RequiredMode.REQUIRED)
-  val from: @Contextual LocalDateTime,
-  @Schema(title = "종료일시", description = "검색을 종료할 년월일시", example = "2025-04-17 12:00:00", requiredMode = RequiredMode.REQUIRED)
-  val to: @Contextual LocalDateTime
 )

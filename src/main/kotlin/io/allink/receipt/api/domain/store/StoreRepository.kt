@@ -1,7 +1,7 @@
 package io.allink.receipt.api.domain.store
 
-import io.allink.receipt.api.common.ExposedRepository
-import io.allink.receipt.api.common.PagedResult
+import io.allink.receipt.api.domain.PagedResult
+import io.allink.receipt.api.repository.ExposedRepository
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow
@@ -106,8 +106,13 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
       else when (column) {
         "id" -> StoreTable.id
         "businessNo" -> StoreTable.businessNo
-        "storeName" -> StoreTable.storeName
+        "name" -> StoreTable.storeName
         "franchiseCode" -> StoreTable.franchiseCode
+        "regDate" -> StoreTable.regDate
+        "modDate" -> StoreTable.modDate
+        "addr1" -> StoreTable.addr1
+        "managerName" -> StoreTable.managerName
+        "ceoName" -> StoreTable.ceoName
         else -> null
         }
     }

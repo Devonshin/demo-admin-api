@@ -1,6 +1,6 @@
 package io.allink.receipt.api.domain.merchant
 
-import io.allink.receipt.api.common.BaseModel
+import io.allink.receipt.api.domain.BaseModel
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
@@ -33,7 +33,7 @@ data class MerchantTagModel(
   @Schema(title = "단말기 아이디", description = "포스, 결제 단말기 고유 아이디", example = "1234567890")
   val deviceId: String,
   @Schema(title = "가맹점 아이디", description = "올링크에서 관리하는 가맹점 고유아이디", example = "3a931370-cd0b-4427-bf38-418111969c22")
-  val storeUid: String,
+  val storeUid: String?,
   @Schema(title = "등록일시", example = "2025-04-17 12:00:00.213123")
   val regDate: @Contextual LocalDateTime,
   @Schema(title = "수정일시", example = "2025-04-17 12:00:00.213123")
@@ -60,8 +60,8 @@ object MerchantTagTable : Table("merchant_tag") {
   val merchantStoreId = varchar("merchant_store_id", 36)
   val merchantGroupId = reference("merchant_group_id", MerchantGroupTable.id)
   val deviceId = varchar("device_id", 50)
-  val storeUid = varchar("store_uid", 36)
+  val storeUid = varchar("store_uid", 36).nullable()
   val regDate = datetime("reg_date")
-  val modDate = datetime("mod_date")
+  val modDate = datetime("mod_date").nullable()
   override val primaryKey = PrimaryKey(id)
 }

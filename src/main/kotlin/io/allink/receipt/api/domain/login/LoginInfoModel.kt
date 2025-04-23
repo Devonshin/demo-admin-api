@@ -1,6 +1,6 @@
 package io.allink.receipt.api.domain.login
 
-import io.allink.receipt.api.common.BaseModel
+import io.allink.receipt.api.domain.BaseModel
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual

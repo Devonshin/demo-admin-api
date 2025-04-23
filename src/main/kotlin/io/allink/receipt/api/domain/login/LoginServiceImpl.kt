@@ -2,8 +2,8 @@ package io.allink.receipt.api.domain.login
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import io.allink.receipt.api.common.InvalidVerificationCodeException
-import io.allink.receipt.api.common.NotFoundUserException
+import io.allink.receipt.api.exception.InvalidVerificationCodeException
+import io.allink.receipt.api.exception.NotFoundUserException
 import io.allink.receipt.api.domain.admin.AdminModel
 import io.allink.receipt.api.domain.admin.AdminService
 import io.allink.receipt.api.domain.admin.toRoleString

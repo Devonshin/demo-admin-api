@@ -1,6 +1,6 @@
 package io.allink.receipt.api.domain.user.review
 
-import io.allink.receipt.api.common.ExposedRepository
+import io.allink.receipt.api.repository.ExposedRepository
 
 /**
  * Package: io.allink.receipt.api.domain.review

@@ -1,6 +1,6 @@
 package io.allink.receipt.api.domain.receipt
 
-import io.allink.receipt.api.common.PagedResult
+import io.allink.receipt.api.domain.PagedResult
 
 /**
  * Package: io.allink.receipt.api.domain.receipt

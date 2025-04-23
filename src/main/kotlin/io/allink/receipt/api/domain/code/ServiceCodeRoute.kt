@@ -1,6 +1,6 @@
 package io.allink.receipt.api.domain.code
 
-import io.allink.receipt.api.common.Response
+import io.allink.receipt.api.domain.Response
 import io.allink.receipt.api.common.errorResponse
 import io.allink.receipt.api.common.franchiseCodeListResponse
 import io.github.smiley4.ktoropenapi.get

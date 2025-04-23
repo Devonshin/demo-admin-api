@@ -1,7 +1,7 @@
 package io.allink.receipt.api.domain.receipt
 
-import io.allink.receipt.api.common.ExposedRepository
-import io.allink.receipt.api.common.PagedResult
+import io.allink.receipt.api.repository.ExposedRepository
+import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.advertisement.AdvertisementTable
 import io.allink.receipt.api.domain.advertisement.SimpleAdvertisementModel
 import io.allink.receipt.api.domain.merchant.MerchantTagTable
@@ -138,6 +138,9 @@ interface IssueReceiptRepository : ExposedRepository<IssueReceiptTable, String, 
         "storeBusinessNo" -> StoreTable.businessNo
         "storeName" -> StoreTable.storeName
         "franchiseCode" -> StoreTable.franchiseCode
+        "issueDate" -> table.issueDate
+        "receiptType" -> table.receiptType
+        "receiptAmount" -> table.receiptAmount
         else -> null
       }
     }

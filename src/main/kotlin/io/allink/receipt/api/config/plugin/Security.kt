@@ -2,8 +2,8 @@ package io.allink.receipt.api.config.plugin
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import io.allink.receipt.api.common.ErrorResponse
-import io.allink.receipt.api.common.Response
+import io.allink.receipt.api.domain.ErrorResponse
+import io.allink.receipt.api.domain.Response
 import io.allink.receipt.api.domain.admin.AdminRepository
 import io.allink.receipt.api.domain.admin.AdminStatus
 import io.allink.receipt.api.domain.login.LoginInfoRepository

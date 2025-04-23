@@ -1,6 +1,6 @@
 package io.allink.receipt.api.domain.admin
 
-import io.allink.receipt.api.common.ExposedRepository
+import io.allink.receipt.api.repository.ExposedRepository
 import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTime
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Column

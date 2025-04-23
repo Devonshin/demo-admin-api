@@ -1,8 +1,9 @@
 package io.allink.receipt.api.domain.store
 
-import io.allink.receipt.api.common.BaseModel
-import io.allink.receipt.api.common.Page
-import io.allink.receipt.api.common.Sorter
+import io.allink.receipt.api.domain.BaseModel
+import io.allink.receipt.api.domain.Page
+import io.allink.receipt.api.domain.PeriodFilter
+import io.allink.receipt.api.domain.Sorter
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
@@ -141,7 +142,11 @@ data class StoreFilter(
   val name: String? = null,
   @Schema(title = "프랜차이즈 코드", description = "EQ 검색, 서비스코드 조회에서 가져온 프랜차이즈 코드", example = "EDIYA", requiredMode = RequiredMode.NOT_REQUIRED)
   val franchiseCode: String? = null,
-  @Schema(title = "정렬", requiredMode = RequiredMode.NOT_REQUIRED, exampleClasses = [Sorter::class])
+  @Schema(title = "검색 기간", description = "검색할 기간의 시작과 끝의 범위", example = """{"from: "2025-04-17T12:00:00", "to: "2025-05-17T12:00:00"}""")
+  val period: PeriodFilter,
+  @Schema(title = "정렬", requiredMode = RequiredMode.NOT_REQUIRED, exampleClasses = [Sorter::class], description = """
+    정렬 필드 : id, businessNo, name, franchiseCode, regDate, modDate, addr1, managerName, ceoName
+  """)
   val sort: List<Sorter>? = null,
   @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
   val page: Page = Page(1, 10)

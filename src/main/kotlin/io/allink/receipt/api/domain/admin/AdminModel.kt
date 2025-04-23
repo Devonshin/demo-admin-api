@@ -1,6 +1,6 @@
 package io.allink.receipt.api.domain.admin
 
-import io.allink.receipt.api.common.BaseModel
+import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTime
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable

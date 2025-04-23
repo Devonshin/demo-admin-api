@@ -1,5 +1,7 @@
-package io.allink.receipt.api.common
+package io.allink.receipt.api.repository
 
+import io.allink.receipt.api.domain.BaseModel
+import io.allink.receipt.api.domain.Sorter
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
@@ -20,7 +22,7 @@ interface ExposedRepository<
   val table: TABLE
 
   suspend fun <T> query(block: suspend () -> T): T =
-    newSuspendedTransaction(Dispatchers.IO) {
+    newSuspendedTransaction (Dispatchers.IO) {
       addLogger(StdOutSqlLogger)
       block()
     }
@@ -43,22 +45,21 @@ interface ExposedRepository<
 
   suspend fun delete(id: T): Int
 
-  fun columnSort(query: Query, sorters: List<Sorter>?, converter: (String) -> Column<out Any?>?) =
-    {
-      sorters?.forEach {sorter ->
-        columnConvert(sorter.field)?.let { field ->
-          val sortOrder =
-            if (sorter.direction.equals("desc", ignoreCase = true)) {
-              SortOrder.DESC
-            } else {
-              SortOrder.ASC
-            }
-          query.orderBy(
-            field, sortOrder
-          )
-        }
+  fun columnSort(query: Query, sorters: List<Sorter>?, converter: (String) -> Column<out Any?>?) {
+    sorters?.forEach { sorter ->
+      columnConvert(sorter.field)?.let { field ->
+        val sortOrder =
+          if (sorter.direction.equals("desc", ignoreCase = true)) {
+            SortOrder.DESC
+          } else {
+            SortOrder.ASC
+          }
+        query.orderBy(
+          field, sortOrder
+        )
       }
     }
+  }
 
   val columnConvert: (String?) -> Column<out Any?>?
 }

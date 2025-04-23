@@ -1,7 +1,7 @@
 package io.allink.receipt.api.domain.user
 
 import io.allink.receipt.api.common.Constant.Companion.AES256_KEY
-import io.allink.receipt.api.common.PagedResult
+import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.util.AES256Util
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.selectAll

@@ -1,4 +1,4 @@
-package io.allink.receipt.api.common
+package io.allink.receipt.api.domain
 
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable

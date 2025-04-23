@@ -1,6 +1,6 @@
 package io.allink.receipt.api.domain.store
 
-import io.allink.receipt.api.common.PagedResult
+import io.allink.receipt.api.domain.PagedResult
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.selectAll
 
@@ -29,6 +29,14 @@ class StoreRepositoryImpl(
     }
     filter.businessNo?.let {
       select.andWhere { table.businessNo eq it }
+    }
+    filter.period.let {
+      it.from.let { from ->
+        select.andWhere { table.regDate greaterEq from }
+      }
+      it.to.let { to ->
+        select.andWhere { table.regDate lessEq to }
+      }
     }
     columnSort(select, filter.sort, columnConvert)
     val totalCount = select.count().toInt()

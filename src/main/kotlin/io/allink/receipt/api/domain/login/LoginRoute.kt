@@ -1,6 +1,7 @@
 package io.allink.receipt.api.domain.login
 
 import io.allink.receipt.api.common.*
+import io.allink.receipt.api.domain.Response
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.post
 import io.ktor.http.*
@@ -45,7 +46,7 @@ fun Route.loginRoutes(
 
       call.respond(
         HttpStatusCode.OK,
-        Response<VerificationCode>(
+        Response(
           data = generateVerificationCode
         )
       )

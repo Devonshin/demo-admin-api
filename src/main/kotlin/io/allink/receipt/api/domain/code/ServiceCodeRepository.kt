@@ -1,6 +1,6 @@
 package io.allink.receipt.api.domain.code
 
-import io.allink.receipt.api.common.ExposedRepository
+import io.allink.receipt.api.repository.ExposedRepository
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow

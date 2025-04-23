@@ -1,6 +1,6 @@
 package io.allink.receipt.api.config.plugin
 
-import io.allink.receipt.api.common.Response
+import io.allink.receipt.api.domain.Response
 import io.allink.receipt.api.domain.login.VerificationCode
 import io.allink.receipt.api.domain.login.VerificationCodeRequest
 import io.github.smiley4.ktoropenapi.OpenApi

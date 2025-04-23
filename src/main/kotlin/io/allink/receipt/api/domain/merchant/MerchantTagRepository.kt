@@ -1,6 +1,13 @@
 package io.allink.receipt.api.domain.merchant
 
-import io.allink.receipt.api.common.ExposedRepository
+import io.allink.receipt.api.domain.merchant.MerchantTagTable.deviceId
+import io.allink.receipt.api.domain.merchant.MerchantTagTable.id
+import io.allink.receipt.api.domain.merchant.MerchantTagTable.merchantGroupId
+import io.allink.receipt.api.domain.merchant.MerchantTagTable.merchantStoreId
+import io.allink.receipt.api.domain.merchant.MerchantTagTable.modDate
+import io.allink.receipt.api.domain.merchant.MerchantTagTable.regDate
+import io.allink.receipt.api.domain.merchant.MerchantTagTable.storeUid
+import io.allink.receipt.api.repository.ExposedRepository
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow
@@ -19,12 +26,22 @@ interface MerchantTagRepository: ExposedRepository<MerchantTagTable, String, Mer
     return Companion.toModel(row)
   }
 
-  override fun toRow(model: MerchantTagModel): MerchantTagTable.(InsertStatement<EntityID<String>>) -> Unit {
-    TODO("Not yet implemented")
+  override fun toRow(model: MerchantTagModel): MerchantTagTable.(InsertStatement<EntityID<String>>) -> Unit = {
+    it[merchantStoreId] = model.merchantStoreId
+    it[merchantGroupId] = model.merchantGroupId
+    it[deviceId] = model.deviceId
+    it[storeUid] = model.storeUid
+    it[regDate] = model.regDate
+    it[modDate] = model.modDate
   }
 
-  override fun toUpdateRow(model: MerchantTagModel): MerchantTagTable.(UpdateStatement) -> Unit {
-    TODO("Not yet implemented")
+  override fun toUpdateRow(model: MerchantTagModel): MerchantTagTable.(UpdateStatement) -> Unit = {
+    it[merchantStoreId] = model.merchantStoreId
+    it[merchantGroupId] = model.merchantGroupId
+    it[deviceId] = model.deviceId
+    it[storeUid] = model.storeUid
+    it[regDate] = model.regDate
+    it[modDate] = model.modDate
   }
 
   override suspend fun create(model: MerchantTagModel): MerchantTagModel {
@@ -49,13 +66,13 @@ interface MerchantTagRepository: ExposedRepository<MerchantTagTable, String, Mer
   companion object {
     fun toModel(row: ResultRow): MerchantTagModel {
       return MerchantTagModel(
-        id = row[MerchantTagTable.id],
-        merchantStoreId = row[MerchantTagTable.merchantStoreId],
-        merchantGroupId = row[MerchantTagTable.merchantGroupId],
-        deviceId = row[MerchantTagTable.deviceId],
-        storeUid = row[MerchantTagTable.storeUid],
-        regDate = row[MerchantTagTable.regDate],
-        modDate = row[MerchantTagTable.modDate]
+        id = row[id],
+        merchantStoreId = row[merchantStoreId],
+        merchantGroupId = row[merchantGroupId],
+        deviceId = row[deviceId],
+        storeUid = row[storeUid],
+        regDate = row[regDate],
+        modDate = row[modDate]
       )
     }
   }

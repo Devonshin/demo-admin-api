@@ -1,6 +1,10 @@
 package io.allink.receipt.api.domain.receipt
 
-import io.allink.receipt.api.common.*
+import io.allink.receipt.api.common.errorResponse
+import io.allink.receipt.api.common.issueReceiptDetailResponse
+import io.allink.receipt.api.common.issueReceiptListRequest
+import io.allink.receipt.api.common.issueReceiptListResponse
+import io.allink.receipt.api.domain.Response
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.post
 import io.ktor.http.*

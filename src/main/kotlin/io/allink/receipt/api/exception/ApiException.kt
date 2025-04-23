@@ -1,4 +1,4 @@
-package io.allink.receipt.api.common
+package io.allink.receipt.api.exception
 
 /**
  * Package: io.allink.receipt.admin.common

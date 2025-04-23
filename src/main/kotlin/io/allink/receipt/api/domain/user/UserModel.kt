@@ -1,8 +1,8 @@
 package io.allink.receipt.api.domain.user
 
-import io.allink.receipt.api.common.BaseModel
-import io.allink.receipt.api.common.Page
-import io.allink.receipt.api.common.Sorter
+import io.allink.receipt.api.domain.BaseModel
+import io.allink.receipt.api.domain.Page
+import io.allink.receipt.api.domain.Sorter
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
@@ -23,9 +23,21 @@ data class UserModel(
   override var id: String?,
   @Schema(title = "이름", description = "사용자 이름", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val name: String?,
-  @Schema(title = "회원가입 상태", description = "회원 가입 상태값", nullable = false, requiredMode = RequiredMode.REQUIRED, exampleClasses = [UserStatus::class])
+  @Schema(
+    title = "회원가입 상태",
+    description = "회원 가입 상태값",
+    nullable = false,
+    requiredMode = RequiredMode.REQUIRED,
+    exampleClasses = [UserStatus::class]
+  )
   val status: UserStatus?,
-  @Schema(title = "휴대폰번호", description = "휴대폰번호", nullable = false, requiredMode = RequiredMode.REQUIRED, example = "01012349876")
+  @Schema(
+    title = "휴대폰번호",
+    description = "휴대폰번호",
+    nullable = false,
+    requiredMode = RequiredMode.REQUIRED,
+    example = "01012349876"
+  )
   val phone: String?,
   @Schema(title = "성별", description = "성별", nullable = false, requiredMode = RequiredMode.REQUIRED, example = "F|M")
   val gender: String?,
@@ -114,7 +126,7 @@ enum class UserRole {
 data class UserFilter(
   @Schema(title = "휴대폰번호", description = "Eq 검색만 가능", requiredMode = RequiredMode.NOT_REQUIRED)
   val phone: String? = null,
-  @Schema(title = "이름", description = "Start with 검색",requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "이름", description = "Start with 검색", requiredMode = RequiredMode.NOT_REQUIRED)
   val name: String? = null,
   @Schema(title = "닉네임", description = "Eq 검색만 가능", requiredMode = RequiredMode.NOT_REQUIRED)
   val nickName: String? = null,
@@ -122,7 +134,10 @@ data class UserFilter(
   val age: Age? = null,
   @Schema(title = "성별", example = "M|F", requiredMode = RequiredMode.NOT_REQUIRED)
   val gender: String? = null,
-  @Schema(title = "정렬", requiredMode = RequiredMode.NOT_REQUIRED, exampleClasses = [Sorter::class])
+  @Schema(
+    title = "정렬", requiredMode = RequiredMode.NOT_REQUIRED, exampleClasses = [Sorter::class],
+    description = """정렬 필드 : name, nickname, phone, gender, birthday, localYn, email, role, regDate, joinSocialType"""
+  )
   val sort: List<Sorter>? = null,
   @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
   val page: Page = Page(1, 10)

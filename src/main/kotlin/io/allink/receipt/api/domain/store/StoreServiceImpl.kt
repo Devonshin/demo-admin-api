@@ -1,4 +1,4 @@
-import io.allink.receipt.api.common.PagedResult
+import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.store.StoreFilter
 import io.allink.receipt.api.domain.store.StoreModel
 import io.allink.receipt.api.domain.store.StoreRepository

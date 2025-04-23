@@ -1,8 +1,10 @@
-package io.allink.receipt.api.common
+package io.allink.receipt.api.domain
 
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 
 /**
  * Package: io.allink.receipt.admin.common
@@ -46,3 +48,13 @@ data class Page(
   @Schema(title = "페이지 길이", description = "최대 값 100", example = "10", requiredMode = RequiredMode.REQUIRED)
   val pageSize: Int = 10
 )
+
+@Serializable
+@Schema(title = "검색 기간", description = "검색할 기간의 시작과 끝의 범위", example = """{"from: "2025-04-17T12:00:00", "to: "2025-05-17T12:00:00"}""", requiredMode = RequiredMode.REQUIRED)
+data class PeriodFilter(
+  @Schema(title = "시작일시", description = "검색을 시작할 년월일시", example = "2025-04-17T12:00:00", requiredMode = RequiredMode.REQUIRED)
+  val from: @Contextual LocalDateTime,
+  @Schema(title = "종료일시", description = "검색을 종료할 년월일시", example = "2025-04-17T12:00:00", requiredMode = RequiredMode.REQUIRED)
+  val to: @Contextual LocalDateTime
+)
+
