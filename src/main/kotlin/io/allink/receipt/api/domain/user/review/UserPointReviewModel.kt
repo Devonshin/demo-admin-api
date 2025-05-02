@@ -40,16 +40,6 @@ data class UserPointReviewModel(
   val modDate: @Contextual LocalDateTime?,
 ): BaseModel<String>
 
-
-@Serializable
-@Schema(name = "SimpleUserPointReviewModel", title = "사용자 포인트 리뷰", description = "사용자의 포인트 리뷰 객체")
-data class SimpleUserPointReviewModel(
-  @Schema(title = "사용자 포인트 리뷰 고유아이디", description = "사용자의 포인트 리뷰 고유아이디", requiredMode = Schema.RequiredMode.REQUIRED, example = "3a931370-cd0b-4427-bf38-418111969c22")
-  override var id: String?,
-  @Schema(title = "현재 상태", description = "리뷰 작성 상태", requiredMode = RequiredMode.REQUIRED)
-  val status: UserReviewStatus?
-): BaseModel<String>
-
 @Schema(name =  "UserReviewStatus", title = "사용자 리뷰", description = "사용자 리뷰 진행 상태", enumAsRef = true)
 enum class UserReviewStatus(val desc: String) {
   WRITING("작성 중"),

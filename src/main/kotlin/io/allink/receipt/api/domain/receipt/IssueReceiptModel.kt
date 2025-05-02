@@ -5,15 +5,11 @@ import io.allink.receipt.api.domain.Page
 import io.allink.receipt.api.domain.PeriodFilter
 import io.allink.receipt.api.domain.Sorter
 import io.allink.receipt.api.domain.advertisement.AdvertisementTable
-import io.allink.receipt.api.domain.advertisement.SimpleAdvertisementModel
 import io.allink.receipt.api.domain.merchant.MerchantTagTable
-import io.allink.receipt.api.domain.merchant.SimpleMerchantTagModel
-import io.allink.receipt.api.domain.receipt.edoc.SimpleEdocModel
 import io.allink.receipt.api.domain.store.SimpleStoreModel
 import io.allink.receipt.api.domain.store.StoreTable
-import io.allink.receipt.api.domain.user.SimpleUserModel
 import io.allink.receipt.api.domain.user.UserTable
-import io.allink.receipt.api.domain.user.review.SimpleUserPointReviewModel
+import io.allink.receipt.api.domain.user.review.UserReviewStatus
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
@@ -21,6 +17,7 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
 import java.time.LocalDateTime
+import java.util.*
 
 /**
  * Package: io.allink.receipt.api.domain.receipt
@@ -37,7 +34,7 @@ data class IssueReceiptModel(
   @Schema(title = "가맹점", description = "영수증 발행 가맹점", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val store: SimpleStoreModel?,
   @Schema(title = "태그", description = "영수증 발행 시 태깅한 태그", nullable = false, requiredMode = RequiredMode.REQUIRED)
-  val tag: SimpleMerchantTagModel?,
+  val tag: SimpleMerchantTagReceiptModel?,
   @Schema(title = "등록일시", description = "등록일시", example = "2025-04-17 12:00:00", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val issueDate: @Contextual LocalDateTime,
   @Schema(title = "사용자", description = "사용자", nullable = false, requiredMode = RequiredMode.REQUIRED)
@@ -137,3 +134,61 @@ data class ReceiptFilter(
   @Schema(title = "페이징")
   val page: Page = Page(1, 10)
 )
+
+
+@Serializable
+@Schema(name = "SimpleMerchantTagModelOfReceipt", title = "머천트 태그", description = "실물 태그의 약식 등록 정보")
+data class SimpleMerchantTagReceiptModel(
+  @Schema(
+    title = "태그아이디",
+    description = "태그의 고유아이디",
+    example = "E001234567890",
+    nullable = false,
+    requiredMode = RequiredMode.REQUIRED
+  )
+  override var id: String?,
+  @Schema(title = "단말기 아이디", description = "포스, 결제 단말기 고유 아이디", example = "1234567890")
+  val deviceId: String?,
+) : BaseModel<String>
+
+@Serializable
+@Schema(title = "사용자 객체", description = "모영 회원 가입자 약식 정보")
+data class SimpleUserModel(
+  @Schema(title = "고유아이디", description = "사용자 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  override var id: String?,
+  @Schema(title = "이름", description = "사용자 이름", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  val name: String?,
+) : BaseModel<String>
+
+
+@Serializable
+@Schema(name = "SimpleAdvertisementModel", title = "광고")
+data class SimpleAdvertisementModel(
+  @Schema(title = "광고주 머천트 고유아이디", description = "광고주 머천트 고유아이디")
+  val merchantGroupId: String?,
+  @Schema(title = "광고주 타이틀", description = "광고 타이틀")
+  val title: String?,
+  override var id: @Contextual UUID? = null
+): BaseModel<UUID>
+
+
+@Serializable
+@Schema(name = "SimpleUserPointReviewModel", title = "사용자 포인트 리뷰", description = "사용자의 포인트 리뷰 객체")
+data class SimpleUserPointReviewModel(
+  @Schema(title = "사용자 포인트 리뷰 고유아이디", description = "사용자의 포인트 리뷰 고유아이디", requiredMode = Schema.RequiredMode.REQUIRED, example = "3a931370-cd0b-4427-bf38-418111969c22")
+  override var id: String?,
+  @Schema(title = "현재 상태", description = "리뷰 작성 상태", requiredMode = RequiredMode.REQUIRED)
+  val status: UserReviewStatus?
+): BaseModel<String>
+
+
+@Serializable
+@Schema(name = "EdocModel", title = "전자문서", description = "전자문서 간단 발송 정보")
+class SimpleEdocModel(
+  @Schema(title = "전자문서 발송기관", description = "전자문서 발송기관 코드", requiredMode = RequiredMode.REQUIRED, example = "kakao|naver")
+  override var id: String?,
+  @Schema(title = "전자문서 아이디", description = "전자문서 고유아이디", requiredMode = RequiredMode.REQUIRED)
+  val envelopId: String,
+  @Schema(title = "발송일시", description = "전자문서 발송 요청일시", requiredMode = RequiredMode.REQUIRED)
+  val regDate: @Contextual LocalDateTime,
+): BaseModel<String>

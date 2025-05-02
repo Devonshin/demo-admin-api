@@ -14,6 +14,11 @@ import io.allink.receipt.api.domain.login.LoginInfoRepositoryImpl
 import io.allink.receipt.api.domain.login.LoginInfoTable
 import io.allink.receipt.api.domain.login.LoginService
 import io.allink.receipt.api.domain.login.LoginServiceImpl
+import io.allink.receipt.api.domain.merchant.MerchantTagRepository
+import io.allink.receipt.api.domain.merchant.MerchantTagRepositoryImpl
+import io.allink.receipt.api.domain.merchant.MerchantTagService
+import io.allink.receipt.api.domain.merchant.MerchantTagServiceImpl
+import io.allink.receipt.api.domain.merchant.MerchantTagTable
 import io.allink.receipt.api.domain.receipt.IssueReceiptRepository
 import io.allink.receipt.api.domain.receipt.IssueReceiptRepositoryImpl
 import io.allink.receipt.api.domain.receipt.IssueReceiptService
@@ -37,8 +42,10 @@ import org.koin.logger.slf4jLogger
 
 fun Application.configureFrameworks() {
   install(Koin) {
-    slf4jLogger()
     modules(module {
+      /**
+       * Repository
+       * */
       single<AdminRepository> {
         AdminRepositoryImpl(AdminTable)
       }
@@ -57,6 +64,12 @@ fun Application.configureFrameworks() {
       single<IssueReceiptRepository> {
         IssueReceiptRepositoryImpl(IssueReceiptTable)
       }
+      single<MerchantTagRepository> {
+        MerchantTagRepositoryImpl(MerchantTagTable)
+      }
+      /**
+       * Services
+       * */
       single<AdminService> {
         AdminServiceImpl(get())
       }
@@ -74,6 +87,9 @@ fun Application.configureFrameworks() {
       }
       single<IssueReceiptService> {
         IssueReceiptServiceImpl(get())
+      }
+      single<MerchantTagService> {
+        MerchantTagServiceImpl(get())
       }
     })
   }

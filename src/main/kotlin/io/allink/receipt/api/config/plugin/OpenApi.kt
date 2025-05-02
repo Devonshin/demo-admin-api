@@ -42,7 +42,6 @@ fun Application.configureOpenApi() {
         "doc" -> false
         "health" -> false
         "ready" -> false
-        "openapi" -> false
         "api" -> false
         "hello" -> false
         null -> false
@@ -58,7 +57,7 @@ fun Application.configureOpenApi() {
       contact {
         name = "Allink"
         url = "https://allink.io"
-        email = "dev@allink.ip"
+        email = "dev@allink.io"
       }
     }
 

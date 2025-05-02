@@ -34,14 +34,3 @@ class EdocModel(
   @Schema(title = "사용자 고유이이디", description = "영수증 사용자 고유아이디", requiredMode = RequiredMode.REQUIRED)
   val userId: String,
 ): BaseModel<String>
-
-@Serializable
-@Schema(name = "EdocModel", title = "전자문서", description = "전자문서 간단 발송 정보")
-class SimpleEdocModel(
-  @Schema(title = "전자문서 발송기관", description = "전자문서 발송기관 코드", requiredMode = RequiredMode.REQUIRED, example = "kakao|naver")
-  override var id: String?,
-  @Schema(title = "전자문서 아이디", description = "전자문서 고유아이디", requiredMode = RequiredMode.REQUIRED)
-  val envelopId: String,
-  @Schema(title = "발송일시", description = "전자문서 발송 요청일시", requiredMode = RequiredMode.REQUIRED)
-  val regDate: @Contextual LocalDateTime,
-): BaseModel<String>

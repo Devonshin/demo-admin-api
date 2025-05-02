@@ -29,16 +29,6 @@ data class AdvertisementModel(
   override var id: @Contextual UUID? = null
 ): BaseModel<UUID>
 
-@Serializable
-@Schema(name = "SimpleAdvertisementModel", title = "광고")
-data class SimpleAdvertisementModel(
-  @Schema(title = "광고주 머천트 고유아이디", description = "광고주 머천트 고유아이디")
-  val merchantGroupId: String?,
-  @Schema(title = "광고주 타이틀", description = "광고 타이틀")
-  val title: String?,
-  override var id: @Contextual UUID? = null
-): BaseModel<UUID>
-
 object AdvertisementTable: UUIDTable(name = "advertisement", columnName = "uuid") {
   val merchantGroupId = varchar("merchant_group_id", 36)
   val title = varchar("title", 255)

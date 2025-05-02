@@ -17,7 +17,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.MissingFieldException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import software.amazon.awssdk.services.sns.model.NotFoundException
 
 @OptIn(ExperimentalSerializationApi::class)
 fun Application.configureStatusPage() {
@@ -155,7 +154,7 @@ fun Application.configureStatusPage() {
     exception<NotFoundException> { call, cause ->
       call.respond(
         HttpStatusCode.NotFound,
-        Response<ErrorResponse>(
+        Response(
           ErrorResponse(
             code = "400",
             message = "Resource not found"

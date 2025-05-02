@@ -23,8 +23,8 @@ data class ServiceCodeModel(
   val serviceName: String,
   @Schema(title = "금액", description = "금액", requiredMode = RequiredMode.NOT_REQUIRED)
   val price: Int?,
-  @Schema(title = "상태", description = "상태", requiredMode = RequiredMode.NOT_REQUIRED)
-  val status: String?,
+  @Schema(title = "상태", description = "상태", allowableValues = ["ACTIVE", "INACTIVE"],requiredMode = RequiredMode.NOT_REQUIRED)
+  val status: ServiceCodeStatus?,
 ): BaseModel<String>
 
 object ServiceCodeTable: Table("service_code") {
@@ -32,7 +32,7 @@ object ServiceCodeTable: Table("service_code") {
   val serviceGroup = varchar("service_group", 10)
   val serviceName = varchar("service_name", 255)
   val price = integer("price").nullable()
-  val status = varchar("status", 10).nullable()
+  val status = enumerationByName<ServiceCodeStatus>("status", 10).nullable()
   override val primaryKey = PrimaryKey(serviceCode)
 }
 

@@ -1,23 +1,23 @@
 package io.allink.receipt.api.common
 
 import io.allink.receipt.api.domain.*
-import io.allink.receipt.api.domain.advertisement.SimpleAdvertisementModel
 import io.allink.receipt.api.domain.code.ServiceCodeModel
+import io.allink.receipt.api.domain.code.ServiceCodeStatus
 import io.allink.receipt.api.domain.login.Jwt
 import io.allink.receipt.api.domain.login.VerificationCheckRequest
 import io.allink.receipt.api.domain.login.VerificationCode
 import io.allink.receipt.api.domain.login.VerificationCodeRequest
+import io.allink.receipt.api.domain.merchant.MerchantTagFilter
+import io.allink.receipt.api.domain.merchant.MerchantTagModel
+import io.allink.receipt.api.domain.merchant.SimpleMerchantStoreDetailModel
 import io.allink.receipt.api.domain.merchant.SimpleMerchantTagModel
-import io.allink.receipt.api.domain.receipt.IssueReceiptModel
-import io.allink.receipt.api.domain.PeriodFilter
-import io.allink.receipt.api.domain.receipt.ReceiptFilter
-import io.allink.receipt.api.domain.receipt.SimpleIssueReceiptModel
-import io.allink.receipt.api.domain.receipt.edoc.SimpleEdocModel
+import io.allink.receipt.api.domain.merchant.SimpleMerchantTagStoreModel
+import io.allink.receipt.api.domain.receipt.*
 import io.allink.receipt.api.domain.store.SimpleStoreModel
 import io.allink.receipt.api.domain.store.StoreFilter
 import io.allink.receipt.api.domain.store.StoreModel
+import io.allink.receipt.api.domain.store.StoreStatus
 import io.allink.receipt.api.domain.user.*
-import io.allink.receipt.api.domain.user.review.SimpleUserPointReviewModel
 import io.allink.receipt.api.domain.user.review.UserReviewStatus
 import io.github.smiley4.ktoropenapi.config.ResponseConfig
 import io.github.smiley4.ktoropenapi.config.SimpleBodyConfig
@@ -176,8 +176,45 @@ private val storeExample = StoreModel(
   iconUrl = null,
   logoUrl = "https://logourl.com",
   receiptWidthInch = null,
+  status = StoreStatus.NORMAL,
   partnerLoginId = null,
   partnerLoginPassword = ""
+)
+
+private val tagExample = MerchantTagModel(
+  id = "TAGE00123",
+  store = SimpleMerchantStoreDetailModel(
+    id = "store-123",
+    storeName = "매장명",
+    businessNo = "123-45-67890",
+    franchiseCode = "FRANCHISE_1",
+    regDate = LocalDateTime.now(),
+    deleteDate = null,
+    ceoName = "저것참",
+    businessType = "1231212345",
+    eventType = "퉁신판매업",
+    modDate = LocalDateTime.now(),
+    status = StoreStatus.NORMAL,
+  ),
+  tagName = "영수증 태그",
+  merchantGroupId = "uuid-like-group-id",
+  deviceId = "229",
+  storeUid = "uuid-like-store-123",
+  regDate = LocalDateTime.parse("2025-03-17T12:00:00"),
+  modDate = null,
+)
+
+private val simpleTagExample = SimpleMerchantTagModel (
+  id = "TAGE00123",
+  store = SimpleMerchantTagStoreModel(
+    id = "uuid-like-merchant-store-123",
+    storeName= "이디야별다방",
+    franchiseCode = "EDIYA",
+    businessNo = "1231212312",
+    status = StoreStatus.NORMAL,
+  ),
+  regDate = LocalDateTime.parse("2025-03-17T12:00:00"),
+  modDate = null,
 )
 
 fun storeDetailResponse(): ResponseConfig.() -> Unit = {
@@ -192,6 +229,53 @@ fun storeDetailResponse(): ResponseConfig.() -> Unit = {
   }
 }
 
+fun tagListRequest(): SimpleBodyConfig.() -> Unit = {
+  description = "태그 목록 조회 요청"
+  example("tag-list-request") {
+    value = MerchantTagFilter(
+      id = "E00TEST1234",
+      storeId = "123456-asdsa-aaasdsd-7890",
+      businessNo = "1234567890",
+      franchiseCode = "FRANCHISE_CODE",
+      storeName = "김밥왕국",
+      period = PeriodFilter(
+        from = LocalDateTime.parse("2025-03-17T12:00:00"),
+        to = LocalDateTime.parse("2025-04-17T12:00:00"),
+      ),
+      page = Page(1, 10),
+      sort = listOf(
+        Sorter("field", "ASC")
+      )
+    )
+  }
+}
+
+fun tagListResponse(): ResponseConfig.() -> Unit = {
+  description = "성공 응답"
+  body<Response<PagedResult<SimpleMerchantTagModel>>> {
+    example("가맹점 목록 응답") {
+      value = Response(
+        data = PagedResult(
+          items = listOf(simpleTagExample),
+          totalPages = 1000,
+          totalCount = 20000,
+          currentPage = 1
+        )
+      )
+    }
+  }
+}
+
+fun tagDetailResponse(): ResponseConfig.() -> Unit = {
+  description = "성공 응답"
+  body<Response<MerchantTagModel>> {
+    example("태그 상세 정보 응답") {
+      value = Response(
+        data = tagExample
+      )
+    }
+  }
+}
 
 fun storeListRequest(): SimpleBodyConfig.() -> Unit = {
   description = "가맹점 목록 조회 요청"
@@ -236,7 +320,11 @@ fun franchiseCodeListResponse(): ResponseConfig.() -> Unit = {
     example("franchise-code-list-reponse") {
       value = listOf(
         ServiceCodeModel(
-          id = "EDIYA", serviceGroup = "FRANCHISE", serviceName = "EDIYA", price = null, status = "ACTIVE"
+          id = "EDIYA",
+          serviceGroup = "FRANCHISE",
+          serviceName = "EDIYA",
+          price = null,
+          status = ServiceCodeStatus.ACTIVE
         )
       )
     }
@@ -311,40 +399,40 @@ fun issueReceiptDetailResponse(): ResponseConfig.() -> Unit = {
     example("전자영수증 상세 응답") {
       value = Response(
         IssueReceiptModel(
-           id = "ed6843f8-67cd-454e-a843-f867cd454ee5",
-           store = SimpleStoreModel(
-             id = "ed6843f8-67cd-454e-a843-f867cd454ee1",
-             storeName = "전자영수증 가맹점",
-             franchiseCode = "EDIYA",
-             businessNo = "123-12-12312",
-             ceoName = "정관장"
-           ),
-           tag = SimpleMerchantTagModel(
-             id = "E00123041234123",
-             deviceId = "01",
-           ),
-           issueDate = LocalDateTime.now(),
-           user = SimpleUserModel(
-             id = "35f787d0-b983-4df8-b787-d0b9830df8ed",
-             name = "나승소",
-           ),
-           receiptType = "PAYMENT",
-           receiptAmount = 10000,
-           originIssueId = "35f787d0-b983-4df8-b787-d0b9830df8ed",
-           userPointReview = SimpleUserPointReviewModel(
-             id = "35f787d0-b983-4df8-b787-d0b9830df8ed",
-             status = UserReviewStatus.APPLIED
-           ),
-           edoc = SimpleEdocModel(
-             id = "kakao",
-             envelopId = "envelop-id-envelop-id-envelop-id",
-             regDate = LocalDateTime.now(),
-           ),
-           advertisement = SimpleAdvertisementModel(
-             id = UUID.randomUUID(),
-             title = "불고기세트",
-             merchantGroupId = "merchant-group-id",
-           )
+          id = "ed6843f8-67cd-454e-a843-f867cd454ee5",
+          store = SimpleStoreModel(
+            id = "ed6843f8-67cd-454e-a843-f867cd454ee1",
+            storeName = "전자영수증 가맹점",
+            franchiseCode = "EDIYA",
+            businessNo = "123-12-12312",
+            ceoName = "정관장"
+          ),
+          tag = SimpleMerchantTagReceiptModel(
+            id = "E00123041234123",
+            deviceId = "01",
+          ),
+          issueDate = LocalDateTime.now(),
+          user = SimpleUserModel(
+            id = "35f787d0-b983-4df8-b787-d0b9830df8ed",
+            name = "나승소",
+          ),
+          receiptType = "PAYMENT",
+          receiptAmount = 10000,
+          originIssueId = "35f787d0-b983-4df8-b787-d0b9830df8ed",
+          userPointReview = SimpleUserPointReviewModel(
+            id = "35f787d0-b983-4df8-b787-d0b9830df8ed",
+            status = UserReviewStatus.APPLIED
+          ),
+          edoc = SimpleEdocModel(
+            id = "kakao",
+            envelopId = "envelop-id-envelop-id-envelop-id",
+            regDate = LocalDateTime.now(),
+          ),
+          advertisement = SimpleAdvertisementModel(
+            id = UUID.randomUUID(),
+            title = "불고기세트",
+            merchantGroupId = "merchant-group-id",
+          )
         )
       )
     }

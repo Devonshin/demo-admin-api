@@ -5,6 +5,7 @@ import io.allink.receipt.api.repository.ExposedRepository
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.statements.UpdateStatement
@@ -17,6 +18,44 @@ import org.jetbrains.exposed.sql.statements.UpdateStatement
 
 interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
   override val table: StoreTable
+
+  suspend fun findAll(filter: StoreFilter): PagedResult<StoreModel> = query {
+    val offset = filter.page.page.minus(1).times(filter.page.pageSize)
+    val select = table.selectAll()
+
+    filter.name?.let { name ->
+      select.andWhere { table.storeName like "$name%" }
+    }
+    filter.franchiseCode?.let {
+      select.andWhere { table.franchiseCode eq it }
+    }
+    filter.id?.let {
+      select.andWhere { table.id eq it }
+    }
+    filter.businessNo?.let {
+      select.andWhere { table.businessNo eq it }
+    }
+    filter.period.let {
+      it.from.let { from ->
+        select.andWhere { table.regDate greaterEq from }
+      }
+      it.to.let { to ->
+        select.andWhere { table.regDate lessEq to }
+      }
+    }
+    columnSort(select, filter.sort, columnConvert)
+    val totalCount = select.count().toInt()
+    val items = select.limit(filter.page.pageSize)
+      .offset(offset.toLong())
+      .toList()
+      .map { toModel(it) }
+    return@query PagedResult(
+      items = items,
+      currentPage = filter.page.page,
+      totalCount = totalCount,
+      totalPages = (totalCount + filter.page.pageSize - 1) / filter.page.pageSize
+    )
+  }
 
   override fun toModel(row: ResultRow): StoreModel {
     return Companion.toModel(row)
@@ -47,7 +86,7 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
     it[logoUrl] = model.logoUrl
     it[receiptWidthInch] = model.receiptWidthInch
     it[partnerLoginId] = model.partnerLoginId
-    it[partnerLoginPword] = model.partnerLoginPassword
+    it[partnerLoginPassword] = model.partnerLoginPassword
     it[regDate] = model.regDate
     it[deleteDate] = model.deleteDate
   }
@@ -77,7 +116,7 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
     it[logoUrl] = model.logoUrl
     it[receiptWidthInch] = model.receiptWidthInch
     it[partnerLoginId] = model.partnerLoginId
-    it[partnerLoginPword] = model.partnerLoginPassword
+    it[partnerLoginPassword] = model.partnerLoginPassword
     it[modDate] = model.modDate
     it[deleteDate] = model.deleteDate
   }
@@ -97,8 +136,6 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
   override suspend fun delete(id: String): Int = query {
     TODO()
   }
-
-  suspend fun findAll(filter: StoreFilter): PagedResult<StoreModel>
 
   override val columnConvert: (String?) -> Column<out Any?>?
     get() = { column ->
@@ -147,8 +184,9 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
         iconUrl = row[StoreTable.iconUrl],
         logoUrl = row[StoreTable.logoUrl],
         receiptWidthInch = row[StoreTable.receiptWidthInch],
+        status = row[StoreTable.status],
         partnerLoginId = row[StoreTable.partnerLoginId],
-        partnerLoginPassword = row[StoreTable.partnerLoginPword]
+        partnerLoginPassword = row[StoreTable.partnerLoginPassword]
       )
     }
   }

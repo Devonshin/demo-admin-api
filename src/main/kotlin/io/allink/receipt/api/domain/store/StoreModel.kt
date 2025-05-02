@@ -18,7 +18,7 @@ import java.time.LocalDateTime
  * Date: 16/04/2025
  */
 @Serializable
-@Schema(name = "store", title = "가맹점", description = "가맹점 등록 정보")
+@Schema(name = "StoreModel", title = "가맹점", description = "가맹점 등록 정보")
 data class StoreModel(
   @Schema(title = "고유아이디", description = "가맹점 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String?,
@@ -68,6 +68,8 @@ data class StoreModel(
   val logoUrl: String?,
   @Schema(title = "영수증 너비 인치", description = "영수증 너비 인치")
   val receiptWidthInch: String?,
+  @Schema(title = "가맹점 상태", description = "가맹점 상태코드", example = "ACTIVE", requiredMode = RequiredMode.REQUIRED, allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"])
+  val status: StoreStatus?,
   @Schema(title = "가맹점 로그인 아이디", description = "가맹점 로그인 아이디")
   val partnerLoginId: String?,
   @Transient
@@ -82,7 +84,7 @@ data class StoreModel(
 ) : BaseModel<String>
 
 @Serializable
-@Schema(name = "simpleStore", title = "가맹점", description = "가맹점 약식 정보")
+@Schema(name = "SimpleStoreModel", title = "가맹점", description = "가맹점 약식 정보")
 data class SimpleStoreModel(
   @Schema(title = "가맹점 고유아이디", description = "가맹점 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String?,
@@ -117,10 +119,11 @@ object StoreTable : Table("store") {
   val managerName = varchar("manager_name", length = 30).nullable()
   val siteLink = varchar("site_link", length = 255).nullable()
   val receiptWidthInch = varchar("receipt_width_inch", length = 2).nullable()
+  val status = enumerationByName<StoreStatus>("status", 20).nullable()
   val workType = varchar("work_type", length = 30).nullable()
   val businessNo = varchar("business_no", length = 30).nullable()
   val partnerLoginId = varchar("partner_login_id", length = 50).nullable()
-  val partnerLoginPword = varchar("partner_login_pword", length = 255).nullable()
+  val partnerLoginPassword = varchar("partner_login_pword", length = 255).nullable()
   val ceoName = varchar("ceo_name", length = 30).nullable()
   val businessType = varchar("business_type", length = 255).nullable()
   val eventType = varchar("event_type", length = 255).nullable()
@@ -130,9 +133,8 @@ object StoreTable : Table("store") {
   override val primaryKey = PrimaryKey(id)
 }
 
-
 @Serializable
-@Schema(title = "가맹점 검색 필터", description = "가맹점 검색 필터")
+@Schema(name = "StoreFilter", title = "가맹점 검색 필터", description = "가맹점 검색 필터")
 data class StoreFilter(
   @Schema(title = "가맹점 아이디", description = "가맹점 고유아이디, EQ 검색",  requiredMode = RequiredMode.NOT_REQUIRED)
   val id: String? = null,
@@ -151,3 +153,13 @@ data class StoreFilter(
   @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
   val page: Page = Page(1, 10)
 )
+
+enum class StoreStatus(
+  val value: String
+) {
+  ACTIVE("정상"),
+  NORMAL("정상"),
+  INACTIVE("중지"),
+  PENDING("대기"),
+  DELETED("삭제")
+}

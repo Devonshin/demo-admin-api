@@ -3,6 +3,7 @@ package io.allink.receipt.api.config.plugin
 import io.allink.receipt.api.domain.admin.adminRoutes
 import io.allink.receipt.api.domain.code.serviceCodeRoutes
 import io.allink.receipt.api.domain.login.loginRoutes
+import io.allink.receipt.api.domain.merchant.merchantTagRoutes
 import io.allink.receipt.api.domain.receipt.issueReceiptRoutes
 import io.allink.receipt.api.domain.store.storeRoutes
 import io.allink.receipt.api.domain.user.userRoutes
@@ -34,6 +35,7 @@ fun Application.configureRouting() {
       storeRoutes(get())
       serviceCodeRoutes(get())
       issueReceiptRoutes(get())
+      merchantTagRoutes(get())
     }
 
     sse("/hello") {
