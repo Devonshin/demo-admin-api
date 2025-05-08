@@ -69,11 +69,10 @@ data class SimpleMerchantTagModel(
 
 object MerchantTagTable : Table("merchant_tag") {
   val id = varchar("tag_id", 36)
-  val merchantStoreId = reference("merchant_store_id", StoreTable.id).nullable()
+  val storeUid = varchar("store_uid", 36).nullable()
   val merchantGroupId = reference("merchant_group_id", MerchantGroupTable.id).nullable()
   val tagName = varchar("tag_name", 50).nullable()
   val deviceId = varchar("device_id", 50).nullable()
-  val storeUid = varchar("store_uid", 36).nullable()
   val regDate = datetime("reg_date")
   val modDate = datetime("mod_date").nullable()
   override val primaryKey = PrimaryKey(id)

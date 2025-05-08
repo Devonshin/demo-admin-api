@@ -57,13 +57,13 @@ interface IssueReceiptRepository : ExposedRepository<IssueReceiptTable, String, 
       )*/
       .join(
         StoreTable,
-        JoinType.INNER,
+        JoinType.LEFT,
         table.storeUid,
         StoreTable.id
       )
       .join(
         UserTable,
-        JoinType.INNER,
+        JoinType.LEFT,
         table.userUid,
         UserTable.id
       )

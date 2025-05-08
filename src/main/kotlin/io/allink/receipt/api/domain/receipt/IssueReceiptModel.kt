@@ -37,7 +37,7 @@ data class IssueReceiptModel(
   val tag: SimpleMerchantTagReceiptModel?,
   @Schema(title = "등록일시", description = "등록일시", example = "2025-04-17 12:00:00", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val issueDate: @Contextual LocalDateTime,
-  @Schema(title = "사용자", description = "사용자", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @Schema(title = "사용자", description = "사용자", nullable = true, requiredMode = RequiredMode.NOT_REQUIRED)
   val user: SimpleUserModel?,
   @Schema(title = "영수증 발행 타입", description = "환불, 결제", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val receiptType: String,
@@ -64,7 +64,7 @@ data class SimpleIssueReceiptModel(
   val tagId: String?,
   @Schema(title = "등록일시", description = "등록일시", example = "2025-04-17 12:00:00", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val issueDate: @Contextual LocalDateTime,
-  @Schema(title = "사용자", description = "사용자", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @Schema(title = "사용자", description = "사용자", nullable = true, requiredMode = RequiredMode.NOT_REQUIRED)
   val user: SimpleUserModel,
   @Schema(title = "영수증 발행 타입", description = "환불, 결제", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val receiptType: String,

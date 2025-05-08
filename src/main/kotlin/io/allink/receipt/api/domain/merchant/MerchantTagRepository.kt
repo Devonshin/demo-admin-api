@@ -4,19 +4,16 @@ import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.deviceId
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.id
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.merchantGroupId
-import io.allink.receipt.api.domain.merchant.MerchantTagTable.merchantStoreId
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.modDate
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.regDate
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.storeUid
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.tagName
-import io.allink.receipt.api.domain.store.StoreStatus
 import io.allink.receipt.api.domain.store.StoreTable
 import io.allink.receipt.api.repository.ExposedRepository
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.statements.UpdateStatement
-import java.time.LocalDateTime
 
 /**
  * Package: io.allink.receipt.api.domain.merchant
@@ -33,12 +30,11 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
       .join(
         StoreTable,
         JoinType.LEFT,
-        table.merchantStoreId,
+        table.storeUid,
         StoreTable.id
       )
       .select(
         table.id,
-        table.merchantStoreId,
         table.merchantGroupId,
         table.storeUid,
         table.regDate,
@@ -55,7 +51,7 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
 
     filter.id?.let { select.andWhere { table.id eq it } }
 
-    filter.storeId?.let { select.andWhere { table.merchantStoreId eq it } }
+    filter.storeId?.let { select.andWhere { table.storeUid eq it } }
 
     filter.businessNo?.let { select.andWhere { StoreTable.businessNo eq it } }
 
@@ -81,7 +77,7 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
         SimpleMerchantTagModel(
           id = it[id],
           store = SimpleMerchantTagStoreModel(
-            id = it[merchantStoreId],
+            id = it[storeUid],
             storeName = it[StoreTable.storeName],
             businessNo = it[StoreTable.businessNo],
             franchiseCode = it[StoreTable.franchiseCode],
@@ -120,7 +116,6 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
   }
 
   override fun toRow(model: MerchantTagModel): MerchantTagTable.(InsertStatement<EntityID<String>>) -> Unit = {
-    it[merchantStoreId] = model.store?.id
     it[merchantGroupId] = model.merchantGroupId
     it[deviceId] = model.deviceId
     it[storeUid] = model.storeUid
@@ -129,7 +124,6 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
   }
 
   override fun toUpdateRow(model: MerchantTagModel): MerchantTagTable.(UpdateStatement) -> Unit = {
-    it[merchantStoreId] = model.store?.id
     it[merchantGroupId] = model.merchantGroupId
     it[deviceId] = model.deviceId
     it[storeUid] = model.storeUid
@@ -147,7 +141,7 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
 
   override suspend fun find(id: String): MerchantTagModel? = query {
     table
-      .join(StoreTable, JoinType.LEFT, table.merchantStoreId, StoreTable.id)
+      .join(StoreTable, JoinType.LEFT, table.storeUid, StoreTable.id)
       .selectAll().where { table.id eq id }.map { toModel(it) }.singleOrNull()
   }
 
