@@ -55,17 +55,15 @@ fun Application.configureSecurity() {
 
 //        todo 권한 체크 추가
 
-        if (payload.audience.contains(jwtAudience)) {
+        if (payload.audience.contains(jwtAudience) &&
+          payload.getClaim("username").asString() != "") {
           JWTPrincipal(payload)
-        }
-        if (payload.getClaim("username").asString() != "") {
-          JWTPrincipal(credential.payload)
         } else null
       }
       challenge { defaultScheme, realm ->
         call.respond(
           HttpStatusCode.Unauthorized,
-          Response<ErrorResponse>(
+          Response(
             ErrorResponse(
               code = "TOKEN_EXPIRED",
               message = "Token expired"

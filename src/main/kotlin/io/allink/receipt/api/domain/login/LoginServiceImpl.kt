@@ -89,23 +89,25 @@ class LoginServiceImpl(
         .withExpiresAt(nowInstant(expireAt))
         .sign(Algorithm.HMAC256(config.propertyOrNull("jwt.secret")?.getString()))
 
-      return Jwt(jwt = token, expireDate = nowLocalDateTimeFormat)
+      return Jwt(jwt = token, expireDate = nowLocalDateTimeFormat, username = adminModel.fullName)
     }
 
     fun jwtGenerate(config: ApplicationConfig, principal: JWTPrincipal): Jwt {
       val expireAt = nowLocalDateTime().plusSeconds(config.propertyOrNull("jwt.expiresIn")?.getString()?.toLong() ?: 0L)!!
       val nowLocalDateTimeFormat = nowLocalDateTimeFormat(expireAt)
+      val username = principal.payload.getClaim("username").asString()
+
       val token = JWT.create()
         .withAudience(config.propertyOrNull("jwt.audience")?.getString())
         .withIssuer(config.propertyOrNull("jwt.issuer")?.getString())
-        .withClaim("username", principal.payload.getClaim("username").asString())
+        .withClaim("username", username)
         .withClaim("lUuid", principal.payload.getClaim("lUuid").asString())
         .withClaim("uUuid", principal.payload.getClaim("uUuid").asString())
         .withClaim("role", principal.payload.getClaim("role").asString())
         .withExpiresAt(nowInstant(expireAt))
         .sign(Algorithm.HMAC256(config.propertyOrNull("jwt.secret")?.getString()))
 
-      return Jwt(jwt = token, expireDate = nowLocalDateTimeFormat)
+      return Jwt(jwt = token, expireDate = nowLocalDateTimeFormat, username = username)
     }
   }
 }

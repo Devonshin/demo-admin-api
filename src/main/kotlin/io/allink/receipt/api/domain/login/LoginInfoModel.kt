@@ -78,5 +78,7 @@ data class Jwt(
   @Schema(description = "Jwt 데이터", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val jwt: String,
   @Schema(description = "만료일시", nullable = false, requiredMode = RequiredMode.REQUIRED)
-  val expireDate: String
+  val expireDate: String,
+  @Schema(description = "사용자명", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  val username: String
 )

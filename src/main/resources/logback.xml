@@ -17,7 +17,7 @@
     </if>
     <if condition='"${KTOR_ENV}" == "production"'>
         <then>
-            <property name="FILE_PATH" value="/var/logs/app"/>
+            <property name="FILE_PATH" value="/app/logs"/>
         </then>
     </if>
     <if condition='"${KTOR_ENV}" == "prod"'>
