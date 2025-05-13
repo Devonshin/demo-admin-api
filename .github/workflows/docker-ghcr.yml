@@ -86,6 +86,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: | # Docker 빌드 시 전달할 인수들
             PROFILE=${{ env.BUILD_ARG_PROFILE }}
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_PROD_AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_KEY=${{ secrets.AWS_PROD_AWS_SECRET_KEY }}
 
       # 10. AWS 자격 증명 설정
       - name: Configure AWS Credentials

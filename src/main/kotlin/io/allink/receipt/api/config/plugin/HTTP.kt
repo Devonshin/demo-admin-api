@@ -6,8 +6,11 @@ import io.ktor.server.plugins.compression.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.swagger.*
 import io.ktor.server.routing.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 fun Application.configureHTTP() {
+  val logger: Logger = LoggerFactory.getLogger(this.javaClass.name)
   val env = environment.config.propertyOrNull("ktor.environment")?.getString()?.let {
     it.lowercase()
   }
@@ -19,10 +22,15 @@ fun Application.configureHTTP() {
     allowMethod(HttpMethod.Put)
     allowHeader(HttpHeaders.Authorization)
     allowHeader(HttpHeaders.ContentType)
+
     allowCredentials = true // 쿠키 및 인증 정보 전송 허용 여부
+    logger.info("env = $env")
     if (env != null && !env.contains("production")) {
-      println("env = $env")
-      anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
+      anyHost()
+    } else {
+      allowHost("allink.io", schemes = listOf("http", "https"))
+      allowHost("dev-receipt-admin.allink.io", schemes = listOf("https"))
+      allowHost("receipt-admin.allink.io", schemes = listOf("https"))
     }
   }
   install(Compression)

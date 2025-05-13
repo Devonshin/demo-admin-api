@@ -19,6 +19,10 @@ fun Application.configureMonitoring() {
   }
   install(KHealth)
   install(CallLogging) {
+    filter { call ->
+      val uri = call.request.uri
+      uri != "/"
+    }
     callIdMdc("call-id")
     level = Level.INFO
     format { call ->
@@ -28,10 +32,6 @@ fun Application.configureMonitoring() {
       val uri = call.request.uri
 
       "URI: $uri, Status: $status, HTTP method: $httpMethod, User agent: $userAgent"
-    }
-
-    filter { call ->
-      !call.request.path().startsWith("/health")
     }
   }
 }

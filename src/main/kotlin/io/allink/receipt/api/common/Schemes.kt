@@ -49,7 +49,7 @@ fun verificationCodeCheckResponse(): ResponseConfig.() -> Unit = {
   body<Response<Jwt>> {
     example("성공 응답") {
       description = "API 이용에 사용할 JWT"
-      value = Response(data = Jwt("jwt.payload.signature", "2022-01-01 00:00:00"))
+      value = Response(data = Jwt("jwt.payload.signature", "2022-01-01 00:00:00", "김대협"))
     }
   }
 }
