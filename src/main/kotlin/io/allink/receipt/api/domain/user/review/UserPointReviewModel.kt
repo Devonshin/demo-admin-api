@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 @Serializable
 @Schema(name = "userPointReviewModel", title = "사용자 포인트 리뷰", description = "사용자의 포인트 리뷰 객체")
 data class UserPointReviewModel(
-  @Schema(title = "사용자 포인트 리뷰 고유아이디", description = "사용자의 포인트 리뷰 고유아이디", requiredMode = Schema.RequiredMode.REQUIRED, example = "3a931370-cd0b-4427-bf38-418111969c22")
+  @Schema(title = "사용자 포인트 리뷰 고유아이디", description = "사용자의 포인트 리뷰 고유아이디", requiredMode = RequiredMode.REQUIRED, example = "3a931370-cd0b-4427-bf38-418111969c22")
   override var id: String?,
   @Schema(title = "사용자 고유 아이디", description = "사용자 고유아이디", requiredMode = RequiredMode.REQUIRED)
   val userUuid: String,

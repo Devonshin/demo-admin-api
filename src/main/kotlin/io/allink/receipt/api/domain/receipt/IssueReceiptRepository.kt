@@ -4,7 +4,6 @@ import io.allink.receipt.api.common.Constant.Companion.AES256_KEY
 import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.advertisement.AdvertisementTable
 import io.allink.receipt.api.domain.merchant.MerchantTagTable
-import io.allink.receipt.api.domain.merchant.SimpleMerchantTagModel
 import io.allink.receipt.api.domain.store.SimpleStoreModel
 import io.allink.receipt.api.domain.store.StoreTable
 import io.allink.receipt.api.domain.user.UserTable

@@ -19,6 +19,11 @@ import io.allink.receipt.api.domain.merchant.MerchantTagRepositoryImpl
 import io.allink.receipt.api.domain.merchant.MerchantTagService
 import io.allink.receipt.api.domain.merchant.MerchantTagServiceImpl
 import io.allink.receipt.api.domain.merchant.MerchantTagTable
+import io.allink.receipt.api.domain.npoint.NPointRepository
+import io.allink.receipt.api.domain.npoint.NPointRepositoryImpl
+import io.allink.receipt.api.domain.npoint.NPointService
+import io.allink.receipt.api.domain.npoint.NPointServiceImpl
+import io.allink.receipt.api.domain.npoint.NPointWaitingTable
 import io.allink.receipt.api.domain.receipt.IssueReceiptRepository
 import io.allink.receipt.api.domain.receipt.IssueReceiptRepositoryImpl
 import io.allink.receipt.api.domain.receipt.IssueReceiptService
@@ -38,7 +43,6 @@ import io.allink.receipt.api.domain.user.UserTable
 import io.ktor.server.application.*
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
-import org.koin.logger.slf4jLogger
 
 fun Application.configureFrameworks() {
   install(Koin) {
@@ -67,6 +71,9 @@ fun Application.configureFrameworks() {
       single<MerchantTagRepository> {
         MerchantTagRepositoryImpl(MerchantTagTable)
       }
+      single<NPointRepository> {
+        NPointRepositoryImpl(NPointWaitingTable)
+      }
       /**
        * Services
        * */
@@ -90,6 +97,9 @@ fun Application.configureFrameworks() {
       }
       single<MerchantTagService> {
         MerchantTagServiceImpl(get())
+      }
+      single<NPointService> {
+        NPointServiceImpl(get())
       }
     })
   }

@@ -7,11 +7,11 @@ import io.allink.receipt.api.domain.login.Jwt
 import io.allink.receipt.api.domain.login.VerificationCheckRequest
 import io.allink.receipt.api.domain.login.VerificationCode
 import io.allink.receipt.api.domain.login.VerificationCodeRequest
-import io.allink.receipt.api.domain.merchant.MerchantTagFilter
-import io.allink.receipt.api.domain.merchant.MerchantTagModel
-import io.allink.receipt.api.domain.merchant.SimpleMerchantStoreDetailModel
-import io.allink.receipt.api.domain.merchant.SimpleMerchantTagModel
-import io.allink.receipt.api.domain.merchant.SimpleMerchantTagStoreModel
+import io.allink.receipt.api.domain.merchant.*
+import io.allink.receipt.api.domain.npoint.NPointFilter
+import io.allink.receipt.api.domain.npoint.NPointPayModel
+import io.allink.receipt.api.domain.npoint.NPointStoreModel
+import io.allink.receipt.api.domain.npoint.NPointUserModel
 import io.allink.receipt.api.domain.receipt.*
 import io.allink.receipt.api.domain.store.SimpleStoreModel
 import io.allink.receipt.api.domain.store.StoreFilter
@@ -204,17 +204,41 @@ private val tagExample = MerchantTagModel(
   modDate = null,
 )
 
-private val simpleTagExample = SimpleMerchantTagModel (
+private val simpleTagExample = SimpleMerchantTagModel(
   id = "TAGE00123",
   store = SimpleMerchantTagStoreModel(
     id = "uuid-like-merchant-store-123",
-    storeName= "이디야별다방",
+    storeName = "이디야별다방",
     franchiseCode = "EDIYA",
     businessNo = "1231212312",
     status = StoreStatus.NORMAL,
   ),
   regDate = LocalDateTime.parse("2025-03-17T12:00:00"),
   modDate = null,
+)
+
+private val pointPayExample = NPointPayModel(
+  id = 123,
+  point = 500,
+  status = "지급완료",
+  store = NPointStoreModel(
+    id = "store-id",
+    storeName = "김밥천국",
+    franchiseCode = "FRANCHISE_CODE",
+    businessNo = "1234567890",
+  ),
+  user = NPointUserModel(
+    id = "user-id",
+    name = "정조준",
+    phone = "0101221177",
+    gender = "F",
+    birthday = "19801114",
+    nickname = "대장군",
+  ),
+  provideCase = "이벤트",
+  pointTrNo = "fec68d91-fe2b-40a4-8bcb-4ec03ba05438",
+  pointPayNo = "140629",
+  regDate = LocalDateTime.now(),
 )
 
 fun storeDetailResponse(): ResponseConfig.() -> Unit = {
@@ -250,6 +274,29 @@ fun tagListRequest(): SimpleBodyConfig.() -> Unit = {
   }
 }
 
+fun pointListRequest(): SimpleBodyConfig.() -> Unit = {
+  description = "포인트 목록 조회 요청"
+  example("point-list-request") {
+    value = NPointFilter(
+      storeId = "123456-asdsa-aaasdsd-7890",
+      businessNo = "1234567890",
+      franchiseCode = "FRANCHISE_CODE",
+      storeName = "김밥왕국",
+      phone = "1234567890",
+      userName = "전자용",
+      userNickName = "돼지국밥",
+      period = PeriodFilter(
+        from = LocalDateTime.parse("2025-03-17T12:00:00"),
+        to = LocalDateTime.parse("2025-04-17T12:00:00"),
+      ),
+      page = Page(1, 10),
+      sort = listOf(
+        Sorter("field", "ASC")
+      ),
+    )
+  }
+}
+
 fun tagListResponse(): ResponseConfig.() -> Unit = {
   description = "성공 응답"
   body<Response<PagedResult<SimpleMerchantTagModel>>> {
@@ -257,6 +304,22 @@ fun tagListResponse(): ResponseConfig.() -> Unit = {
       value = Response(
         data = PagedResult(
           items = listOf(simpleTagExample),
+          totalPages = 1000,
+          totalCount = 20000,
+          currentPage = 1
+        )
+      )
+    }
+  }
+}
+
+fun pointListResponse(): ResponseConfig.() -> Unit = {
+  description = "성공 응답"
+  body<Response<PagedResult<NPointPayModel>>> {
+    example("포인트 지급 목록 응답") {
+      value = Response(
+        data = PagedResult(
+          items = listOf(pointPayExample),
           totalPages = 1000,
           totalCount = 20000,
           currentPage = 1
