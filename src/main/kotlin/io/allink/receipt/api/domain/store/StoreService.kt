@@ -11,4 +11,5 @@ import io.allink.receipt.api.domain.PagedResult
 interface StoreService {
   suspend fun findAllStore(filter: StoreFilter) : PagedResult<StoreModel>
   suspend fun findStore(id: String) : StoreModel?
+  suspend fun findSearchStores(filter: StoreSearchFilter): PagedResult<StoreSearchModel>
 }

@@ -3,6 +3,7 @@ package io.allink.receipt.api.domain.npoint
 import io.allink.receipt.api.common.errorResponse
 import io.allink.receipt.api.common.pointListRequest
 import io.allink.receipt.api.common.pointListResponse
+import io.allink.receipt.api.domain.Response
 import io.github.smiley4.ktoropenapi.get
 import io.ktor.http.*
 import io.ktor.server.request.*
@@ -36,7 +37,10 @@ fun Route.pointRoutes(
 
     }) {
       val filter = call.receive<NPointFilter>()
-      call.respond(nPointService.getAllNPointPay(filter))
+      call.respond(
+        HttpStatusCode.OK,
+        Response(data = nPointService.getAllNPointPay(filter))
+      )
     }
   }
 

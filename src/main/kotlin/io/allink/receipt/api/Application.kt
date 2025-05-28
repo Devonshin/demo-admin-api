@@ -9,7 +9,6 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-  System.getProperty("KTOR_ENV")?.let { println("Application started in $it mode") }
   configureHTTP()
   configureMonitoring()
   configureStatusPage()

@@ -1,22 +1,19 @@
 package io.allink.receipt.api.common
 
 import io.allink.receipt.api.domain.*
+import io.allink.receipt.api.domain.admin.MasterRole
 import io.allink.receipt.api.domain.code.ServiceCodeModel
 import io.allink.receipt.api.domain.code.ServiceCodeStatus
 import io.allink.receipt.api.domain.login.Jwt
 import io.allink.receipt.api.domain.login.VerificationCheckRequest
 import io.allink.receipt.api.domain.login.VerificationCode
 import io.allink.receipt.api.domain.login.VerificationCodeRequest
-import io.allink.receipt.api.domain.merchant.*
 import io.allink.receipt.api.domain.npoint.NPointFilter
 import io.allink.receipt.api.domain.npoint.NPointPayModel
 import io.allink.receipt.api.domain.npoint.NPointStoreModel
 import io.allink.receipt.api.domain.npoint.NPointUserModel
 import io.allink.receipt.api.domain.receipt.*
 import io.allink.receipt.api.domain.store.SimpleStoreModel
-import io.allink.receipt.api.domain.store.StoreFilter
-import io.allink.receipt.api.domain.store.StoreModel
-import io.allink.receipt.api.domain.store.StoreStatus
 import io.allink.receipt.api.domain.user.*
 import io.allink.receipt.api.domain.user.review.UserReviewStatus
 import io.github.smiley4.ktoropenapi.config.ResponseConfig
@@ -49,12 +46,13 @@ fun verificationCodeCheckResponse(): ResponseConfig.() -> Unit = {
   body<Response<Jwt>> {
     example("성공 응답") {
       description = "API 이용에 사용할 JWT"
-      value = Response(data = Jwt("jwt.payload.signature", "2022-01-01 00:00:00", "김대협"))
+      value = Response(data = Jwt("jwt.payload.signature", "2022-01-01 00:00:00", "김대협", role = MasterRole()))
     }
   }
 }
 
 fun verificationCodeRequest(): SimpleBodyConfig.() -> Unit = {
+  required = true
   example("phone") {
     value = VerificationCodeRequest("01012345678")
   }
@@ -75,6 +73,7 @@ fun verificationCodeResponse(): ResponseConfig.() -> Unit = {
 
 fun verificationCodeCheckRequest(): SimpleBodyConfig.() -> Unit = {
   description = "인증코드 확인 요청"
+  required = true
   example("verification-request") {
     value = VerificationCheckRequest(
       loginUuid = "loginUuid", verificationCode = "123456"
@@ -84,6 +83,7 @@ fun verificationCodeCheckRequest(): SimpleBodyConfig.() -> Unit = {
 
 fun userListRequest(): SimpleBodyConfig.() -> Unit = {
   description = "목록 조회 요청"
+  required = true
   example("user-list-request") {
     value = UserFilter(
       phone = "1234567890",
@@ -148,75 +148,6 @@ fun userDetailResponse(): ResponseConfig.() -> Unit = {
   }
 }
 
-private val storeExample = StoreModel(
-  id = "store-123",
-  storeName = "매장명",
-  businessNo = "123-45-67890",
-  franchiseCode = "FRANCHISE_1",
-  storeType = "가맹점 타입",
-  zoneCode = "1234123124",
-  addr1 = "서울시 서대문구 동대문",
-  addr2 = "3층",
-  regDate = LocalDateTime.now(),
-  deleteDate = null,
-  mapUrl = null,
-  lat = "123.14213123",
-  lon = "123.123412312",
-  tel = "021032001",
-  mobile = "01012341234",
-  managerName = "나원참",
-  siteLink = null,
-  workType = "receipt-print",
-  ceoName = "저것참",
-  businessType = "1231212345",
-  eventType = "퉁신판매업",
-  email = "kkk22@nav.com",
-  businessNoLaw = null,
-  modDate = LocalDateTime.now(),
-  iconUrl = null,
-  logoUrl = "https://logourl.com",
-  receiptWidthInch = null,
-  status = StoreStatus.NORMAL,
-  partnerLoginId = null,
-  partnerLoginPassword = ""
-)
-
-private val tagExample = MerchantTagModel(
-  id = "TAGE00123",
-  store = SimpleMerchantStoreDetailModel(
-    id = "store-123",
-    storeName = "매장명",
-    businessNo = "123-45-67890",
-    franchiseCode = "FRANCHISE_1",
-    regDate = LocalDateTime.now(),
-    deleteDate = null,
-    ceoName = "저것참",
-    businessType = "1231212345",
-    eventType = "퉁신판매업",
-    modDate = LocalDateTime.now(),
-    status = StoreStatus.NORMAL,
-  ),
-  tagName = "영수증 태그",
-  merchantGroupId = "uuid-like-group-id",
-  deviceId = "229",
-  storeUid = "uuid-like-store-123",
-  regDate = LocalDateTime.parse("2025-03-17T12:00:00"),
-  modDate = null,
-)
-
-private val simpleTagExample = SimpleMerchantTagModel(
-  id = "TAGE00123",
-  store = SimpleMerchantTagStoreModel(
-    id = "uuid-like-merchant-store-123",
-    storeName = "이디야별다방",
-    franchiseCode = "EDIYA",
-    businessNo = "1231212312",
-    status = StoreStatus.NORMAL,
-  ),
-  regDate = LocalDateTime.parse("2025-03-17T12:00:00"),
-  modDate = null,
-)
-
 private val pointPayExample = NPointPayModel(
   id = 123,
   point = 500,
@@ -241,41 +172,9 @@ private val pointPayExample = NPointPayModel(
   regDate = LocalDateTime.now(),
 )
 
-fun storeDetailResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
-  body<Response<StoreModel>> {
-    example("가맹점 상세 데이터 응답") {
-      description = "가맹점 상세 데이터"
-      value = Response(
-        data = storeExample
-      )
-    }
-  }
-}
-
-fun tagListRequest(): SimpleBodyConfig.() -> Unit = {
-  description = "태그 목록 조회 요청"
-  example("tag-list-request") {
-    value = MerchantTagFilter(
-      id = "E00TEST1234",
-      storeId = "123456-asdsa-aaasdsd-7890",
-      businessNo = "1234567890",
-      franchiseCode = "FRANCHISE_CODE",
-      storeName = "김밥왕국",
-      period = PeriodFilter(
-        from = LocalDateTime.parse("2025-03-17T12:00:00"),
-        to = LocalDateTime.parse("2025-04-17T12:00:00"),
-      ),
-      page = Page(1, 10),
-      sort = listOf(
-        Sorter("field", "ASC")
-      )
-    )
-  }
-}
-
 fun pointListRequest(): SimpleBodyConfig.() -> Unit = {
   description = "포인트 목록 조회 요청"
+  required = true
   example("point-list-request") {
     value = NPointFilter(
       storeId = "123456-asdsa-aaasdsd-7890",
@@ -297,22 +196,6 @@ fun pointListRequest(): SimpleBodyConfig.() -> Unit = {
   }
 }
 
-fun tagListResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
-  body<Response<PagedResult<SimpleMerchantTagModel>>> {
-    example("가맹점 목록 응답") {
-      value = Response(
-        data = PagedResult(
-          items = listOf(simpleTagExample),
-          totalPages = 1000,
-          totalCount = 20000,
-          currentPage = 1
-        )
-      )
-    }
-  }
-}
-
 fun pointListResponse(): ResponseConfig.() -> Unit = {
   description = "성공 응답"
   body<Response<PagedResult<NPointPayModel>>> {
@@ -329,58 +212,10 @@ fun pointListResponse(): ResponseConfig.() -> Unit = {
   }
 }
 
-fun tagDetailResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
-  body<Response<MerchantTagModel>> {
-    example("태그 상세 정보 응답") {
-      value = Response(
-        data = tagExample
-      )
-    }
-  }
-}
-
-fun storeListRequest(): SimpleBodyConfig.() -> Unit = {
-  description = "가맹점 목록 조회 요청"
-  example("store-list-request") {
-    value = StoreFilter(
-      name = "store-name",
-      id = "store-id",
-      businessNo = "1234567890",
-      franchiseCode = "FRANCHISE_CODE",
-      period = PeriodFilter(
-        from = LocalDateTime.parse("2025-03-17T12:00:00"),
-        to = LocalDateTime.parse("2025-04-17T12:00:00"),
-      ),
-      page = Page(1, 10),
-      sort = listOf(
-        Sorter("field", "ASC")
-      )
-    )
-  }
-}
-
-fun storeListResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
-  body<Response<PagedResult<StoreModel>>> {
-    example("가맹점 목록 응답") {
-      value = Response(
-        data = PagedResult(
-          items = listOf(storeExample),
-          totalPages = 1000,
-          totalCount = 20000,
-          currentPage = 1
-        )
-      )
-    }
-  }
-}
-
-
 fun franchiseCodeListResponse(): ResponseConfig.() -> Unit = {
   description = "프랜차이즈 코드 목록 응답"
   body<Response<List<ServiceCodeModel>>> {
-    example("franchise-code-list-reponse") {
+    example("franchise-code-list-response") {
       value = listOf(
         ServiceCodeModel(
           id = "EDIYA",
@@ -394,9 +229,45 @@ fun franchiseCodeListResponse(): ResponseConfig.() -> Unit = {
   }
 }
 
+fun bankCodeListResponse(): ResponseConfig.() -> Unit = {
+  description = "은행 코드 목록 응답"
+  body<Response<List<ServiceCodeModel>>> {
+    example("bank-code-list-response") {
+      value = listOf(
+        ServiceCodeModel(
+          id = "BANK-088",
+          serviceGroup = "BANK_CODE",
+          serviceName = "신한은행",
+          price = null,
+          status = ServiceCodeStatus.ACTIVE
+        )
+      )
+    }
+  }
+}
+
+fun vendorCodeListResponse(): ResponseConfig.() -> Unit = {
+  description = "밴더사 코드 목록 응답"
+  body<Response<List<ServiceCodeModel>>> {
+    example("vendor-code-list-response") {
+      value = listOf(
+        ServiceCodeModel(
+          id = "VEN-KOCES",
+          serviceGroup = "VEN_CODE",
+          serviceName = "코세스",
+          price = null,
+          status = ServiceCodeStatus.ACTIVE
+        )
+      )
+    }
+  }
+}
+
+
 
 fun issueReceiptListRequest(): SimpleBodyConfig.() -> Unit = {
   description = "전자영수증 목록 조회 요청"
+  required = true
   example("issue-receipt-list-request") {
     value = ReceiptFilter(
       storeId = "store-id",

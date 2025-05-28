@@ -55,7 +55,7 @@ class AdminRepositoryTest {
         email = "admin@example.com",
         status = AdminStatus.ACTIVE,
         regDate = now,
-        modDate = now
+        agencyUuid = null,
       )
       var createdAdmin: AdminModel? = adminRepository.create(adminModel)
       //
@@ -83,8 +83,8 @@ class AdminRepositoryTest {
         phone = "211222112",
         email = "update-admin@example.com",
         status = AdminStatus.INACTIVE,
-        regDate = regDate,
-        modDate = now
+        modDate = now,
+        agencyUuid = null,
       )
 
       val updateCount = adminRepository.update(model = updateModel)

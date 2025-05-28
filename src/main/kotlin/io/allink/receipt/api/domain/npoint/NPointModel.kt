@@ -1,5 +1,6 @@
 package io.allink.receipt.api.domain.npoint
 
+import io.allink.receipt.api.domain.BaseFilter
 import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.domain.Page
 import io.allink.receipt.api.domain.PeriodFilter
@@ -44,7 +45,7 @@ data class NPointPayModel(
 ): BaseModel<Long>
 
 @Serializable
-@Schema(name = "pointUserModel", title = "사용자 객체", description = "모영 회원 가입자")
+@Schema(name = "pointUserModel", title = "사용자 객체", description = "모바일 전자영수증 가입자")
 data class NPointUserModel(
   @Schema(title = "고유아이디", description = "사용자 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String?,
@@ -142,7 +143,7 @@ data class NPointFilter(
   val userNickName: String? = null,
   @Schema(title = "가맹점 아이디", description = "가맹점 고유아이디, EQ 검색",)
   val storeId: String? = null,
-  @Schema(title = "사업자 번호", description="사업자 번호, EQ 검색", example="1234567890")
+  @Schema(title = "사업자 번호", description="사업자 번호, EQ 검색", example="123-45-67890")
   val businessNo: String? = null,
   @Schema(title = "가맹점명", description = "Start with 검색")
   val storeName: String? = null,
@@ -151,10 +152,10 @@ data class NPointFilter(
   @Schema(title = "정렬", exampleClasses = [Sorter::class], ref = "", description = """
     정렬 필드: phone, userId, userName, userNickName, storeId, storeBusinessNo, storeName, franchiseCode, regDate
   """, example = "{\"field\": \"regDate\", \"direction\": \"DESC\"}")
-  val sort: List<Sorter>? = null,
-  @Schema(title = "페이징")
-  val page: Page = Page(1, 10)
-)
+  override val sort: List<Sorter>? = null,
+  @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
+  override val page: Page = Page(1, 10)
+): BaseFilter
 
 
 

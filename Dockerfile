@@ -6,8 +6,9 @@ ARG AWS_SECRET_KEY
 
 ENV TZ=Asia/Seoul
 ENV KTOR_ENV=$PROFILE
-ENV JAVA_OPTS="-Daws.accessKeyId=$AWS_ACCESS_KEY_ID \
-               -Daws.secretKey=$AWS_SECRET_KEY"
+ENV AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+ENV AWS_SECRET_KEY=$AWS_SECRET_KEY
+
 WORKDIR /app
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

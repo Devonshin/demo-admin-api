@@ -43,5 +43,7 @@ enum class ServiceCodeStatus {
 
 enum class ServiceCodeGroup {
   FRANCHISE,
+  BANK_CODE,
+  VEN_CODE,
   MERT_SVC
 }

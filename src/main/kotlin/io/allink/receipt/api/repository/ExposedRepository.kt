@@ -1,7 +1,10 @@
 package io.allink.receipt.api.repository
 
+import io.allink.receipt.api.domain.BaseFilter
 import io.allink.receipt.api.domain.BaseModel
+import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.Sorter
+import io.allink.receipt.api.domain.merchant.MerchantTagModel
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
@@ -45,7 +48,7 @@ interface ExposedRepository<
 
   suspend fun delete(id: T): Int
 
-  fun columnSort(query: Query, sorters: List<Sorter>?, converter: (String) -> Column<out Any?>?) {
+  fun columnSort(query: Query, sorters: List<Sorter>?, converter: (String) -> Expression<out Any?>?) {
     sorters?.forEach { sorter ->
       columnConvert(sorter.field)?.let { field ->
         val sortOrder =
@@ -61,5 +64,28 @@ interface ExposedRepository<
     }
   }
 
-  val columnConvert: (String?) -> Column<out Any?>?
+  val columnConvert: (String?) -> Expression<out Any?>?
+
+  fun result(
+    select: Query,
+    filter: BaseFilter,
+    offset: Int,
+    toModelList: (ResultRow) -> MODEL
+  ): PagedResult<MODEL> {
+
+    columnSort(select, filter.sort, columnConvert)
+    val totalCount = select.count().toInt()
+    val items = select.limit(filter.page.pageSize)
+      .offset(offset.toLong())
+      .toList()
+      .map { toModelList(it) }
+
+    return PagedResult(
+      items = items,
+      currentPage = filter.page.page,
+      totalCount = totalCount,
+      totalPages = (totalCount + filter.page.pageSize - 1) / filter.page.pageSize
+    )
+  }
+
 }

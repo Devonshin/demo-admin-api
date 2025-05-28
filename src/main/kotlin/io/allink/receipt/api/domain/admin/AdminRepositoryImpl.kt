@@ -30,6 +30,16 @@ class AdminRepositoryImpl(
     )
   }
 
+  override suspend fun findAllByAgencyId(agencyUuid: UUID): List<AdminModel> {
+    return query {
+      table.selectAll().where {
+        table.agencyUuid eq agencyUuid
+      }.map {
+        toModel(it)
+      }
+    }
+  }
+
   override suspend fun findByPhone(phone: String): AdminModel? = query {
     table.selectAll().where {
       table.phone eq phone

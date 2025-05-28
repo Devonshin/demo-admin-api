@@ -4,14 +4,16 @@ import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.deviceId
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.id
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.merchantGroupId
+import io.allink.receipt.api.domain.merchant.MerchantTagTable.merchantStoreId
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.modDate
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.regDate
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.storeUid
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.tagName
 import io.allink.receipt.api.domain.store.StoreTable
 import io.allink.receipt.api.repository.ExposedRepository
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.JoinType
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.statements.UpdateStatement
 
@@ -23,89 +25,20 @@ import org.jetbrains.exposed.sql.statements.UpdateStatement
 
 interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, MerchantTagModel> {
 
-  suspend fun findAll(filter: MerchantTagFilter): PagedResult<SimpleMerchantTagModel> = query {
-
-    val offset = filter.page.page.minus(1).times(filter.page.pageSize)
-    val select = table
-      .join(
-        StoreTable,
-        JoinType.LEFT,
-        table.storeUid,
-        StoreTable.id
-      )
-      .select(
-        table.id,
-        table.merchantGroupId,
-        table.storeUid,
-        table.regDate,
-        table.modDate,
-        StoreTable.id,
-        StoreTable.storeName,
-        StoreTable.franchiseCode,
-        StoreTable.businessNo,
-        StoreTable.regDate,
-        StoreTable.modDate,
-        StoreTable.deleteDate,
-        StoreTable.status,
-      )
-
-    filter.id?.let { select.andWhere { table.id eq it } }
-
-    filter.storeId?.let { select.andWhere { table.storeUid eq it } }
-
-    filter.businessNo?.let { select.andWhere { StoreTable.businessNo eq it } }
-
-    filter.storeName?.let { select.andWhere { StoreTable.storeName like "it%" } }
-
-    filter.franchiseCode?.let { select.andWhere { StoreTable.franchiseCode eq it } }
-
-    filter.period.let {
-      it.from.let { from ->
-        select.andWhere { table.regDate greaterEq from }
-      }
-      it.to.let { to ->
-        select.andWhere { table.regDate lessEq to }
-      }
-    }
-
-    columnSort(select, filter.sort, columnConvert)
-    val totalCount = select.count().toInt()
-    val items = select.limit(filter.page.pageSize)
-      .offset(offset.toLong())
-      .toList()
-      .map {
-        SimpleMerchantTagModel(
-          id = it[id],
-          store = SimpleMerchantTagStoreModel(
-            id = it[storeUid],
-            storeName = it[StoreTable.storeName],
-            businessNo = it[StoreTable.businessNo],
-            franchiseCode = it[StoreTable.franchiseCode],
-            status = it[StoreTable.status]
-          ),
-          regDate = it[regDate],
-          modDate = it[modDate]
-        )
-      }
-    return@query PagedResult(
-      items = items,
-      currentPage = filter.page.page,
-      totalCount = totalCount,
-      totalPages = (totalCount + filter.page.pageSize - 1) / filter.page.pageSize
-    )
-  }
+  suspend fun findAll(filter: MerchantTagFilter): PagedResult<SimpleMerchantTagModel>
+  suspend fun findForUpdate(id: String): MerchantTagModel?
 
   override val columnConvert: (String?) -> Column<out Any?>?
     get() = { column ->
       if (column == null) null
       else when (column) {
-        "id" -> StoreTable.id
-        "name" -> StoreTable.storeName
+        "id" -> table.id
+        "name" -> table.tagName
         "franchiseCode" -> StoreTable.franchiseCode
         "regDate" -> StoreTable.regDate
         "modDate" -> StoreTable.modDate
-        "storeName" -> StoreTable.addr1
-        "storeStatus" -> StoreTable.managerName
+        "storeName" -> StoreTable.storeName
+        "storeStatus" -> StoreTable.status
         "businessNo" -> StoreTable.businessNo
         else -> null
       }
@@ -115,34 +48,81 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
     return Companion.toModel(row)
   }
 
-  override fun toRow(model: MerchantTagModel): MerchantTagTable.(InsertStatement<EntityID<String>>) -> Unit = {
+  fun toUpdateModel(row: ResultRow): MerchantTagModel {
+    return MerchantTagModel(
+      id = row[id],
+      tagName = row[tagName],
+      merchantGroupId = row[merchantGroupId],
+      merchantStoreId = row[merchantStoreId],
+      deviceId = row[deviceId],
+      storeUid = row[storeUid],
+      regDate = row[regDate],
+      modDate = row[modDate]
+    )
+  }
+
+  override fun toRow(model: MerchantTagModel): MerchantTagTable.(InsertStatement<*>) -> Unit = {
+    it[id] = model.id!!
     it[merchantGroupId] = model.merchantGroupId
     it[deviceId] = model.deviceId
     it[storeUid] = model.storeUid
+    it[tagName] = model.tagName
+    it[merchantStoreId] = model.merchantStoreId
     it[regDate] = model.regDate
-    it[modDate] = model.modDate
+    it[regBy] = model.regBy!!
   }
 
   override fun toUpdateRow(model: MerchantTagModel): MerchantTagTable.(UpdateStatement) -> Unit = {
     it[merchantGroupId] = model.merchantGroupId
     it[deviceId] = model.deviceId
     it[storeUid] = model.storeUid
-    it[regDate] = model.regDate
+    it[tagName] = model.tagName
+    it[merchantStoreId] = model.merchantStoreId
     it[modDate] = model.modDate
-  }
-
-  override suspend fun create(model: MerchantTagModel): MerchantTagModel {
-    TODO("Not yet implemented")
-  }
-
-  override suspend fun update(model: MerchantTagModel): Int {
-    TODO("Not yet implemented")
+    it[modBy] = model.modBy
   }
 
   override suspend fun find(id: String): MerchantTagModel? = query {
     table
-      .join(StoreTable, JoinType.LEFT, table.storeUid, StoreTable.id)
-      .selectAll().where { table.id eq id }.map { toModel(it) }.singleOrNull()
+      .join(
+        StoreTable,
+        JoinType.LEFT,
+        table.storeUid,
+        StoreTable.id
+      )
+      .join(
+        MerchantGroupTable,
+        JoinType.LEFT,
+        table.merchantGroupId,
+        MerchantGroupTable.id
+      )
+      .select(
+        table.id,
+        table.merchantGroupId,
+        table.deviceId,
+        table.storeUid,
+        table.merchantStoreId,
+        table.tagName,
+        table.regDate,
+        table.modDate,
+        StoreTable.id,
+        StoreTable.storeName,
+        StoreTable.businessNo,
+        StoreTable.franchiseCode,
+        StoreTable.ceoName,
+        StoreTable.tel,
+        StoreTable.businessType,
+        StoreTable.eventType,
+        StoreTable.status,
+        StoreTable.regDate,
+        StoreTable.deleteDate,
+        StoreTable.modDate,
+        MerchantGroupTable.id,
+        MerchantGroupTable.receiptType,
+      )
+      .where { table.id eq id }
+      .map { toModel(it) }
+      .singleOrNull()
   }
 
   override suspend fun delete(id: String): Int {
@@ -151,6 +131,12 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
 
   companion object {
     fun toModel(row: ResultRow): MerchantTagModel {
+      val receiptType = row[MerchantGroupTable.receiptType]
+      val deviceType = if (receiptType == "MERCHANT_RECEIPT") {
+        "CAT"
+      } else {
+        "OKPOS"
+      }
       return MerchantTagModel(
         id = row[id],
         store = SimpleMerchantStoreDetailModel(
@@ -159,8 +145,10 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
           businessNo = row[StoreTable.businessNo],
           franchiseCode = row[StoreTable.franchiseCode],
           ceoName = row[StoreTable.ceoName],
+          tel = row[StoreTable.tel],
           businessType = row[StoreTable.businessType],
           eventType = row[StoreTable.eventType],
+          deviceType = deviceType,
           status = row[StoreTable.status],
           regDate = row[StoreTable.regDate],
           deleteDate = row[StoreTable.deleteDate],
@@ -168,6 +156,7 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
         ),
         tagName = row[tagName],
         merchantGroupId = row[merchantGroupId],
+        merchantStoreId = row[merchantStoreId],
         deviceId = row[deviceId],
         storeUid = row[storeUid],
         regDate = row[regDate],

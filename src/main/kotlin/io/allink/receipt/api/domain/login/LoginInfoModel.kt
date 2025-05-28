@@ -1,10 +1,17 @@
 package io.allink.receipt.api.domain.login
 
 import io.allink.receipt.api.domain.BaseModel
+import io.allink.receipt.api.domain.admin.AdminTable
+import io.allink.receipt.api.domain.admin.MasterRole
+import io.allink.receipt.api.domain.admin.Role
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
+import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.javatime.datetime
 import java.time.LocalDateTime
@@ -23,13 +30,15 @@ data class LoginInfoModel(
   val verificationCode: String,
   val expireDate: @Contextual LocalDateTime,
   val status: LoginStatus,
+  val loginDate: @Contextual LocalDateTime? = null,
 ): BaseModel<UUID>
 
 object LoginInfoTable: UUIDTable(name = "login_info", columnName = "login_uuid") {
-  val userUuid = uuid("user_uuid")
+  val userUuid = reference("user_uuid", AdminTable.id)
   val verificationCode = text("verification_code")
   val expireDate = datetime("expire_date")
   val status = enumerationByName("status", 20, LoginStatus::class)
+  val loginDate = datetime("login_date").nullable()
 }
 
 enum class LoginStatus {
@@ -80,5 +89,8 @@ data class Jwt(
   @Schema(description = "만료일시", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val expireDate: String,
   @Schema(description = "사용자명", nullable = false, requiredMode = RequiredMode.REQUIRED)
-  val username: String
+  val username: String,
+  @Schema(description = "권한", nullable = false, requiredMode = RequiredMode.REQUIRED, example = "")
+  @Polymorphic
+  val role: Role,
 )

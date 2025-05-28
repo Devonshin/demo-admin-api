@@ -25,8 +25,9 @@ interface AdminRepository : ExposedRepository<AdminTable, UUID, AdminModel> {
     it[phone] = model.phone
     it[email] = model.email
     it[status] = model.status
+    it[agencyUuid] = model.agencyUuid
     it[regDate] = nowLocalDateTime()
-    it[modDate] = null
+    it[regBy] = model.regBy
   }
 
   override fun toUpdateRow(model: AdminModel): AdminTable.(UpdateStatement) -> Unit = {
@@ -37,8 +38,9 @@ interface AdminRepository : ExposedRepository<AdminTable, UUID, AdminModel> {
     it[phone] = model.phone
     it[email] = model.email
     it[status] = model.status
-    it[regDate] = model.regDate
+    it[agencyUuid] = model.agencyUuid
     it[modDate] = nowLocalDateTime()
+    it[modBy] = model.modBy
   }
 
   override fun toModel(row: ResultRow): AdminModel {
@@ -52,9 +54,14 @@ interface AdminRepository : ExposedRepository<AdminTable, UUID, AdminModel> {
       email = row[table.email],
       status = row[table.status],
       regDate = row[table.regDate],
-      modDate = row[table.modDate]
+      modDate = row[table.modDate],
+      agencyUuid = row[table.agencyUuid]?.value,
+      regBy = row[table.regBy],
+      modBy = row[table.modBy]
     )
   }
+
+  suspend fun findAllByAgencyId(agencyUuid: UUID): List<AdminModel>
 
   suspend fun findByPhone(phone: String): AdminModel?
 

@@ -1,4 +1,4 @@
-package io.allink.receipt.api.domain.tag
+package io.allink.receipt.api.domain.merchant.batch
 
 import io.allink.receipt.api.util.DateUtil
 import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTimeStrMs
@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutRequest
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest
 import java.io.File
-import java.util.UUID
+import java.util.*
 
 /**
  * Package: io.allink.receipt.api.domain.tag
@@ -25,24 +25,29 @@ suspend fun insertTagsFromExcelToDynamoDb(
 ) {
   readExcelAndProcess(filePath) { tagIds ->
     val tagModels = createTagModels(tagIds)
-    batchInsertTags(dynamoDbClient,  tagModels)
+    batchInsertTags(dynamoDbClient, tagModels)
     println("Inserted ${tagModels.size} tags")
   }
 }
 
-fun createTagModels(tagIds: List<String>): List<TagModel> {
+suspend fun readExcelAndProcess(filePath: String, processTagIds: (List<TagBatch>) -> Unit) {
+  val tagIds = readTagIdsFromExcel(filePath)
+  processTagIds(tagIds)
+}
+
+fun createTagModels(tagBatches: List<TagBatch>): List<TagModel> {
   val currentDate = DateUtil.nowLocalDateTime()
-  return tagIds.map { tagId ->
+  return tagBatches.map { tagBatch ->
     TagModel(
-      name = tagId,
-      tagId = tagId,
+      name = tagBatch.tagName?:tagBatch.tagId,
+      tagId = tagBatch.tagId,
       status = TagStatus.NORMAL,
-      storeUid = null,
+      storeUid = tagBatch.storeUid,
+      deviceId = tagBatch.deviceId,
       regDate = currentDate
     )
   }
 }
-
 
 fun batchInsertTags(dynamoDbClient: DynamoDbClient, tags: List<TagModel>) {
   dynamoDbClient.use {
@@ -58,7 +63,9 @@ fun batchInsertTags(dynamoDbClient: DynamoDbClient, tags: List<TagModel>) {
                 mapOf(
                   "uid" to AttributeValue.builder().s(UUID.randomUUID().toString()).build(),
                   "tagId" to AttributeValue.builder().s(tag.tagId).build(),
-                  "tagName" to AttributeValue.builder().s(tag.tagId).build(),
+                  "tagName" to AttributeValue.builder().s(tag.name).build(),
+                  "storeUid" to AttributeValue.builder().s(tag.storeUid).build(),
+                  "deviceId" to AttributeValue.builder().s(tag.deviceId).build(),
                   "regDate" to AttributeValue.builder().s(regDate).build(),
                   "status" to AttributeValue.builder().s(TagStatus.NORMAL.name).build()
                 )
@@ -70,27 +77,39 @@ fun batchInsertTags(dynamoDbClient: DynamoDbClient, tags: List<TagModel>) {
         .requestItems(mapOf("tags" to putRequests))
         .build()
 
-      dynamoDbClient.batchWriteItem(batchRequest).also { response ->
-        if (response.hasUnprocessedItems() && response.unprocessedItems().isNotEmpty()) {
-          println("Some items were not processed: ${response.unprocessedItems()}")
+      dynamoDbClient
+        .batchWriteItem(batchRequest)
+        .also { response ->
+          if (response.hasUnprocessedItems() && response.unprocessedItems().isNotEmpty()) {
+            println("Some items were not processed: ${response.unprocessedItems()}")
+          }
         }
-      }
     }
   }
 }
 
-suspend fun readExcelAndProcess(filePath: String, processTagIds: (List<String>) -> Unit) {
-    val tagIds = readTagIdsFromExcel(filePath)
-    processTagIds(tagIds)
+private suspend fun readTagIdsFromExcel(filePath: String): List<TagBatch> {
+  return withContext(Dispatchers.IO) {
+    File(filePath).inputStream().use { inputStream ->
+      Retable.excel()
+        .read(inputStream)
+        .records
+        .map { record ->
+          TagBatch(
+            record["TAG_ID"]!!,
+            record["TAG_NAME"],
+            record["DEVICE_ID"],
+            record["STORE_ID"]
+          )
+        }
+        .toList()
+    }
+  }
 }
 
-private suspend fun readTagIdsFromExcel(filePath: String): List<String> {
-    return withContext(Dispatchers.IO) {
-      File(filePath).inputStream().use { inputStream ->
-        Retable.excel().read(inputStream)
-          .records
-          .mapNotNull { record -> record["UID"] }
-          .toList()
-      }
-    }
-}
+data class TagBatch(
+  val tagId: String,
+  val tagName: String?,
+  val storeUid: String?,
+  val deviceId: String?
+)

@@ -1,6 +1,7 @@
 package io.allink.receipt.api.domain.sns
 
 import com.typesafe.config.ConfigFactory
+import io.ktor.server.config.ApplicationConfig
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.sns.SnsClient
@@ -13,14 +14,15 @@ import software.amazon.awssdk.services.sns.model.PublishResponse
  * Date: 13/04/2025
  */
 
-class SMSVerificationServiceImpl : VerificationService {
+class SMSVerificationServiceImpl(
+  val config: ApplicationConfig
+) : VerificationService {
 
-  private val config = ConfigFactory.load()
   private val snsClient: SnsClient = SnsClient.builder()
     .credentialsProvider {
       AwsBasicCredentials.create(
-        config.getString("aws.accessKeyId"),
-        config.getString("aws.secretKey")
+        config.property("aws.accessKeyId").getString(),
+        config.property("aws.secretKey").getString()
       )
     }
     .region(Region.AP_NORTHEAST_1)
@@ -28,7 +30,7 @@ class SMSVerificationServiceImpl : VerificationService {
 
 
   override suspend fun sendVerificationMessage(to: String, message: String, expired: String) {
-    val template = config.getString("aws.smsTemplate")
+    val template = config.property("aws.smsTemplate").getString()
     val replaced = template.replace("{code}", message).replace("{exp_date}", expired)
     sendSms(to, replaced)
   }

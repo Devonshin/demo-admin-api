@@ -1,7 +1,9 @@
 import io.allink.receipt.api.domain.PagedResult
+import io.allink.receipt.api.domain.store.StoreSearchFilter
 import io.allink.receipt.api.domain.store.StoreFilter
 import io.allink.receipt.api.domain.store.StoreModel
 import io.allink.receipt.api.domain.store.StoreRepository
+import io.allink.receipt.api.domain.store.StoreSearchModel
 import io.allink.receipt.api.domain.store.StoreService
 
 /**
@@ -19,5 +21,9 @@ class StoreServiceImpl(
 
   override suspend fun findStore(id: String): StoreModel? {
     return storeRepository.find(id)
+  }
+
+  override suspend fun findSearchStores(filter: StoreSearchFilter): PagedResult<StoreSearchModel> {
+    return storeRepository.searchStores(filter)
   }
 }

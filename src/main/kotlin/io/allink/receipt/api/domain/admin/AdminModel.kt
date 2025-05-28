@@ -1,8 +1,10 @@
 package io.allink.receipt.api.domain.admin
 
 import io.allink.receipt.api.domain.BaseModel
+import io.allink.receipt.api.domain.agency.bz.BzAgencyTable
 import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTime
 import kotlinx.serialization.Contextual
+import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.javatime.datetime
@@ -19,15 +21,19 @@ import java.util.*
 @Serializable
 data class AdminModel(
   override var id: @Contextual UUID? = null,
-  val loginId: String?,
-  val password: String?,
+  val loginId: String? = null,
+  val password: String? = null,
   val fullName: String,
+  @Polymorphic
   val role: Role,
   val phone: String,
-  val email: String?,
+  val email: String? = null,
   val status: AdminStatus,
-  val regDate: @Contextual LocalDateTime,
-  val modDate: @Contextual LocalDateTime?,
+  val regDate: @Contextual LocalDateTime? = null,
+  val modDate: @Contextual LocalDateTime? = null,
+  val agencyUuid: @Contextual UUID? = null,
+  val regBy: @Contextual UUID? = null,
+  val modBy: @Contextual UUID? = null,
 ) : BaseModel<UUID>
 
 object AdminTable : UUIDTable(name = "admin", columnName = "uuid") {
@@ -40,8 +46,12 @@ object AdminTable : UUIDTable(name = "admin", columnName = "uuid") {
   val status = enumerationByName("status", 20, AdminStatus::class)
   val regDate = datetime(name = "reg_date").default(nowLocalDateTime())
   val modDate = datetime(name = "mod_date").nullable()
+  val regBy = uuid(name = "reg_by").nullable()
+  val modBy = uuid(name = "mod_by").nullable()
+  val agencyUuid = reference("agency_uuid", BzAgencyTable.id).nullable()
 }
 
+@Serializable
 sealed interface Role {
   val description: String
   val menus: List<Menu>
@@ -49,74 +59,96 @@ sealed interface Role {
 }
 
 fun String.toRole(): Role? = when (this.uppercase()) {
-  "ROLE_MASTER" -> MasterRole
-  "ROLE_AGENCY_STAFF" -> AgencyStaffRole
-  "ROLE_AGENCY_MASTER" -> AgencyMasterRole
-  "ROLE_MERCHANT_STAFF" -> MerchantStaffRole
-  "ROLE_MERCHANT_MASTER" -> MerchantMasterRole
+  "MASTER" -> MasterRole()
+  "BZ_AGENCY_STAFF" -> BzAgencyStaffRole()
+  "BZ_AGENCY_MASTER" -> BzAgencyMasterRole()
+  "ADV_AGENCY_STAFF" -> AdvAgencyStaffRole()
+  "ADV_AGENCY_MASTER" -> AdvAgencyMasterRole()
+  "MERCHANT_STAFF" -> MerchantStaffRole()
+  "MERCHANT_MASTER" -> MerchantMasterRole()
   else -> null
 }
 
 fun Role.toRoleString(): String = when (this) {
-  is MasterRole -> "ROLE_MASTER"
-  is AgencyStaffRole -> "ROLE_AGENCY_STAFF"
-  is AgencyMasterRole -> "ROLE_AGENCY_MASTER"
-  is MerchantStaffRole -> "ROLE_MERCHANT_STAFF"
-  is MerchantMasterRole -> "ROLE_MERCHANT_MASTER"
+  is MasterRole -> "MASTER"
+  is BzAgencyStaffRole -> "BZ_AGENCY_STAFF"
+  is BzAgencyMasterRole -> "BZ_AGENCY_MASTER"
+  is AdvAgencyStaffRole -> "ADV_AGENCY_STAFF"
+  is AdvAgencyMasterRole -> "ADV_AGENCY_MASTER"
+  is MerchantStaffRole -> "MERCHANT_STAFF"
+  is MerchantMasterRole -> "MERCHANT_MASTER"
 }
 
-object MasterRole : Role {
-  override val description = "마스터 권한"
-  override val menus = Menu.entries.toList()
-  override val permission = Permission.entries.toList()
-}
+@Serializable
+data class MasterRole(
+    override val description: String = "전체 마스터",
+    override val menus: List<Menu> = Menu.entries.toList(),
+    override val permission: List<Permission> = Permission.entries.toList()
+) : Role
 
-object AgencyStaffRole : Role {
-  override val description = "광고 스태프 권한"
-  override val menus = listOf(Menu.ADV_AGENCY)
-  override val permission = listOf(Permission.VIEW)
-}
+@Serializable
+data class BzAgencyStaffRole(
+    override val description: String = "영업 대리점 스태프",
+    override val menus: List<Menu> = listOf(Menu.BZ_AGENCIES_STORE),
+    override val permission: List<Permission> = listOf(Permission.VIEW)
+) : Role
 
-object AgencyMasterRole : Role {
-  override val description = "광고 마스터 권한"
-  override val menus = listOf(Menu.ADV_AGENCY)
-  override val permission = listOf(Permission.VIEW)
-}
+@Serializable
+data class BzAgencyMasterRole(
+  override val description: String = "영업 대리점 마스터",
+  override val menus: List<Menu> = listOf(Menu.BZ_AGENCIES_STORE),
+  override val permission: List<Permission> = listOf(Permission.VIEW)
+) : Role
 
-object MerchantStaffRole : Role {
-  override val description = "대리점 스태프 권한"
-  override val menus = listOf(Menu.BZ_AGENCY, Menu.PROFILE)
-  override val permission = listOf(Permission.VIEW)
-}
+@Serializable
+data class AdvAgencyStaffRole(
+  override val description: String = "광고 대리점 스태프",
+  override val menus: List<Menu> = listOf(Menu.ADV_AGENCIES),
+  override val permission: List<Permission> = listOf(Permission.VIEW)
+) : Role
 
-object MerchantMasterRole : Role {
-  override val description = "대리점 마스터 권한"
-  override val menus = listOf(Menu.BZ_AGENCY, Menu.PROFILE)
-  override val permission = listOf(Permission.VIEW)
-}
+@Serializable
+data class AdvAgencyMasterRole(
+    override val description: String = "광고 대리점 마스터",
+    override val menus: List<Menu> = listOf(Menu.ADV_AGENCIES),
+    override val permission: List<Permission> = listOf(Permission.VIEW)
+) : Role
+
+@Serializable
+data class MerchantStaffRole(
+    override val description: String = "가맹점 스태프",
+    override val menus: List<Menu> = listOf(Menu.BZ_AGENCIES, Menu.PROFILES),
+    override val permission: List<Permission> = listOf(Permission.VIEW)
+) : Role
+
+@Serializable
+data class MerchantMasterRole(
+  override val description: String = "가맹점 마스터",
+  override val menus: List<Menu> = listOf(Menu.BZ_AGENCIES, Menu.PROFILES),
+  override val permission: List<Permission> = listOf(Permission.VIEW)
+) : Role
 
 enum class Menu(val path: String) {
-  SETTING("setting"),
-  PROFILE("profile"),
+  SETTINGS("settings"),
+  PROFILES("profiles"),
   DASHBOARD("dashboard"),
-  ADVERTISEMENT("advertisement"),
-  ADV_AGENCY("adv-agency"), /*광고 대리점*/
-  BZ_AGENCY("bz-agency"), /*영업 대리점*/
-  MERCHANT("merchant"),
-  POINT("point"),
-  RECEIPT("receipt"),
-  SETTLEMENT("settlement"),
-  STORE("store"),
-  TAG("tag"),
-  USER("user"),
+  ADVERTISEMENTS("advertisements"),
+  ADV_AGENCIES("adv-agencies"), /*광고 대리점*/
+  BZ_AGENCIES("bz-agencies"), /*영업 대리점*/
+  BZ_AGENCIES_STORE("bz-agencies-stores"), /*영업 대리점 가맹점*/
+  MERCHANTS("merchant"),
+  POINTS("points"),
+  RECEIPTS("receipts"),
+  SETTLEMENTS("settlements"),
+  STORES("stores"),
+  TAGS("tags"),
+  USERS("users"),
 }
 
 enum class Permission {
   VIEW,
   LIST,
-  CREATE,
-  UPDATE,
-  DELETE
+  MODIFY,
 }
 
 enum class AdminStatus {

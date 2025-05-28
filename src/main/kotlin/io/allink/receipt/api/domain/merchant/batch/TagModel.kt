@@ -1,4 +1,4 @@
-package io.allink.receipt.api.domain.tag
+package io.allink.receipt.api.domain.merchant.batch
 
 import java.time.LocalDateTime
 
@@ -13,6 +13,7 @@ data class TagModel(
   val tagId: String,
   val status: TagStatus,
   val storeUid: String? = null,
+  val deviceId: String? = null,
   val regDate: LocalDateTime,
   val modDate: LocalDateTime? = null
 )

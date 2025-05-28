@@ -15,6 +15,8 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.MissingFieldException
+import org.jetbrains.exposed.exceptions.ExposedSQLException
+import org.postgresql.util.PSQLException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -36,6 +38,7 @@ fun Application.configureStatusPage() {
         )
       )
     }
+
     status(HttpStatusCode.Unauthorized) {call, status->
       call.respond(
         status,
@@ -97,7 +100,7 @@ fun Application.configureStatusPage() {
     exception<RequestValidationException> { call, cause ->
       call.respond(
         HttpStatusCode.BadRequest,
-        Response<ErrorResponse>(
+        Response(
           ErrorResponse(
             code = "400",
             message = cause.reasons.joinToString()
@@ -109,7 +112,7 @@ fun Application.configureStatusPage() {
     exception<TokenExpiredException> { call, cause ->
       call.respond(
         HttpStatusCode.BadRequest,
-        Response<ErrorResponse>(
+        Response(
           ErrorResponse(
             code = "401",
             message = "Token expired"
@@ -126,7 +129,6 @@ fun Application.configureStatusPage() {
         }
         else -> "Invalid JSON format: ${cause.message}"
       }
-
       call.respond(
         HttpStatusCode.BadRequest,
         Response(
@@ -142,7 +144,21 @@ fun Application.configureStatusPage() {
       logger.error("Bad Request : {}", cause.message)
       call.respond(
         HttpStatusCode.BadRequest,
-        Response<ErrorResponse>(
+        Response(
+          ErrorResponse(
+            code = "400",
+            message = "Bad Request: ${cause.message}"
+          )
+        )
+      )
+    }
+
+    exception<ExposedSQLException> { call, cause ->
+      logger.error("Bad Request : {}", cause.message)
+
+      call.respond(
+        HttpStatusCode.BadRequest,
+        Response(
           ErrorResponse(
             code = "400",
             message = "Bad Request: ${cause.message}"
@@ -157,7 +173,7 @@ fun Application.configureStatusPage() {
         Response(
           ErrorResponse(
             code = "400",
-            message = "Resource not found"
+            message = "Resource not found [${cause.message}]"
           )
         )
       )
@@ -166,7 +182,7 @@ fun Application.configureStatusPage() {
     exception<ApiException> { call, cause ->
       call.respond(
         HttpStatusCode.BadRequest,
-        Response<ErrorResponse>(
+        Response(
           ErrorResponse(
             code = cause.code,
             message = cause.message

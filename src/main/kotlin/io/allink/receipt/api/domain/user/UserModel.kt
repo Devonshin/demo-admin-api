@@ -1,5 +1,6 @@
 package io.allink.receipt.api.domain.user
 
+import io.allink.receipt.api.domain.BaseFilter
 import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.domain.Page
 import io.allink.receipt.api.domain.Sorter
@@ -17,7 +18,7 @@ import java.time.LocalDateTime
  * Date: 15/04/2025
  */
 @Serializable
-@Schema(title = "사용자 객체", description = "모영 회원 가입자")
+@Schema(title = "사용자 객체", description = "모바일 전자영수증 가입자")
 data class UserModel(
   @Schema(title = "고유아이디", description = "사용자 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String?,
@@ -129,10 +130,10 @@ data class UserFilter(
     title = "정렬", requiredMode = RequiredMode.NOT_REQUIRED, exampleClasses = [Sorter::class],
     description = """정렬 필드 : name, nickname, phone, gender, birthday, localYn, email, role, regDate, joinSocialType"""
   )
-  val sort: List<Sorter>? = null,
+  override val sort: List<Sorter>? = null,
   @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
-  val page: Page = Page(1, 10)
-)
+  override val page: Page = Page(1, 10)
+): BaseFilter
 
 @Serializable
 @Schema(title = "나이 대")

@@ -1,7 +1,11 @@
 package io.allink.receipt.api.config.plugin
 
+import io.allink.receipt.api.domain.Request
+import io.allink.receipt.api.domain.agency.bz.BzAgencyModel
 import io.allink.receipt.api.domain.login.VerificationCheckRequest
 import io.allink.receipt.api.domain.login.VerificationCodeRequest
+import io.allink.receipt.api.domain.store.StoreFilter
+import io.allink.receipt.api.domain.store.StoreSearchFilter
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -37,5 +41,48 @@ fun Application.configureValidation() {
         ValidationResult.Invalid("Body text should start with 'Hello'")
       else ValidationResult.Valid
     }
+
+    validate<Request<String>> { request ->
+      if (request.data.isEmpty())
+        ValidationResult.Invalid("Request.data should not be empty")
+      else ValidationResult.Valid
+    }
+
+    validate<BzAgencyModel> { agency ->
+      if (agency.id == null) ValidationResult.Invalid("Agency uuid is required")
+      businessNoValidator(agency.businessNo)
+    }
+
+    validate<StoreFilter> { storeFilter ->
+      businessNoValidator(storeFilter.businessNo)
+    }
+
+    validate<StoreSearchFilter> { storeFilter ->
+      businessNoValidator(storeFilter.businessNo)
+    }
   }
+}
+
+fun businessNoValidator(businessNo: String?): ValidationResult =
+  if (businessNo != null && !isValidBusinessNo(businessNo)) {
+    ValidationResult.Invalid("사업자 등록 번호가 유효하지 않습니다. ")
+  } else ValidationResult.Valid
+
+fun isValidBusinessNo(businessNo: String): Boolean {
+  val businessNo = businessNo.replace("\\D", "")
+  if (!Regex("\\d{10}").matches(businessNo)) return false
+  val weights = listOf(1, 3, 7, 1, 3, 7, 1, 3, 5)
+  var checkDigit = 0
+  weights.forEachIndexed { index, weight ->
+    val digit = businessNo[index].digitToInt()
+    checkDigit += if (index == 8) {
+      ((digit * weight) / 10) + ((digit * weight) % 10)
+    } else {
+      digit * weight
+    }
+  }
+
+  checkDigit = (10 - (checkDigit % 10)) % 10
+
+  return checkDigit == businessNo.last().digitToInt()
 }

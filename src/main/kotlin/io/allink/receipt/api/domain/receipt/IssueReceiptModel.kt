@@ -1,5 +1,6 @@
 package io.allink.receipt.api.domain.receipt
 
+import io.allink.receipt.api.domain.BaseFilter
 import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.domain.Page
 import io.allink.receipt.api.domain.PeriodFilter
@@ -121,7 +122,7 @@ data class ReceiptFilter(
   val tagUid: String? = null,
   @Schema(title = "가맹점 아이디", description = "가맹점 고유아이디, EQ 검색",)
   val storeId: String? = null,
-  @Schema(title = "사업자 번호", description="사업자 번호, EQ 검색", example="1234567890")
+  @Schema(title = "사업자 번호", description="사업자 번호, EQ 검색", example="123-45-67890")
   val businessNo: String? = null,
   @Schema(title = "가맹점명", description = "Start with 검색")
   val storeName: String? = null,
@@ -130,14 +131,14 @@ data class ReceiptFilter(
   @Schema(title = "정렬", exampleClasses = [Sorter::class], ref = "", description = """
     정렬 필드: phone, userId, userName, userNickName, tagUid, storeId, storeBusinessNo, storeName, franchiseCode, issueDate, receiptType, receiptAmount
   """, example = "{\"field\": \"issueDate\", \"direction\": \"DESC\"}")
-  val sort: List<Sorter>? = null,
-  @Schema(title = "페이징")
-  val page: Page = Page(1, 10)
-)
+  override val sort: List<Sorter>? = null,
+  @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
+  override val page: Page = Page(1, 10)
+): BaseFilter
 
 
 @Serializable
-@Schema(name = "SimpleMerchantTagModelOfReceipt", title = "머천트 태그", description = "실물 태그의 약식 등록 정보")
+@Schema(name = "simpleMerchantTagModelOfReceipt", title = "머천트 태그", description = "실물 태그의 약식 등록 정보")
 data class SimpleMerchantTagReceiptModel(
   @Schema(
     title = "태그아이디",
@@ -152,7 +153,7 @@ data class SimpleMerchantTagReceiptModel(
 ) : BaseModel<String>
 
 @Serializable
-@Schema(title = "사용자 객체", description = "모영 회원 가입자 약식 정보")
+@Schema(title = "사용자 객체", description = "모바일 전자영수증 가입자 약식 정보")
 data class SimpleUserModel(
   @Schema(title = "고유아이디", description = "사용자 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String?,

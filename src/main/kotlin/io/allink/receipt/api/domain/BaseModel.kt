@@ -16,6 +16,12 @@ interface BaseModel<T> {
   var id: T?
 }
 
+interface BaseFilter {
+  val sort: List<Sorter>?
+  @get:Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
+  val page: Page
+    get() = Page(1, 10)
+}
 
 @Serializable
 @Schema(title = "목록 결과 객체", description = "목록 결과 객체")

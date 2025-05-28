@@ -71,7 +71,7 @@ fun Route.loginRoutes(
 
       call.respond(
         HttpStatusCode.OK,
-        Response<Jwt>(
+        Response(
           data = jwt
         )
       )
@@ -96,7 +96,7 @@ fun Route.loginRoutes(
 
         call.respond(
           HttpStatusCode.OK,
-          Response<Jwt>(
+          Response(
             data = jwt
           )
         )

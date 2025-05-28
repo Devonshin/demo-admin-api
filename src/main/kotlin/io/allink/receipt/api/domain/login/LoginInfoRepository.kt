@@ -18,9 +18,10 @@ interface LoginInfoRepository: ExposedRepository<LoginInfoTable, UUID, LoginInfo
   override fun toModel(row: ResultRow): LoginInfoModel {
     return LoginInfoModel(
       id = row[table.id].value,
-      userUuid = row[table.userUuid],
+      userUuid = row[table.userUuid].value,
       verificationCode = row[table.verificationCode],
       expireDate = row[table.expireDate],
+      loginDate = row[table.loginDate],
       status = row[table.status])
   }
 
@@ -29,6 +30,7 @@ interface LoginInfoRepository: ExposedRepository<LoginInfoTable, UUID, LoginInfo
     it[verificationCode] = model.verificationCode
     it[expireDate] = model.expireDate
     it[status] = model.status
+    it[loginDate] = model.loginDate
   }
 
   override fun toUpdateRow(model: LoginInfoModel): LoginInfoTable.(UpdateStatement) -> Unit = {
@@ -36,6 +38,7 @@ interface LoginInfoRepository: ExposedRepository<LoginInfoTable, UUID, LoginInfo
     it[verificationCode] = model.verificationCode
     it[expireDate] = model.expireDate
     it[status] = model.status
+    it[loginDate] = model.loginDate
   }
 
   override val columnConvert: (String?) -> Column<out Any?>?

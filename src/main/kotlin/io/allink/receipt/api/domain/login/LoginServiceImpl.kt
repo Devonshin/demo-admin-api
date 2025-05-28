@@ -6,6 +6,7 @@ import io.allink.receipt.api.exception.InvalidVerificationCodeException
 import io.allink.receipt.api.exception.NotFoundUserException
 import io.allink.receipt.api.domain.admin.AdminModel
 import io.allink.receipt.api.domain.admin.AdminService
+import io.allink.receipt.api.domain.admin.toRole
 import io.allink.receipt.api.domain.admin.toRoleString
 import io.allink.receipt.api.domain.sns.VerificationService
 import io.allink.receipt.api.util.DateUtil.Companion.nowInstant
@@ -61,7 +62,7 @@ class LoginServiceImpl(
       throw InvalidVerificationCodeException("Not found user. [${checkRequest.loginUuid}]")
     }
     return adminService.findByUserUuId(loginInfo.userUuid)?.let { adminModel ->
-      val count = loginInfoRepository.update(loginInfo.copy(status = LoginStatus.ACTIVE))
+      val count = loginInfoRepository.update(loginInfo.copy(status = LoginStatus.ACTIVE, loginDate = nowLocalDateTime()))
       if (count != 1) {
         throw InvalidVerificationCodeException("Failed to update login info. [${checkRequest.loginUuid}]")
       }
@@ -89,13 +90,14 @@ class LoginServiceImpl(
         .withExpiresAt(nowInstant(expireAt))
         .sign(Algorithm.HMAC256(config.propertyOrNull("jwt.secret")?.getString()))
 
-      return Jwt(jwt = token, expireDate = nowLocalDateTimeFormat, username = adminModel.fullName)
+      return Jwt(jwt = token, expireDate = nowLocalDateTimeFormat, username = adminModel.fullName, role = adminModel.role)
     }
 
     fun jwtGenerate(config: ApplicationConfig, principal: JWTPrincipal): Jwt {
       val expireAt = nowLocalDateTime().plusSeconds(config.propertyOrNull("jwt.expiresIn")?.getString()?.toLong() ?: 0L)!!
       val nowLocalDateTimeFormat = nowLocalDateTimeFormat(expireAt)
       val username = principal.payload.getClaim("username").asString()
+      val role = principal.payload.getClaim("role").asString()!!
 
       val token = JWT.create()
         .withAudience(config.propertyOrNull("jwt.audience")?.getString())
@@ -103,11 +105,11 @@ class LoginServiceImpl(
         .withClaim("username", username)
         .withClaim("lUuid", principal.payload.getClaim("lUuid").asString())
         .withClaim("uUuid", principal.payload.getClaim("uUuid").asString())
-        .withClaim("role", principal.payload.getClaim("role").asString())
+        .withClaim("role", role)
         .withExpiresAt(nowInstant(expireAt))
         .sign(Algorithm.HMAC256(config.propertyOrNull("jwt.secret")?.getString()))
 
-      return Jwt(jwt = token, expireDate = nowLocalDateTimeFormat, username = username)
+      return Jwt(jwt = token, expireDate = nowLocalDateTimeFormat, username = username, role = role.toRole()!!)
     }
   }
 }
