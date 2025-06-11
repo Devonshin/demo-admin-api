@@ -1,11 +1,7 @@
 package io.allink.receipt.api.domain.merchant
 
-import io.allink.receipt.api.domain.Page
-import io.allink.receipt.api.domain.PagedResult
-import io.allink.receipt.api.domain.PeriodFilter
-import io.allink.receipt.api.domain.Response
-import io.allink.receipt.api.domain.Sorter
-import io.allink.receipt.api.domain.store.StoreStatus
+import io.allink.receipt.api.common.StatusCode
+import io.allink.receipt.api.domain.*
 import io.github.smiley4.ktoropenapi.config.ResponseConfig
 import io.github.smiley4.ktoropenapi.config.SimpleBodyConfig
 import java.time.LocalDateTime
@@ -94,7 +90,7 @@ private val tagExample = MerchantTagModel(
     businessType = "1231212345",
     eventType = "퉁신판매업",
     modDate = LocalDateTime.now(),
-    status = StoreStatus.NORMAL,
+    status = StatusCode.NORMAL,
   ),
   tagName = "영수증 태그",
   merchantGroupId = "uuid-like-group-id",
@@ -111,7 +107,7 @@ private val simpleTagExample = SimpleMerchantTagModel(
     storeName = "이디야별다방",
     franchiseCode = "EDIYA",
     businessNo = "1231212312",
-    status = StoreStatus.NORMAL,
+    status = StatusCode.NORMAL,
   ),
   regDate = LocalDateTime.parse("2025-03-17T12:00:00"),
   modDate = null,

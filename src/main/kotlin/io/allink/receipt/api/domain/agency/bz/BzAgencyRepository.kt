@@ -3,13 +3,16 @@ package io.allink.receipt.api.domain.agency.bz
 import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.admin.AdminTable
 import io.allink.receipt.api.repository.ExposedRepository
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.statements.InsertStatement
-import org.jetbrains.exposed.sql.statements.UpdateStatement
-import org.jetbrains.exposed.sql.update
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.singleOrNull
+import kotlinx.coroutines.flow.toList
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
+import org.jetbrains.exposed.v1.core.statements.UpdateStatement
+import org.jetbrains.exposed.v1.r2dbc.insertAndGetId
+import org.jetbrains.exposed.v1.r2dbc.selectAll
+import org.jetbrains.exposed.v1.r2dbc.update
 import java.util.*
 
 /**
@@ -22,20 +25,20 @@ interface BzAgencyRepository : ExposedRepository<BzAgencyTable, UUID, BzAgencyMo
 
   suspend fun findAllByFilter(filter: BzAgencyFilter): PagedResult<BzListAgencyModel>
 
-  override suspend fun create(model: BzAgencyModel): BzAgencyModel = query {
+  override suspend fun create(model: BzAgencyModel): BzAgencyModel {
     val createdId = table.insertAndGetId {
-      toRow(model)(it)
+      toRow(model)
     }.value
-    model.copy(id = createdId)
+    return model.copy(id = createdId)
   }
 
-  override suspend fun update(model: BzAgencyModel): Int = query {
-    table.update({ table.id eq model.id!! }) {
+  override suspend fun update(model: BzAgencyModel): Int {
+    return table.update({ table.id eq model.id!! }) {
       toUpdateRow(model)(it)
     }
   }
 
-  override suspend fun find(id: UUID): BzAgencyModel? = query {
+  override suspend fun find(id: UUID): BzAgencyModel? {
 
     val staffs = AdminTable
       .selectAll()
@@ -57,7 +60,7 @@ interface BzAgencyRepository : ExposedRepository<BzAgencyTable, UUID, BzAgencyMo
       }
       .toList()
 
-    table
+    return table
       .selectAll()
       .where {
         table.id eq id
@@ -68,7 +71,7 @@ interface BzAgencyRepository : ExposedRepository<BzAgencyTable, UUID, BzAgencyMo
       .singleOrNull()
   }
 
-  override suspend fun delete(id: UUID): Int = query {
+  override suspend fun delete(id: UUID): Int {
     TODO()
   }
   fun toModel(row: ResultRow, staffs: List<BzAgencyAdminModel>): BzAgencyModel{
@@ -111,7 +114,7 @@ interface BzAgencyRepository : ExposedRepository<BzAgencyTable, UUID, BzAgencyMo
     return toModel(row, listOf())
   }
 
-  override fun toRow(model: BzAgencyModel): BzAgencyTable.(InsertStatement<EntityID<UUID>>) -> Unit = {
+  override fun toRow(model: BzAgencyModel): BzAgencyTable.(UpdateBuilder<*>) -> Unit = {
     it[agencyName] = model.agencyName
     it[businessNo] = model.businessNo
     it[addr1] = model.addr1

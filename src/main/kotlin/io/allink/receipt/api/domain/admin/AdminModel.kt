@@ -6,8 +6,8 @@ import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTime
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.v1.core.dao.id.UUIDTable
+import org.jetbrains.exposed.v1.javatime.datetime
 import java.time.LocalDateTime
 import java.util.*
 

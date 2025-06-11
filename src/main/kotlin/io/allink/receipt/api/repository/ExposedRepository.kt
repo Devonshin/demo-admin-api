@@ -1,16 +1,15 @@
 package io.allink.receipt.api.repository
 
-import io.allink.receipt.api.domain.BaseFilter
 import io.allink.receipt.api.domain.BaseModel
-import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.Sorter
-import io.allink.receipt.api.domain.merchant.MerchantTagModel
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.statements.InsertStatement
-import org.jetbrains.exposed.sql.statements.UpdateStatement
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
+import org.jetbrains.exposed.v1.core.statements.UpdateStatement
+import org.jetbrains.exposed.v1.r2dbc.Query
+import org.jetbrains.exposed.v1.r2dbc.addLogger
+import org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 
 /**
  * Package: io.allink.receipt.admin.common
@@ -18,26 +17,28 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
  * Date: 13/04/2025
  */
 
+object TransactionUtil {
+  suspend fun <T> withTransaction(block: suspend () -> T): T =
+    suspendTransaction (Dispatchers.IO) {
+      addLogger(StdOutSqlLogger)
+      block()
+    }
+  suspend fun <T> withTransactionReturn(block: suspend () -> T): T {
+    return suspendTransaction (Dispatchers.IO) {
+      addLogger(StdOutSqlLogger)
+      block()
+    }
+  }
+}
+
 interface ExposedRepository<
     TABLE : Table,
-    T : Comparable<T>,
-    MODEL : BaseModel<T>> {
+    T : Any,
+    MODEL : BaseModel<*>> {
   val table: TABLE
 
-  suspend fun <T> query(block: suspend () -> T): T =
-    newSuspendedTransaction (Dispatchers.IO) {
-      addLogger(StdOutSqlLogger)
-      block()
-    }
-
-  suspend fun deleteQuery(block: suspend () -> Int): Int =
-    newSuspendedTransaction(Dispatchers.IO) {
-      addLogger(StdOutSqlLogger)
-      block()
-    }
-
   fun toModel(row: ResultRow): MODEL
-  fun toRow(model: MODEL): TABLE.(InsertStatement<EntityID<T>>) -> Unit
+  fun toRow(model: MODEL): TABLE.(UpdateBuilder<EntityID<T>>) -> Unit
   fun toUpdateRow(model: MODEL): TABLE.(UpdateStatement) -> Unit
 
   suspend fun create(model: MODEL): MODEL
@@ -65,27 +66,5 @@ interface ExposedRepository<
   }
 
   val columnConvert: (String?) -> Expression<out Any?>?
-
-  fun result(
-    select: Query,
-    filter: BaseFilter,
-    offset: Int,
-    toModelList: (ResultRow) -> MODEL
-  ): PagedResult<MODEL> {
-
-    columnSort(select, filter.sort, columnConvert)
-    val totalCount = select.count().toInt()
-    val items = select.limit(filter.page.pageSize)
-      .offset(offset.toLong())
-      .toList()
-      .map { toModelList(it) }
-
-    return PagedResult(
-      items = items,
-      currentPage = filter.page.page,
-      totalCount = totalCount,
-      totalPages = (totalCount + filter.page.pageSize - 1) / filter.page.pageSize
-    )
-  }
 
 }

@@ -4,10 +4,10 @@ import io.allink.receipt.api.domain.BaseModel
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.v1.core.dao.id.UUIDTable
+import org.jetbrains.exposed.v1.javatime.datetime
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 /**
  * Package: io.allink.receipt.api.domain.advertizement

@@ -47,12 +47,14 @@ dependencies {
   implementation("io.ktor:ktor-serialization-kotlinx-json")
   implementation("dev.hayden:khealth:3.0.2")
   implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
-  implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+//  implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
   implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
-  implementation("com.zaxxer:HikariCP:$hikaricp_version")
+  implementation("org.jetbrains.exposed:exposed-r2dbc:$exposed_version")
+//  implementation("com.zaxxer:HikariCP:$hikaricp_version")
 
 //  implementation("com.h2database:h2:$h2_version")
-  implementation("org.postgresql:postgresql:$postgres_version")
+  implementation("org.postgresql:postgresql:42.7.2") // 최신 버전 확인 필요
+  implementation("org.postgresql:r2dbc-postgresql:$postgres_version")
   implementation("io.insert-koin:koin-ktor:$koin_version")
   implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
   implementation("io.ktor:ktor-server-netty")

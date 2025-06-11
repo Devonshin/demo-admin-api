@@ -7,17 +7,12 @@ import io.allink.receipt.api.domain.login.LoginInfoRepositoryImpl
 import io.allink.receipt.api.domain.login.LoginInfoTable
 import io.allink.receipt.api.domain.login.LoginStatus
 import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTime
-import io.ktor.server.testing.testApplication
+import io.ktor.server.testing.*
 import kotlinx.serialization.Contextual
-import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertNotNull
-import java.util.UUID
+import org.jetbrains.exposed.v1.r2dbc.Database
+import org.junit.jupiter.api.*
+import java.util.*
 import kotlin.test.assertEquals
 
 /**

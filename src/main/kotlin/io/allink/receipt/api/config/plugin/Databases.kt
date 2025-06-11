@@ -1,42 +1,36 @@
 package io.allink.receipt.api.config.plugin
 
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
-import com.zaxxer.hikari.util.IsolationLevel
 import io.ktor.server.application.*
-import io.ktor.server.config.*
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.Database
+import io.r2dbc.spi.ConnectionFactories
+import io.r2dbc.spi.ConnectionFactoryOptions
+import io.r2dbc.spi.ConnectionFactoryOptions.*
+import org.jetbrains.exposed.v1.r2dbc.R2dbcDatabase
+import org.jetbrains.exposed.v1.r2dbc.R2dbcDatabaseConfig
+
 
 fun Application.configureDatabases() {
   val postgresConfig = environment.config.config("postgres")
-  val dbConnection = Database.connect(dataSource(postgresConfig))
 
-  monitor.subscribe(ApplicationStopped) {
-    runBlocking {
-      try {
-        dbConnection.connector().close()
-        println("Database connection done.")
-      } catch (e: Exception) {
-        println("Error closing database connection: ${e.message}")
-      }
-    }
-  }
-}
+  val host = postgresConfig.property("url").getString()
+  val port = postgresConfig.property("port").getString().toInt()
+  val user = postgresConfig.property("user").getString()
+  val password = postgresConfig.property("password").getString()
+  val database = postgresConfig.property("database").getString()
 
-fun dataSource(config: ApplicationConfig): HikariDataSource {
-  val url = config.property("url").getString()
-  val user = config.property("user").getString()
-  val password = config.property("password").getString()
-  val hConfig = HikariConfig()
-  hConfig.jdbcUrl = url
-  hConfig.username = user
-  hConfig.password = password
-  hConfig.setDriverClassName(config.property("driverClassName").getString())
-  hConfig.maximumPoolSize = config.property("hikari.maximum-pool-size").getString().toInt()
-  hConfig.isAutoCommit = config.property("hikari.auto-commit").getString().toBoolean()
-  hConfig.transactionIsolation = IsolationLevel.TRANSACTION_REPEATABLE_READ.name
-  hConfig.leakDetectionThreshold = 15000
-  hConfig.validate()
-  return HikariDataSource(hConfig)
+  val options = builder()
+    .option(DRIVER, "postgresql")
+    .option(HOST, host)
+    .option(PORT, port)
+    .option(USER, user)
+    .option(PASSWORD, password)
+    .option(DATABASE, database)
+    .option(PROTOCOL, "postgresql")
+    .build()
+
+  val connectionFactory = ConnectionFactories.get(options)
+  R2dbcDatabase.connect(connectionFactory, databaseConfig = R2dbcDatabaseConfig.invoke {
+    useNestedTransactions = true
+    connectionFactoryOptions = options
+  })
+
 }

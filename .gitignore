@@ -40,3 +40,7 @@ out/
 .DS_Store
 .kotlin
 /upload/
+
+.aiignore
+
+doc/PROJECT_GUIDELINES.md

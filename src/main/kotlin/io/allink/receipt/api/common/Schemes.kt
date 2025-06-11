@@ -10,7 +10,6 @@ import io.allink.receipt.api.domain.login.VerificationCode
 import io.allink.receipt.api.domain.login.VerificationCodeRequest
 import io.allink.receipt.api.domain.npoint.NPointFilter
 import io.allink.receipt.api.domain.npoint.NPointPayModel
-import io.allink.receipt.api.domain.npoint.NPointStoreModel
 import io.allink.receipt.api.domain.npoint.NPointUserModel
 import io.allink.receipt.api.domain.receipt.*
 import io.allink.receipt.api.domain.store.SimpleStoreModel
@@ -152,11 +151,12 @@ private val pointPayExample = NPointPayModel(
   id = 123,
   point = 500,
   status = "지급완료",
-  store = NPointStoreModel(
+  store = SimpleStoreModel(
     id = "store-id",
     storeName = "김밥천국",
     franchiseCode = "FRANCHISE_CODE",
     businessNo = "1234567890",
+    ceoName = "홍감자"
   ),
   user = NPointUserModel(
     id = "user-id",
@@ -222,7 +222,8 @@ fun franchiseCodeListResponse(): ResponseConfig.() -> Unit = {
           serviceGroup = "FRANCHISE",
           serviceName = "EDIYA",
           price = null,
-          status = ServiceCodeStatus.ACTIVE
+          status = ServiceCodeStatus.ACTIVE,
+          serviceType = "REVIEW"
         )
       )
     }
@@ -239,7 +240,8 @@ fun bankCodeListResponse(): ResponseConfig.() -> Unit = {
           serviceGroup = "BANK_CODE",
           serviceName = "신한은행",
           price = null,
-          status = ServiceCodeStatus.ACTIVE
+          status = ServiceCodeStatus.ACTIVE,
+          serviceType = "REVIEW"
         )
       )
     }
@@ -256,7 +258,8 @@ fun vendorCodeListResponse(): ResponseConfig.() -> Unit = {
           serviceGroup = "VEN_CODE",
           serviceName = "코세스",
           price = null,
-          status = ServiceCodeStatus.ACTIVE
+          status = ServiceCodeStatus.ACTIVE,
+          serviceType = "REVIEW"
         )
       )
     }

@@ -11,11 +11,15 @@ import io.allink.receipt.api.domain.merchant.MerchantTagTable.storeUid
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.tagName
 import io.allink.receipt.api.domain.store.StoreTable
 import io.allink.receipt.api.repository.ExposedRepository
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.statements.InsertStatement
-import org.jetbrains.exposed.sql.statements.UpdateStatement
+import io.allink.receipt.api.repository.TransactionUtil
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.singleOrNull
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.JoinType
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
+import org.jetbrains.exposed.v1.core.statements.UpdateStatement
+import org.jetbrains.exposed.v1.r2dbc.select
 
 /**
  * Package: io.allink.receipt.api.domain.merchant
@@ -61,7 +65,7 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
     )
   }
 
-  override fun toRow(model: MerchantTagModel): MerchantTagTable.(InsertStatement<*>) -> Unit = {
+  override fun toRow(model: MerchantTagModel): MerchantTagTable.(UpdateBuilder<*>) -> Unit = {
     it[id] = model.id!!
     it[merchantGroupId] = model.merchantGroupId
     it[deviceId] = model.deviceId
@@ -82,7 +86,7 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
     it[modBy] = model.modBy
   }
 
-  override suspend fun find(id: String): MerchantTagModel? = query {
+  override suspend fun find(id: String): MerchantTagModel? = TransactionUtil.withTransaction {
     table
       .join(
         StoreTable,

@@ -70,7 +70,7 @@ fun Application.configureOpenApi() {
       url = "https://dev-receipt-api.allink.io"
     }
     server {
-      description = "운영서버(준비 중)"
+      description = "운영서버"
       url = "https://receipt-api.allink.io"
     }
 

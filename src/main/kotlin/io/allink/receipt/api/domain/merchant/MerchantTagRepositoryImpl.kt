@@ -6,10 +6,14 @@ import io.allink.receipt.api.domain.merchant.MerchantTagTable.modDate
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.regDate
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.storeUid
 import io.allink.receipt.api.domain.store.StoreTable
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.update
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.singleOrNull
+import kotlinx.coroutines.flow.toList
+import org.jetbrains.exposed.v1.core.JoinType
+import org.jetbrains.exposed.v1.r2dbc.andWhere
+import org.jetbrains.exposed.v1.r2dbc.insert
+import org.jetbrains.exposed.v1.r2dbc.select
+import org.jetbrains.exposed.v1.r2dbc.update
 
 /**
  * Package: io.allink.receipt.api.domain.merchant
@@ -21,7 +25,7 @@ class MerchantTagRepositoryImpl(
   override val table: MerchantTagTable
 ) : MerchantTagRepository {
 
-  override suspend fun findAll(filter: MerchantTagFilter): PagedResult<SimpleMerchantTagModel> = query {
+  override suspend fun findAll(filter: MerchantTagFilter): PagedResult<SimpleMerchantTagModel> {
 
     val offset = filter.page.page.minus(1).times(filter.page.pageSize)
     val select = table
@@ -89,7 +93,7 @@ class MerchantTagRepositoryImpl(
           modDate = it[modDate]
         )
       }
-    return@query PagedResult(
+    return PagedResult(
       items = items,
       currentPage = filter.page.page,
       totalCount = totalCount,
@@ -97,8 +101,8 @@ class MerchantTagRepositoryImpl(
     )
   }
 
-  override suspend fun findForUpdate(id: String): MerchantTagModel? = query {
-    table
+  override suspend fun findForUpdate(id: String): MerchantTagModel? {
+    return table
       .select(
         table.id,
         table.merchantGroupId,
@@ -114,15 +118,15 @@ class MerchantTagRepositoryImpl(
       .singleOrNull()
   }
 
-  override suspend fun create(model: MerchantTagModel): MerchantTagModel = query {
+  override suspend fun create(model: MerchantTagModel): MerchantTagModel {
     table.insert {
       toRow(model)(it)
     }
-    model
+    return model
   }
 
-  override suspend fun update(model: MerchantTagModel): Int = query {
-    table.update(
+  override suspend fun update(model: MerchantTagModel): Int {
+    return table.update(
       where = { table.id eq model.id!! },
       body = toUpdateRow(model)
     )

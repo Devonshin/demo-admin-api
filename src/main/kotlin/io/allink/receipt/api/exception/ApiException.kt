@@ -9,7 +9,6 @@ package io.allink.receipt.api.exception
 sealed class ApiException(override val message: String, val code: String) : RuntimeException(message)
 
 class NotFoundUserException(message: String): ApiException(message, "NOT_FOUND_USER")
-
+class NotFoundStoreException(message: String): ApiException(message, "NOT_FOUND_STORE")
 class InvalidVerificationCodeException(message: String): ApiException(message, "INVALID_VERIFICATION_CODE")
-
 class InvalidFileUploadException(message: String): ApiException(message, "INVALID_FILE_UPLOAD")

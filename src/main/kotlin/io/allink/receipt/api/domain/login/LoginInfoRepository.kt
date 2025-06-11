@@ -1,12 +1,11 @@
 package io.allink.receipt.api.domain.login
 
 import io.allink.receipt.api.repository.ExposedRepository
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.statements.InsertStatement
-import org.jetbrains.exposed.sql.statements.UpdateStatement
-import java.util.UUID
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
+import org.jetbrains.exposed.v1.core.statements.UpdateStatement
+import java.util.*
 
 /**
  * Package: io.allink.receipt.admin.domain.login
@@ -25,7 +24,7 @@ interface LoginInfoRepository: ExposedRepository<LoginInfoTable, UUID, LoginInfo
       status = row[table.status])
   }
 
-  override fun toRow(model: LoginInfoModel): LoginInfoTable.(InsertStatement<EntityID<UUID>>) -> Unit = {
+  override fun toRow(model: LoginInfoModel): LoginInfoTable.(UpdateBuilder<*>) -> Unit = {
     it[userUuid] = model.userUuid
     it[verificationCode] = model.verificationCode
     it[expireDate] = model.expireDate

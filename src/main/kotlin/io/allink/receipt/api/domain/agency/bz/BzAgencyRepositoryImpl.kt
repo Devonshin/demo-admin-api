@@ -4,7 +4,13 @@ import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.admin.AdminTable
 import io.allink.receipt.api.domain.login.LoginInfoTable
 import io.ktor.server.plugins.*
-import org.jetbrains.exposed.sql.*
+import kotlinx.coroutines.flow.toList
+import org.jetbrains.exposed.v1.core.Expression
+import org.jetbrains.exposed.v1.core.JoinType
+import org.jetbrains.exposed.v1.core.alias
+import org.jetbrains.exposed.v1.core.max
+import org.jetbrains.exposed.v1.r2dbc.andWhere
+import org.jetbrains.exposed.v1.r2dbc.select
 import java.util.*
 
 /**
@@ -17,7 +23,7 @@ class BzAgencyRepositoryImpl(
   override val table: BzAgencyTable
 ) : BzAgencyRepository {
 
-  override suspend fun findAllByFilter(filter: BzAgencyFilter): PagedResult<BzListAgencyModel> = query {
+  override suspend fun findAllByFilter(filter: BzAgencyFilter): PagedResult<BzListAgencyModel> {
     val offset = filter.page.page.minus(1) * filter.page.pageSize
     val latestLoginAlias = LoginInfoTable.loginDate.max().alias("latestLogin")
 
@@ -65,7 +71,7 @@ class BzAgencyRepositoryImpl(
         )
       }
 
-    return@query PagedResult(
+    return PagedResult(
       items = items,
       currentPage = filter.page.page,
       totalCount = totalCount,

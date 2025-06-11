@@ -1,7 +1,6 @@
 package io.allink.receipt.api.domain.sns
 
-import com.typesafe.config.ConfigFactory
-import io.ktor.server.config.ApplicationConfig
+import io.ktor.server.config.*
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.sns.SnsClient

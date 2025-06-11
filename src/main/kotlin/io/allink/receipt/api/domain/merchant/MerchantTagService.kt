@@ -1,7 +1,7 @@
 package io.allink.receipt.api.domain.merchant
 
 import io.allink.receipt.api.domain.PagedResult
-import java.util.UUID
+import java.util.*
 
 
 interface MerchantTagService {

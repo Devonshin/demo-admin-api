@@ -5,6 +5,8 @@ import io.allink.receipt.api.domain.agency.bz.BzAgencyModel
 import io.allink.receipt.api.domain.login.VerificationCheckRequest
 import io.allink.receipt.api.domain.login.VerificationCodeRequest
 import io.allink.receipt.api.domain.store.StoreFilter
+import io.allink.receipt.api.domain.store.StoreModifyModel
+import io.allink.receipt.api.domain.store.StoreRegistModel
 import io.allink.receipt.api.domain.store.StoreSearchFilter
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
@@ -59,6 +61,24 @@ fun Application.configureValidation() {
 
     validate<StoreSearchFilter> { storeFilter ->
       businessNoValidator(storeFilter.businessNo)
+    }
+
+    validate<StoreRegistModel> { storeRegistModel ->
+      if (storeRegistModel.businessNo == null || storeRegistModel.businessNo.isEmpty()) {
+        ValidationResult.Invalid("businessNo is required")
+      } else if (storeRegistModel.storeName == null || storeRegistModel.storeName.isEmpty()) {
+        ValidationResult.Invalid("storeName is required")
+      } else ValidationResult.Valid
+    }
+
+    validate<StoreModifyModel> { storeModifyModel ->
+      if (storeModifyModel.businessNo == null || storeModifyModel.businessNo.isEmpty()) {
+        ValidationResult.Invalid("businessNo is required")
+      } else if (storeModifyModel.id == null || storeModifyModel.id.isEmpty()) {
+        ValidationResult.Invalid("id is required")
+      } else if (storeModifyModel.storeName == null || storeModifyModel.storeName.isEmpty()) {
+        ValidationResult.Invalid("storeName is required")
+      } else ValidationResult.Valid
     }
   }
 }

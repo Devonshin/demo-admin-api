@@ -5,16 +5,10 @@ import io.allink.receipt.api.common.Constant.Companion.ACCEPT_FILE_TYPE
 import io.allink.receipt.api.common.Constant.Companion.checkAcceptFileField
 import io.allink.receipt.api.common.Constant.Companion.checkAcceptFileType
 import io.allink.receipt.api.common.errorResponse
-import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.Request
 import io.allink.receipt.api.domain.Response
-import io.allink.receipt.api.domain.agency.bz.BzAgencyService
-import io.allink.receipt.api.domain.agency.bz.BzListAgencyModel
-import io.allink.receipt.api.domain.agency.bz.agencyDetailResponse
-import io.allink.receipt.api.domain.store.StoreService
 import io.allink.receipt.api.exception.InvalidFileUploadException
 import io.github.smiley4.ktoropenapi.config.ResponseConfig
-import io.github.smiley4.ktoropenapi.config.RouteConfig
 import io.github.smiley4.ktoropenapi.config.descriptors.SwaggerTypeDescriptor
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.post
@@ -45,7 +39,7 @@ fun Route.fileRoutes(
 
     post("/preview", {
       operationId = "file-preview-url"
-      tags = listOf("파일 관리")
+      tags = listOf("파일 관리", "가맹점 관리", "영업 대리점 관리")
       summary = "파일 미리보기 임시 URL"
       description = "파일을 미리보기 혹은 다운로드 할 수 있는 임시 URL을 생성합니다. 임시 URL은 생성 후 15분간 유효합니다."
       securitySchemeNames = listOf("auth-jwt")
@@ -73,7 +67,7 @@ fun Route.fileRoutes(
 
     post("/upload/{menu}/{field}/{id}", {
       operationId = "file-upload"
-      tags = listOf("파일 관리")
+      tags = listOf("파일 관리", "가맹점 관리", "영업 대리점 관리")
       summary = "파일 업로드"
       description = "한번에 하나의 파일을 업로드를 합니다. 파일을 업로드 후 응답으로 생성되는 파일 경로를 대상 필드의 값으로 설정 후 저장해야 합니다."
       securitySchemeNames = listOf("auth-jwt")
@@ -83,7 +77,7 @@ fun Route.fileRoutes(
           required = true
           example("menu") {
             description = "파일을 등록하는 메뉴"
-            value = "bz-agencies|stores|advertisement|..."
+            value = "bz-agencies|stores|advertisements|..."
           }
         }
         pathParameter<String>("field") {
@@ -149,8 +143,8 @@ fun Route.fileRoutes(
     get("/download/batch-file/tag",  {
       operationId = "file-download-tag"
       tags = listOf("태그 관리")
-      summary = "태그 다운로드 URL"
-      description = "태그 등록 파일을 다운로드 할 수 있는 임시 URL을 생성합니다. 임시 URL은 생성 후 15분간 유효합니다."
+      summary = "태그 일괄 등록 파일 다운로드 URL"
+      description = "태그 일괄 등록용 파일을 다운로드 할 수 있는 임시 URL을 생성합니다. 임시 URL은 생성 후 15분간 유효합니다."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<Request<String>> {
@@ -177,8 +171,8 @@ fun Route.fileRoutes(
     post("/upload/batch/tags", {
       operationId = "tags-batch-upload"
       tags = listOf("태그 관리")
-      summary = "태그 배치 파일 업로드"
-      description = "태그 등록용 배치 파일을 업로드 합니다."
+      summary = "태그 일괄 등록 파일 업로드"
+      description = "태그 일괄 등록용 파일을 업로드 합니다."
       securitySchemeNames = listOf("auth-jwt")
       request {
         multipartBody {
@@ -227,7 +221,7 @@ fun Route.fileRoutes(
       operationId = "stores-batch-upload"
       tags = listOf("가맹점 관리")
       summary = "가맹점 배치 파일 업로드"
-      description = "가맹점 등록용 배치 파일을 업로드 합니다."
+      description = "가맹점 일괄 등록용 배치 파일을 업로드 합니다."
       securitySchemeNames = listOf("auth-jwt")
       request {
         multipartBody {
@@ -251,13 +245,11 @@ fun Route.fileRoutes(
       }
     }) {
       val multipart = call.receiveMultipart()
-      var fileName: String? = null
       var fileBytes: ByteArray? = null
       multipart.forEachPart { part ->
         when (part) {
           is PartData.FileItem -> {
             part.originalFileName?.let {
-              fileName = it
               fileBytes = part.readToByteArray()
             }
           }
@@ -277,7 +269,7 @@ fun Route.fileRoutes(
       operationId = "file-download-store"
       tags = listOf("가맹점 관리")
       summary = "가맹점 다운로드 URL"
-      description = "가맹점 등록 파일을 다운로드 할 수 있는 임시 URL을 생성합니다. 임시 URL은 생성 후 15분간 유효합니다."
+      description = "가맹점 일괄 등록용 파일을 다운로드 할 수 있는 임시 URL을 생성합니다. 임시 URL은 생성 후 15분간 유효합니다."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<Request<String>> {

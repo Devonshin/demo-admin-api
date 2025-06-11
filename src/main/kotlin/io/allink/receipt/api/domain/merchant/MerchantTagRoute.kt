@@ -5,12 +5,12 @@ import io.allink.receipt.api.domain.Response
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.post
 import io.ktor.http.*
-import io.ktor.server.auth.jwt.JWTPrincipal
-import io.ktor.server.auth.principal
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import java.util.UUID
+import java.util.*
 
 /**
  * Package: io.allink.receipt.api.domain.merchant

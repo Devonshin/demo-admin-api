@@ -2,7 +2,7 @@ package io.allink
 
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.server.config.ApplicationConfig
+import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import kotlin.test.Test
 import kotlin.test.assertEquals

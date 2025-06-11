@@ -2,20 +2,16 @@ package io.allink.receipt.api.domain.login
 
 import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.domain.admin.AdminTable
-import io.allink.receipt.api.domain.admin.MasterRole
 import io.allink.receipt.api.domain.admin.Role
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
-import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.v1.core.dao.id.UUIDTable
+import org.jetbrains.exposed.v1.javatime.datetime
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 /**
  * Package: io.allink.receipt.admin.domain.login

@@ -1,13 +1,6 @@
 package io.allink.receipt.api.config.plugin
 
-import io.allink.receipt.api.domain.admin.AdvAgencyMasterRole
-import io.allink.receipt.api.domain.admin.AdvAgencyStaffRole
-import io.allink.receipt.api.domain.admin.BzAgencyMasterRole
-import io.allink.receipt.api.domain.admin.BzAgencyStaffRole
-import io.allink.receipt.api.domain.admin.MasterRole
-import io.allink.receipt.api.domain.admin.MerchantMasterRole
-import io.allink.receipt.api.domain.admin.MerchantStaffRole
-import io.allink.receipt.api.domain.admin.Role
+import io.allink.receipt.api.domain.admin.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*

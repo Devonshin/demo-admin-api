@@ -6,14 +6,13 @@ import io.allink.receipt.api.domain.ErrorResponse
 import io.allink.receipt.api.domain.Response
 import io.allink.receipt.api.domain.admin.AdminRepository
 import io.allink.receipt.api.domain.admin.AdminStatus
-import io.allink.receipt.api.domain.admin.toRole
 import io.allink.receipt.api.domain.login.LoginInfoRepository
 import io.allink.receipt.api.domain.login.LoginStatus
+import io.allink.receipt.api.repository.TransactionUtil
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import org.koin.ktor.ext.get
 import java.util.*
@@ -41,18 +40,22 @@ fun Application.configureSecurity() {
         val loginUuid = payload.getClaim("lUuid").asString()
         if (loginUuid == null) return@validate null
         val loginInfoRepository: LoginInfoRepository = get()
-
-        val loginInfo = loginInfoRepository.find(UUID.fromString(loginUuid))
-        if (loginInfo == null) return@validate null
-        if (loginInfo.status != LoginStatus.ACTIVE) return@validate null
+        TransactionUtil.withTransactionReturn {
+          val loginInfo = loginInfoRepository.find(UUID.fromString(loginUuid))
+          if (loginInfo == null) return@withTransactionReturn null
+          if (loginInfo.status != LoginStatus.ACTIVE) return@withTransactionReturn null
+        } ?: return@validate null
 
         val userUuid = payload.getClaim("uUuid").asString()
         if (userUuid == null) return@validate null
 
         val adminRepository: AdminRepository = get()
-        val admin = adminRepository.findByUserUuid(UUID.fromString(userUuid))
-        if (admin == null) return@validate null
-        if (admin.status != AdminStatus.ACTIVE) return@validate null
+        TransactionUtil.withTransactionReturn {
+          val admin = adminRepository.findByUserUuid(UUID.fromString(userUuid))
+          if (admin == null) return@withTransactionReturn null
+          if (admin.status != AdminStatus.ACTIVE) return@withTransactionReturn null
+        } ?: return@validate null
+
         if (payload.audience.contains(jwtAudience) &&
           payload.getClaim("username").asString() != ""
         ) {

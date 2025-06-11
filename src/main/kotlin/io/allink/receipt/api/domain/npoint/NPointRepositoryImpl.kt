@@ -5,9 +5,11 @@ import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.store.StoreTable
 import io.allink.receipt.api.domain.user.UserTable
 import io.allink.receipt.api.util.AES256Util
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.alias
-import org.jetbrains.exposed.sql.andWhere
+import kotlinx.coroutines.flow.toList
+import org.jetbrains.exposed.v1.core.JoinType
+import org.jetbrains.exposed.v1.core.alias
+import org.jetbrains.exposed.v1.r2dbc.andWhere
+import org.jetbrains.exposed.v1.r2dbc.select
 
 /**
  * Package: io.allink.receipt.api.domain.point
@@ -17,7 +19,7 @@ import org.jetbrains.exposed.sql.andWhere
 
 class NPointRepositoryImpl(override val table: NPointWaitingTable) : NPointRepository {
 
-  override suspend fun findAll(filter: NPointFilter): PagedResult<NPointPayModel> = query {
+  override suspend fun findAll(filter: NPointFilter): PagedResult<NPointPayModel> {
 
     val offset = filter.page.page.minus(1).times(filter.page.pageSize)
     val select = table
@@ -37,6 +39,7 @@ class NPointRepositoryImpl(override val table: NPointWaitingTable) : NPointRepos
         StoreTable.storeName,
         StoreTable.businessNo,
         StoreTable.franchiseCode,
+        StoreTable.ceoName,
         UserTable.id.alias("user_id"),
         UserTable.name,
         UserTable.nickname,
@@ -95,7 +98,7 @@ class NPointRepositoryImpl(override val table: NPointWaitingTable) : NPointRepos
       .toList()
       .map { toModel(row = it) }
 
-    return@query PagedResult(
+    return PagedResult(
       items = items,
       currentPage = filter.page.page,
       totalCount = totalCount,

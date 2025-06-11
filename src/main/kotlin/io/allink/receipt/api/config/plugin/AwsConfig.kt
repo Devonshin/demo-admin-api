@@ -21,7 +21,8 @@ private val logger: Logger = LoggerFactory.getLogger("io.allink.receipt.api.conf
 fun configureAwsDynamoDb(config: ApplicationConfig): DynamoDbClient {
   val awsConfig = config.config("aws")
   val env = config.config("ktor").property("environment").getString()
-  if (env == "local") {
+  logger.info("Using $env")
+  if (env == "local" || env == "test") {
     return localDynamoDbClient()
   }
 

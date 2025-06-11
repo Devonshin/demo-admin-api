@@ -5,11 +5,14 @@ import io.allink.receipt.api.domain.Response
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.post
 import io.ktor.http.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.*
 
 /**
  * Package: io.allink.receipt.api.domain.store
@@ -84,7 +87,8 @@ fun Route.storeRoutes(
       val filter = call.receive<StoreSearchFilter>()
       call.respond(
         HttpStatusCode.OK,
-        Response(data = storeService.findSearchStores(filter)
+        Response(
+          data = storeService.findSearchStores(filter)
         )
       )
     }
@@ -93,31 +97,52 @@ fun Route.storeRoutes(
     /*
     * 가맹점 등록
     * */
-//    post("/register", {
-//      operationId = "store-register"
-//      tags = listOf("가맹점 관리")
-//      summary = "가맹점 등록"
-//      description = "새로운 가맹점을 등록합니다."
-//      securitySchemeNames = listOf("auth-jwt")
-//      request {
-////        body<StoreModel>(storeRegisterRequest())
-//      }
-//      response {
-//        code(HttpStatusCode.Created, storeRegisterResponse())
-//        code(HttpStatusCode.BadRequest, errorResponse())
-//      }
-//    }) {
-//      try {
-//        val storeModel = call.receive<StoreModel>()
-//        val registeredStore = storeService.registerStore(storeModel)
-//        call.respond(HttpStatusCode.Created, Response(data = registeredStore))
-//      } catch (e: Exception) {
-//        logger.error("가맹점 등록 중 오류가 발생했습니다: ${e.message}", e)
-//        call.respond(HttpStatusCode.BadRequest, errorResponse(message = "가맹점 등록 실패: ${e.localizedMessage}"))
-//      }
-//    }
+    post("/regist", {
+      operationId = "store-regist"
+      tags = listOf("가맹점 관리")
+      summary = "가맹점 등록"
+      description = "새로운 가맹점을 등록합니다."
+      securitySchemeNames = listOf("auth-jwt")
+      request {
+        body<StoreRegistModel>(storeRegisterRequest())
+      }
+      response {
+        code(HttpStatusCode.OK, storeDetailResponse())
+        code(HttpStatusCode.BadRequest, errorResponse())
+      }
+    }) {
+      val storeRegistModel = call.receive<StoreRegistModel>()
+      val principal: JWTPrincipal = call.principal()!!
+      val userUuid = principal.payload.getClaim("uUuid").asString()
+      val registStoreUid = storeService.registStore(storeRegistModel, UUID.fromString(userUuid))
+      call.respond(HttpStatusCode.OK, Response(data = storeService.findStore(registStoreUid)))
+    }
+
+    /*
+    * 가맹점 수정
+    * */
+    post("/modify", {
+      operationId = "store-modify"
+      tags = listOf("가맹점 관리")
+      summary = "가맹점 수정"
+      description = "가맹점 정보를 수정합니다."
+      securitySchemeNames = listOf("auth-jwt")
+      request {
+        body<StoreModifyModel>(storeModifyRequest())
+      }
+      response {
+        code(HttpStatusCode.OK, storeDetailResponse())
+        code(HttpStatusCode.BadRequest, errorResponse())
+      }
+    }) {
+      val storeModifyModel = call.receive<StoreModifyModel>()
+      val principal: JWTPrincipal = call.principal()!!
+      val userUuid = principal.payload.getClaim("uUuid").asString()
+      storeService.modifyStore(storeModifyModel, UUID.fromString(userUuid))
+      call.respond(HttpStatusCode.OK, Response(data = storeService.findStore(storeModifyModel.id)))
+    }
 
 
   }
-  
+
 }

@@ -1,13 +1,13 @@
 package io.allink.receipt.api.domain.code
 
 import io.allink.receipt.api.common.bankCodeListResponse
-import io.allink.receipt.api.domain.Response
 import io.allink.receipt.api.common.errorResponse
 import io.allink.receipt.api.common.franchiseCodeListResponse
 import io.allink.receipt.api.common.vendorCodeListResponse
+import io.allink.receipt.api.domain.Response
 import io.github.smiley4.ktoropenapi.get
 import io.ktor.http.*
-import io.ktor.server.response.respond
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 /**

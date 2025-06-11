@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.core.dao.id.UUIDTable
+import org.jetbrains.exposed.v1.javatime.datetime
 import java.time.LocalDateTime
 import java.util.*
 
@@ -24,7 +24,7 @@ import java.util.*
 @Serializable
 @Schema(name = "bzAgencyModel", title = "대리점 정보", description = "대리점 정보를 나타내는 객체, ")
 data class BzAgencyModel(
-  @Schema(title = "고유 아이디", description = "대리점 고유 식별자", requiredMode = RequiredMode.NOT_REQUIRED, readOnly = true)
+  @Schema(title = "고유 아이디", description = "대리점 고유 식별자", readOnly = true)
   override var id: @Contextual UUID?,
   @Schema(title = "대리점명", description = "대리점 이름", requiredMode = RequiredMode.REQUIRED)
   val agencyName: String? = null,
@@ -40,7 +40,7 @@ data class BzAgencyModel(
   val ceoName: String? = null,
   @Schema(title = "대표자 전화번호", description = "대리점 대표자 전화번호")
   val ceoPhone: String? = null,
-  @Schema(title = "담당자", description = "담당자(시스템 사용자)", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "담당자", description = "담당자(시스템 사용자)")
   val staffs: List<BzAgencyAdminModel>? = listOf(),
   @Schema(
     title = "신청서 파일 경로",
@@ -134,23 +134,23 @@ data class BzListAgencyModel(
 @Serializable
 @Schema(name = "bzAgencyAdminModel", title = "대리점 담당자", description = "대리점 담당자 (시스템 사용자)")
 data class BzAgencyAdminModel(
-  @Schema(title = "고유 아이디", description = "담당자 식별자, id 값이 없으면 신규 생성", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "고유 아이디", description = "담당자 식별자, id 값이 없으면 신규 생성")
   override var id: @Contextual UUID? = null,
   @Schema(title = "담당자명", description = "담당자명", requiredMode = RequiredMode.REQUIRED)
   val fullName: String,
   @Schema(title = "전화번호", description = "전화번호: 고유한 값, 전화번호 중복 등록불가", requiredMode = RequiredMode.REQUIRED)
   val phone: String,
-  @Schema(title = "이메일", description = "이메일", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "이메일", description = "이메일")
   val email: String?,
-  @Schema(title = "상태", description = "상태", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "상태", description = "상태")
   val status: AdminStatus,
-  @Schema(title = "등록일시", description = "등록일시", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "등록일시", description = "등록일시")
   val regDate: @Contextual LocalDateTime? = null,
-  @Schema(title = "수정일시", description = "수정일시", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "수정일시", description = "수정일시")
   val modDate: @Contextual LocalDateTime? = null,
-  @Schema(title = "등록인", description = "등록인", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "등록인", description = "등록인")
   val regBy: @Contextual UUID? = null,
-  @Schema(title = "수정인", description = "수정인", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "수정인", description = "수정인")
   val modBy: @Contextual UUID? = null,
 ) : BaseModel<UUID>
 
@@ -197,21 +197,21 @@ object BzAgencyStoreTable : Table("bz_agency_store") {
 @Serializable
 @Schema(name = "bzAgencyFilter", title = "대리점 검색 필터", description = "대리점 검색 필터")
 data class BzAgencyFilter(
-  @Schema(title = "대리점 아이디", description = "대리점 고유아이디, EQ 검색", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "대리점 아이디", description = "대리점 고유아이디, EQ 검색")
   val id: String? = null,
   @Schema(
     title = "사업자 번호",
     description = "사업자 번호, EQ 검색",
     example = "123-45-67890",
-    requiredMode = RequiredMode.NOT_REQUIRED
+    
   )
   val businessNo: String? = null,
-  @Schema(title = "대리점명", description = "Start with 검색", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "대리점명", description = "Start with 검색")
   val agencyName: String? = null,
-  @Schema(title = "상태", description = "EQ 검색", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "상태", description = "EQ 검색")
   val status: AgencyStatus? = null,
   @Schema(
-    title = "정렬", requiredMode = RequiredMode.NOT_REQUIRED, exampleClasses = [Sorter::class], description = """
+    title = "정렬", exampleClasses = [Sorter::class], description = """
     정렬 필드 : id, agencyName, businessNo, latestLoginAt 
   """
   )

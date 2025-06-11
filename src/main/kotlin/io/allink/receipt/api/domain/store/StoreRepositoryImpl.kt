@@ -2,10 +2,13 @@ package io.allink.receipt.api.domain.store
 
 import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.merchant.MerchantGroupTable
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.selectAll
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
+import org.jetbrains.exposed.v1.core.JoinType
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.r2dbc.andWhere
+import org.jetbrains.exposed.v1.r2dbc.select
+import org.jetbrains.exposed.v1.r2dbc.selectAll
 
 /**
  * Package: io.allink.receipt.api.domain.store
@@ -17,7 +20,7 @@ class StoreRepositoryImpl(
   override val table: StoreTable
 ) : StoreRepository {
 
-  override suspend fun findAll(filter: StoreFilter): PagedResult<StoreModel> = query {
+  override suspend fun findAll(filter: StoreFilter): PagedResult<StoreModel> {
     val offset = filter.page.page.minus(1).times(filter.page.pageSize)
     val select = table.selectAll()
 
@@ -45,9 +48,10 @@ class StoreRepositoryImpl(
     val totalCount = select.count().toInt()
     val items = select.limit(filter.page.pageSize)
       .offset(offset.toLong())
+      .map { row: ResultRow -> toModel(row) }
       .toList()
-      .map { toModel(it) }
-    return@query PagedResult(
+
+    return PagedResult(
       items = items,
       currentPage = filter.page.page,
       totalCount = totalCount,
@@ -55,7 +59,7 @@ class StoreRepositoryImpl(
     )
   }
 
-  override suspend fun searchStores(filter: StoreSearchFilter): PagedResult<StoreSearchModel> = query {
+  override suspend fun searchStores(filter: StoreSearchFilter): PagedResult<StoreSearchModel> {
 
     val offset = filter.page.page.minus(1).times(filter.page.pageSize)
     val select = table
@@ -89,15 +93,15 @@ class StoreRepositoryImpl(
     val totalCount = select.count().toInt()
     val items = select.limit(filter.page.pageSize)
       .offset(offset.toLong())
+      .map { row: ResultRow -> toSearchModel(row) }
       .toList()
-      .map { toSearchModel(it) }
-    return@query PagedResult(
+
+    return PagedResult(
       items = items,
       currentPage = filter.page.page,
       totalCount = totalCount,
       totalPages = (totalCount + filter.page.pageSize - 1) / filter.page.pageSize
     )
-
   }
 
   fun toSearchModel(row: ResultRow): StoreSearchModel {

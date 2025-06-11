@@ -3,10 +3,10 @@ package io.allink.receipt.api.domain.merchant
 import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.merchant.batch.TagStatus
 import io.allink.receipt.api.domain.store.StoreService
+import io.allink.receipt.api.repository.TransactionUtil
 import io.allink.receipt.api.util.DateUtil
 import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTimeStrMs
 import io.ktor.server.plugins.*
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest
@@ -19,20 +19,25 @@ class MerchantTagServiceImpl(
   val dynamoDbClient: DynamoDbClient
 ) : MerchantTagService {
 
-  override suspend fun getTags(merchantTagFilter: MerchantTagFilter): PagedResult<SimpleMerchantTagModel> {
-    return merchantTagRepository.findAll(merchantTagFilter)
+  override suspend fun getTags(
+    merchantTagFilter: MerchantTagFilter
+  ): PagedResult<SimpleMerchantTagModel> = TransactionUtil.withTransaction {
+    merchantTagRepository.findAll(merchantTagFilter)
   }
 
-  override suspend fun modifyTag(modify: MerchantTagModifyModel, userUuid: UUID): MerchantTagModel {
+  override suspend fun modifyTag(
+    modify: MerchantTagModifyModel,
+    userUuid: UUID
+  ): MerchantTagModel =
+    TransactionUtil.withTransaction {
 
-    val tagModel = merchantTagRepository.findForUpdate(modify.id)
-    val store = if (modify.storeId != null) {
-      storeService.findStore(modify.storeId) ?: throw NotFoundException("No store found for id ${modify.storeId}")
-    } else {
-      null
-    }
-    val now = DateUtil.nowLocalDateTime()
-    newSuspendedTransaction {
+      val tagModel = merchantTagRepository.findForUpdate(modify.id)
+      val store = if (modify.storeId != null) {
+        storeService.findStore(modify.storeId) ?: throw NotFoundException("No store found for id ${modify.storeId}")
+      } else {
+        null
+      }
+      val now = DateUtil.nowLocalDateTime()
       try {
         if (tagModel != null) {
           merchantTagRepository.update(
@@ -98,15 +103,12 @@ class MerchantTagServiceImpl(
       } catch (e: Exception) {
         throw e
       }
+      getTag(modify.id)
     }
-    return getTag(modify.id)
-  }
 
-  override suspend fun getTag(tagId: String): MerchantTagModel {
+  override suspend fun getTag(tagId: String): MerchantTagModel = TransactionUtil.withTransaction {
     if (tagId.isEmpty()) throw BadRequestException("No tag id provided")
-    return merchantTagRepository.find(tagId) ?: throw NotFoundException("No tag found for id $tagId")
+    merchantTagRepository.find(tagId) ?: throw NotFoundException("No tag found for id $tagId")
   }
-
-
 
 }

@@ -1,18 +1,15 @@
 package io.allink.receipt.api.domain.npoint
 
-import io.allink.receipt.api.domain.BaseFilter
-import io.allink.receipt.api.domain.BaseModel
-import io.allink.receipt.api.domain.Page
-import io.allink.receipt.api.domain.PeriodFilter
-import io.allink.receipt.api.domain.Sorter
+import io.allink.receipt.api.domain.*
+import io.allink.receipt.api.domain.store.SimpleStoreModel
 import io.allink.receipt.api.domain.store.StoreTable
 import io.allink.receipt.api.domain.user.UserTable
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.javatime.datetime
 import java.time.LocalDateTime
 
 /**
@@ -28,12 +25,12 @@ data class NPointPayModel(
   override var id: Long?,
   @Schema(title = "포인트 적립 금액", description = "포인트 적립 금액", requiredMode = RequiredMode.REQUIRED)
   val point: Int?,
-  @Schema(title = "포인트 적립 상태", description = "포인트 적립 연동 결과 값", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "포인트 적립 상태", description = "포인트 적립 연동 결과 값")
   val status: String?,
   @Schema(title = "사용자", description = "포인트 적립 사용자", requiredMode = RequiredMode.REQUIRED)
   val user: NPointUserModel,
   @Schema(title = "가맹점", description = "포인트 제공 가맹점", requiredMode = RequiredMode.REQUIRED)
-  val store: NPointStoreModel,
+  val store: SimpleStoreModel,
   @Schema(title = "적립 케이스", description = "포인트 적립 케이스", example = "리뷰|이벤트", requiredMode = RequiredMode.REQUIRED)
   val provideCase: String,
   @Schema(title = "포인트 거래번호", description = "포인트 거래번호", requiredMode = RequiredMode.REQUIRED)
@@ -65,19 +62,6 @@ data class NPointUserModel(
   val birthday: String?,
   @Schema(title = "닉네임", description = "소셜 연동 닉네임")
   val nickname: String?,
-) : BaseModel<String>
-
-@Serializable
-@Schema(name = "nPointStoreModel", title = "가맹점", description = "가맹점 등록 정보")
-data class NPointStoreModel(
-  @Schema(title = "고유아이디", description = "가맹점 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
-  override var id: String?,
-  @Schema(title = "가맹점명", description = "가맹점명", requiredMode = RequiredMode.REQUIRED)
-  val storeName: String,
-  @Schema(title = "프랜차이즈코드", description = "프랜차이즈 코드")
-  val franchiseCode: String?,
-  @Schema(title = "사업자 등록번호", description = "사업자 등록번호")
-  val businessNo: String?,
 ) : BaseModel<String>
 
 data class NPointTxtHistoryModel(

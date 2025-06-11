@@ -7,16 +7,14 @@ import io.allink.receipt.api.domain.ErrorResponse
 import io.allink.receipt.api.domain.Response
 import io.allink.receipt.api.exception.ApiException
 import io.ktor.http.*
-import io.ktor.serialization.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.request.ContentTransformationException
 import io.ktor.server.response.*
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.MissingFieldException
-import org.jetbrains.exposed.exceptions.ExposedSQLException
-import org.postgresql.util.PSQLException
+import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -27,7 +25,7 @@ fun Application.configureStatusPage() {
 
   install(StatusPages) {
 
-    status(HttpStatusCode.NotFound) {call, status->
+    status(HttpStatusCode.NotFound) { call, status ->
       call.respond(
         status,
         Response(
@@ -39,7 +37,7 @@ fun Application.configureStatusPage() {
       )
     }
 
-    status(HttpStatusCode.Unauthorized) {call, status->
+    status(HttpStatusCode.Unauthorized) { call, status ->
       call.respond(
         status,
         Response(
@@ -51,7 +49,7 @@ fun Application.configureStatusPage() {
       )
     }
 
-    status(HttpStatusCode.MethodNotAllowed) {call, status->
+    status(HttpStatusCode.MethodNotAllowed) { call, status ->
       call.respond(
         status,
         Response(
@@ -63,7 +61,7 @@ fun Application.configureStatusPage() {
       )
     }
 
-    status(HttpStatusCode.UnsupportedMediaType) {call, status->
+    status(HttpStatusCode.UnsupportedMediaType) { call, status ->
       call.respond(
         status,
         Response(
@@ -78,21 +76,25 @@ fun Application.configureStatusPage() {
     exception<JWTDecodeException> { call, _ ->
       call.respond(
         HttpStatusCode.BadRequest,
-        mapOf("error" to "Invalid token format")
+        Response(
+          ErrorResponse(
+            code = "BAD_REQUEST",
+            message = "Invalid token format"
+          )
+        )
       )
     }
 
-    exception<TokenExpiredException> { call, _ ->
-      call.respond(
-        HttpStatusCode.Unauthorized,
-        mapOf("error" to "Token has expired")
-      )
-    }
 
     exception<SignatureVerificationException> { call, _ ->
       call.respond(
-        HttpStatusCode.Forbidden,
-        mapOf("error" to "Invalid token signature")
+        HttpStatusCode.BadRequest,
+        Response(
+          ErrorResponse(
+            code = "BAD_REQUEST",
+            message = "Invalid token format"
+          )
+        )
       )
     }
 
@@ -102,7 +104,7 @@ fun Application.configureStatusPage() {
         HttpStatusCode.BadRequest,
         Response(
           ErrorResponse(
-            code = "400",
+            code = "BAD_REQUEST",
             message = cause.reasons.joinToString()
           )
         )
@@ -111,56 +113,50 @@ fun Application.configureStatusPage() {
 
     exception<TokenExpiredException> { call, cause ->
       call.respond(
-        HttpStatusCode.BadRequest,
+        HttpStatusCode.Unauthorized,
         Response(
           ErrorResponse(
-            code = "401",
+            code = "UNAUTHORIZED",
             message = "Token expired"
           )
         )
       )
     }
 
-    exception<JsonConvertException> { call, cause ->
-      val message = when (val realCause = cause.cause) {
-        is MissingFieldException -> {
-          val fields = realCause.missingFields.joinToString(", ")
-          "Missing required field(s): $fields"
-        }
-        else -> "Invalid JSON format: ${cause.message}"
-      }
+    exception<ContentTransformationException> { call, cause ->
+      logger.error("ContentTransformationException : {}", cause.message, cause)
       call.respond(
         HttpStatusCode.BadRequest,
         Response(
           ErrorResponse(
-            code = "400",
-            message = message
+            code = "BAD_REQUEST",
+            message = "요청 본문이 잘못 됐습니다. 필드를 확인하세요.[${cause.message}]"
           )
         )
       )
     }
 
     exception<BadRequestException> { call, cause ->
-      logger.error("Bad Request : {}", cause.message)
+      logger.error("BadRequestException : {}", cause.message, cause)
+      val rootCause = cause.cause
       call.respond(
         HttpStatusCode.BadRequest,
         Response(
           ErrorResponse(
-            code = "400",
-            message = "Bad Request: ${cause.message}"
+            code = "BAD_REQUEST",
+            message = "Bad Request: ${rootCause?.message?:cause.message}"
           )
         )
       )
     }
 
     exception<ExposedSQLException> { call, cause ->
-      logger.error("Bad Request : {}", cause.message)
-
+      logger.error("ExposedSQLException : {}", cause.message, cause)
       call.respond(
         HttpStatusCode.BadRequest,
         Response(
           ErrorResponse(
-            code = "400",
+            code = "BAD_REQUEST",
             message = "Bad Request: ${cause.message}"
           )
         )
@@ -172,7 +168,7 @@ fun Application.configureStatusPage() {
         HttpStatusCode.NotFound,
         Response(
           ErrorResponse(
-            code = "400",
+            code = "BAD_REQUEST",
             message = "Resource not found [${cause.message}]"
           )
         )
@@ -180,6 +176,7 @@ fun Application.configureStatusPage() {
     }
 
     exception<ApiException> { call, cause ->
+      logger.error("ApiException : {}", cause.message, cause)
       call.respond(
         HttpStatusCode.BadRequest,
         Response(
@@ -194,9 +191,9 @@ fun Application.configureStatusPage() {
     exception<Throwable> { call, cause ->
       logger.error("Unhandled exception", cause)
       call.respond(
-        status = HttpStatusCode.InternalServerError, message = Response<ErrorResponse>(
+        status = HttpStatusCode.InternalServerError, message = Response(
           ErrorResponse(
-            code = "500",
+            code = "INTERNAL_SERVER_ERROR",
             message = "Unknown error"
           )
         )

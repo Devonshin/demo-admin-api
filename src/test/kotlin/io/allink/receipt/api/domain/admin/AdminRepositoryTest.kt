@@ -5,8 +5,7 @@ import io.allink.receipt.api.config.plugin.dataSource
 import io.allink.receipt.api.domain.user.UserStatus
 import io.ktor.server.testing.*
 import kotlinx.serialization.Contextual
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.r2dbc.Database
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.time.LocalDateTime
@@ -28,10 +27,6 @@ class AdminRepositoryTest {
   @AfterAll
   fun destroy() {
     println("Dropping tables and closing database...")
-    // 테이블 삭제 및 데이터베이스 리소스 종료
-    transaction(database) {
-//      SchemaUtils.drop(AdminTable) // 테이블 삭제
-    }
     database.connector().close()
   }
 
@@ -50,7 +45,7 @@ class AdminRepositoryTest {
         loginId = "adminLogin",
         password = "securePassword",
         fullName = "Admin User",
-        role = MasterRole,
+        role = MasterRole(),
         phone = "123456789",
         email = "admin@example.com",
         status = AdminStatus.ACTIVE,
@@ -79,7 +74,7 @@ class AdminRepositoryTest {
         loginId = "updateAdminLogin",
         password = "updateSecurePassword",
         fullName = "update Admin User",
-        role = AgencyStaffRole,
+        role = BzAgencyStaffRole(),
         phone = "211222112",
         email = "update-admin@example.com",
         status = AdminStatus.INACTIVE,

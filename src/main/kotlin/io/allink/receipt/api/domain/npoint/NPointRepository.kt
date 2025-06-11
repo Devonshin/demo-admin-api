@@ -2,16 +2,16 @@ package io.allink.receipt.api.domain.npoint
 
 import io.allink.receipt.api.common.Constant.Companion.AES256_KEY
 import io.allink.receipt.api.domain.PagedResult
+import io.allink.receipt.api.domain.store.SimpleStoreModel
 import io.allink.receipt.api.domain.store.StoreTable
 import io.allink.receipt.api.domain.user.UserTable
 import io.allink.receipt.api.repository.ExposedRepository
 import io.allink.receipt.api.util.AES256Util
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.statements.InsertStatement
-import org.jetbrains.exposed.sql.statements.UpdateStatement
-import kotlin.math.max
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
+import org.jetbrains.exposed.v1.core.statements.UpdateStatement
 
 /**
  * Package: io.allink.receipt.api.domain.point
@@ -41,11 +41,12 @@ interface NPointRepository : ExposedRepository<NPointWaitingTable, Long, NPointP
         birthday = row[UserTable.birthday],
         nickname = AES256Util.decrypt(row[UserTable.nickname], AES256_KEY)
       ),
-      store = NPointStoreModel(
+      store = SimpleStoreModel(
         id = row[StoreTable.id],
         storeName = row[StoreTable.storeName],
         franchiseCode = row[StoreTable.franchiseCode],
-        businessNo = row[StoreTable.businessNo]
+        businessNo = row[StoreTable.businessNo],
+        ceoName = row[StoreTable.ceoName]
       ),
       provideCase = row[table.provideCase].desc,
       pointTrNo = txHistory?.txNo,
@@ -84,7 +85,7 @@ interface NPointRepository : ExposedRepository<NPointWaitingTable, Long, NPointP
   }
 
 
-  override fun toRow(model: NPointPayModel): NPointWaitingTable.(InsertStatement<EntityID<Long>>) -> Unit {
+  override fun toRow(model: NPointPayModel): NPointWaitingTable.(UpdateBuilder<EntityID<Long>>) -> Unit {
     TODO("Not yet implemented")
   }
 

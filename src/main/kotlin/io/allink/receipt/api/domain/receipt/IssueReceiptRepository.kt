@@ -10,13 +10,14 @@ import io.allink.receipt.api.domain.user.UserTable
 import io.allink.receipt.api.domain.user.review.UserPointReviewTable
 import io.allink.receipt.api.repository.ExposedRepository
 import io.allink.receipt.api.util.AES256Util
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.statements.InsertStatement
-import org.jetbrains.exposed.sql.statements.UpdateStatement
+import kotlinx.coroutines.flow.toList
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.JoinType
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
+import org.jetbrains.exposed.v1.core.statements.UpdateStatement
+import org.jetbrains.exposed.v1.r2dbc.andWhere
+import org.jetbrains.exposed.v1.r2dbc.select
 
 /**
  * Package: io.allink.receipt.api.domain.receipt
@@ -44,7 +45,7 @@ interface IssueReceiptRepository : ExposedRepository<IssueReceiptTable, String, 
     TODO("Not yet implemented")
   }
 
-  suspend fun findAll(filter: ReceiptFilter): PagedResult<SimpleIssueReceiptModel> = query {
+  suspend fun findAll(filter: ReceiptFilter): PagedResult<SimpleIssueReceiptModel>  {
 
     val offset = filter.page.page.minus(1).times(filter.page.pageSize)
     val select = table
@@ -127,7 +128,7 @@ interface IssueReceiptRepository : ExposedRepository<IssueReceiptTable, String, 
       .toList()
       .map { toSimpleModel(it) }
 
-    return@query PagedResult(
+    return PagedResult(
       items = items,
       currentPage = filter.page.page,
       totalCount = totalCount,
@@ -146,7 +147,7 @@ interface IssueReceiptRepository : ExposedRepository<IssueReceiptTable, String, 
     it[advertisementId] = model.advertisement?.id
   }
 
-  override fun toRow(model: IssueReceiptModel): IssueReceiptTable.(InsertStatement<EntityID<String>>) -> Unit = {
+  override fun toRow(model: IssueReceiptModel): IssueReceiptTable.(UpdateBuilder<*>) -> Unit = {
     it[storeUid] = model.store?.id
     it[tagId] = model.tag?.id
     it[issueDate] = model.issueDate
@@ -165,7 +166,7 @@ interface IssueReceiptRepository : ExposedRepository<IssueReceiptTable, String, 
         storeName = row[StoreTable.storeName],
         businessNo = row[StoreTable.businessNo],
         franchiseCode = row[StoreTable.franchiseCode],
-        ceoName = row[StoreTable.ceoName]
+        ceoName = row[StoreTable.ceoName],
       ),
       tag = SimpleMerchantTagReceiptModel(
         id = row[MerchantTagTable.id],

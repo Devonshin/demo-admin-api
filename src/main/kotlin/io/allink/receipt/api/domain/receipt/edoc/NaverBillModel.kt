@@ -2,11 +2,11 @@ package io.allink.receipt.api.domain.receipt.edoc
 
 import io.allink.receipt.api.domain.BaseModel
 import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.media.Schema.*
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.javatime.datetime
 import java.time.LocalDateTime
 
 /**

@@ -1,10 +1,12 @@
 package io.allink.receipt.api.domain.login
 
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.update
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.v1.r2dbc.deleteWhere
+import org.jetbrains.exposed.v1.r2dbc.insertAndGetId
+import org.jetbrains.exposed.v1.r2dbc.selectAll
+import org.jetbrains.exposed.v1.r2dbc.update
 import java.util.*
 
 /**
@@ -17,29 +19,29 @@ class LoginInfoRepositoryImpl(
   override val table: LoginInfoTable
 ) : LoginInfoRepository {
 
-  override suspend fun create(model: LoginInfoModel): LoginInfoModel = query {
+  override suspend fun create(model: LoginInfoModel): LoginInfoModel {
     val created = table.insertAndGetId(toRow(model))
     model.id = created.value
-    model
+    return model
   }
 
-  override suspend fun update(model: LoginInfoModel): Int = query {
-    table.update(
+  override suspend fun update(model: LoginInfoModel): Int {
+    return table.update(
       where = { table.id eq model.id!! },
       body = toUpdateRow(model)
     )
   }
 
-  override suspend fun find(id: UUID): LoginInfoModel? = query {
-    table.selectAll().where {
+  override suspend fun find(id: UUID): LoginInfoModel? {
+    return table.selectAll().where {
       table.id eq id
     }.limit(1).map {
       toModel(it)
     }.firstOrNull()
   }
 
-  override suspend fun delete(id: UUID): Int = deleteQuery {
-    table.deleteWhere {
+  override suspend fun delete(id: UUID): Int {
+    return table.deleteWhere {
       table.id eq id
     }
   }

@@ -1,11 +1,10 @@
 package io.allink.receipt.api.domain.code
 
 import io.allink.receipt.api.repository.ExposedRepository
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.statements.InsertStatement
-import org.jetbrains.exposed.sql.statements.UpdateStatement
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
+import org.jetbrains.exposed.v1.core.statements.UpdateStatement
 
 interface ServiceCodeRepository: ExposedRepository<ServiceCodeTable, String, ServiceCodeModel> {
 
@@ -34,7 +33,7 @@ interface ServiceCodeRepository: ExposedRepository<ServiceCodeTable, String, Ser
     TODO("Not yet implemented")
   }
 
-  override fun toRow(model: ServiceCodeModel): ServiceCodeTable.(InsertStatement<EntityID<String>>) -> Unit {
+  override fun toRow(model: ServiceCodeModel): ServiceCodeTable.(UpdateBuilder<*>) -> Unit {
     TODO("Not yet implemented")
   }
 

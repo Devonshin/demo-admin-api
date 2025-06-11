@@ -2,7 +2,7 @@ package io.allink.receipt.api.config.plugin
 
 import dev.hayden.KHealth
 import io.ktor.http.*
-import io.ktor.http.content.TextContent
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.calllogging.*

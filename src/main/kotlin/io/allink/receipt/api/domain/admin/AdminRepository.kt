@@ -2,11 +2,11 @@ package io.allink.receipt.api.domain.admin
 
 import io.allink.receipt.api.repository.ExposedRepository
 import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTime
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.statements.InsertStatement
-import org.jetbrains.exposed.sql.statements.UpdateStatement
+import kotlinx.coroutines.flow.Flow
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
+import org.jetbrains.exposed.v1.core.statements.UpdateStatement
 import java.util.*
 
 /**
@@ -17,7 +17,7 @@ import java.util.*
 
 interface AdminRepository : ExposedRepository<AdminTable, UUID, AdminModel> {
 
-  override fun toRow(model: AdminModel): AdminTable.(InsertStatement<EntityID<UUID>>) -> Unit = {
+  override fun toRow(model: AdminModel): AdminTable.(UpdateBuilder<*>) -> Unit = {
     it[loginId] = model.loginId
     it[password] = model.password
     it[fullName] = model.fullName
@@ -61,7 +61,7 @@ interface AdminRepository : ExposedRepository<AdminTable, UUID, AdminModel> {
     )
   }
 
-  suspend fun findAllByAgencyId(agencyUuid: UUID): List<AdminModel>
+  suspend fun findAllByAgencyId(agencyUuid: UUID): Flow<AdminModel>
 
   suspend fun findByPhone(phone: String): AdminModel?
 

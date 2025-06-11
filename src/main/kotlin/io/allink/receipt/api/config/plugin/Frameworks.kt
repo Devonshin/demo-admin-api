@@ -2,55 +2,24 @@ package io.allink.receipt.api.config.plugin
 
 import StoreServiceImpl
 import com.typesafe.config.ConfigFactory
-import io.allink.receipt.api.domain.admin.AdminRepository
-import io.allink.receipt.api.domain.admin.AdminRepositoryImpl
-import io.allink.receipt.api.domain.admin.AdminService
-import io.allink.receipt.api.domain.admin.AdminServiceImpl
-import io.allink.receipt.api.domain.admin.AdminTable
-import io.allink.receipt.api.domain.agency.bz.BzAgencyRepository
-import io.allink.receipt.api.domain.agency.bz.BzAgencyRepositoryImpl
-import io.allink.receipt.api.domain.agency.bz.BzAgencyService
-import io.allink.receipt.api.domain.agency.bz.BzAgencyServiceImpl
-import io.allink.receipt.api.domain.agency.bz.BzAgencyTable
+import io.allink.receipt.api.domain.admin.*
+import io.allink.receipt.api.domain.agency.bz.*
 import io.allink.receipt.api.domain.code.ServiceCodeRepository
 import io.allink.receipt.api.domain.code.ServiceCodeRepositoryImpl
 import io.allink.receipt.api.domain.code.ServiceCodeTable
 import io.allink.receipt.api.domain.file.FileService
 import io.allink.receipt.api.domain.file.FileServiceImpl
-import io.allink.receipt.api.domain.login.LoginInfoRepository
-import io.allink.receipt.api.domain.login.LoginInfoRepositoryImpl
-import io.allink.receipt.api.domain.login.LoginInfoTable
-import io.allink.receipt.api.domain.login.LoginService
-import io.allink.receipt.api.domain.login.LoginServiceImpl
-import io.allink.receipt.api.domain.merchant.MerchantTagRepository
-import io.allink.receipt.api.domain.merchant.MerchantTagRepositoryImpl
-import io.allink.receipt.api.domain.merchant.MerchantTagService
-import io.allink.receipt.api.domain.merchant.MerchantTagServiceImpl
-import io.allink.receipt.api.domain.merchant.MerchantTagTable
-import io.allink.receipt.api.domain.npoint.NPointRepository
-import io.allink.receipt.api.domain.npoint.NPointRepositoryImpl
-import io.allink.receipt.api.domain.npoint.NPointService
-import io.allink.receipt.api.domain.npoint.NPointServiceImpl
-import io.allink.receipt.api.domain.npoint.NPointWaitingTable
-import io.allink.receipt.api.domain.receipt.IssueReceiptRepository
-import io.allink.receipt.api.domain.receipt.IssueReceiptRepositoryImpl
-import io.allink.receipt.api.domain.receipt.IssueReceiptService
-import io.allink.receipt.api.domain.receipt.IssueReceiptServiceImpl
-import io.allink.receipt.api.domain.receipt.IssueReceiptTable
+import io.allink.receipt.api.domain.login.*
+import io.allink.receipt.api.domain.merchant.*
+import io.allink.receipt.api.domain.npoint.*
+import io.allink.receipt.api.domain.receipt.*
 import io.allink.receipt.api.domain.sns.SMSVerificationServiceImpl
 import io.allink.receipt.api.domain.sns.VerificationService
-import io.allink.receipt.api.domain.store.StoreRepository
-import io.allink.receipt.api.domain.store.StoreRepositoryImpl
-import io.allink.receipt.api.domain.store.StoreService
-import io.allink.receipt.api.domain.store.StoreTable
-import io.allink.receipt.api.domain.user.UserRepository
-import io.allink.receipt.api.domain.user.UserRepositoryImpl
-import io.allink.receipt.api.domain.user.UserService
-import io.allink.receipt.api.domain.user.UserServiceImpl
-import io.allink.receipt.api.domain.user.UserTable
+import io.allink.receipt.api.domain.store.*
+import io.allink.receipt.api.domain.store.npoint.*
+import io.allink.receipt.api.domain.user.*
 import io.ktor.server.application.*
-import io.ktor.server.config.ApplicationConfig
-import io.ktor.server.config.HoconApplicationConfig
+import io.ktor.server.config.*
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -64,7 +33,8 @@ fun Application.configureFrameworks() {
        * Repository
        * */
       single<ApplicationConfig> {
-        val env = System.getenv("KTOR_ENV") ?: "prod"
+        val env = System.getenv("KTOR_ENV") ?: "test"
+        println("KTOR_ENV: $env")
         val baseConfig = ConfigFactory.load("application.conf")
         val envConfig = ConfigFactory.load("application-$env.conf")
         HoconApplicationConfig(envConfig.withFallback(baseConfig))
@@ -106,8 +76,14 @@ fun Application.configureFrameworks() {
       single<BzAgencyRepository> {
         BzAgencyRepositoryImpl(BzAgencyTable)
       }
-      single<FileService>{
-        FileServiceImpl(get(), get(), get())
+      single<NPointStoreRepository>{
+        NPointStoreRepositoryImpl(NPointStoreTable)
+      }
+      single<NPointStoreServiceRepository>{
+        NPointStoreServiceRepositoryImpl(NPointStoreServiceTable)
+      }
+      single<StoreBillingRepository>{
+        StoreBillingRepositoryImpl(StoreBillingTable)
       }
       /**
        * Services
@@ -125,7 +101,7 @@ fun Application.configureFrameworks() {
         UserServiceImpl(get())
       }
       single<StoreService> {
-        StoreServiceImpl(get())
+        StoreServiceImpl(get(), get(), get(), get())
       }
       single<IssueReceiptService> {
         IssueReceiptServiceImpl(get())
@@ -136,8 +112,17 @@ fun Application.configureFrameworks() {
       single<NPointService> {
         NPointServiceImpl(get())
       }
+      single<NPointStoreServiceService> {
+        NPointStoreServiceServiceImpl(get(), get())
+      }
+      single<StoreBillingService> {
+        StoreBillingServiceImpl(get())
+      }
       single<BzAgencyService> {
         BzAgencyServiceImpl(get(), get())
+      }
+      single<FileService>{
+        FileServiceImpl(get(), get(), get())
       }
     })
   }

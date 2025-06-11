@@ -7,10 +7,12 @@ import io.allink.receipt.api.domain.receipt.edoc.NaverBillTable
 import io.allink.receipt.api.domain.store.StoreTable
 import io.allink.receipt.api.domain.user.UserTable
 import io.allink.receipt.api.domain.user.review.UserPointReviewTable
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.alias
-import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.stringLiteral
+import kotlinx.coroutines.flow.firstOrNull
+import org.jetbrains.exposed.v1.core.JoinType
+import org.jetbrains.exposed.v1.core.alias
+import org.jetbrains.exposed.v1.core.stringLiteral
+import org.jetbrains.exposed.v1.r2dbc.andWhere
+import org.jetbrains.exposed.v1.r2dbc.select
 
 /**
  * Package: io.allink.receipt.api.domain.receipt
@@ -22,7 +24,7 @@ class IssueReceiptRepositoryImpl(
   override val table: IssueReceiptTable
 ) : IssueReceiptRepository {
 
-  override suspend fun findByIdAndUserId(userId: String, receiptId: String): IssueReceiptModel? = query {
+  override suspend fun findByIdAndUserId(userId: String, receiptId: String): IssueReceiptModel? {
 
     var edoc = KakaoBillTable.select(
       KakaoBillTable.userId,
@@ -57,7 +59,7 @@ class IssueReceiptRepositoryImpl(
         }
     }
 
-    table
+    return table
       .join(
         MerchantTagTable,
         JoinType.LEFT,

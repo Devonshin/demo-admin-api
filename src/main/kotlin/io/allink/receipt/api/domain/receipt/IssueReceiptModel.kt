@@ -1,10 +1,6 @@
 package io.allink.receipt.api.domain.receipt
 
-import io.allink.receipt.api.domain.BaseFilter
-import io.allink.receipt.api.domain.BaseModel
-import io.allink.receipt.api.domain.Page
-import io.allink.receipt.api.domain.PeriodFilter
-import io.allink.receipt.api.domain.Sorter
+import io.allink.receipt.api.domain.*
 import io.allink.receipt.api.domain.advertisement.AdvertisementTable
 import io.allink.receipt.api.domain.merchant.MerchantTagTable
 import io.allink.receipt.api.domain.store.SimpleStoreModel
@@ -15,8 +11,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.javatime.datetime
 import java.time.LocalDateTime
 import java.util.*
 
@@ -38,7 +34,7 @@ data class IssueReceiptModel(
   val tag: SimpleMerchantTagReceiptModel?,
   @Schema(title = "등록일시", description = "등록일시", example = "2025-04-17 12:00:00", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val issueDate: @Contextual LocalDateTime,
-  @Schema(title = "사용자", description = "사용자", nullable = true, requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "사용자", description = "사용자", nullable = true)
   val user: SimpleUserModel?,
   @Schema(title = "영수증 발행 타입", description = "환불, 결제", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val receiptType: String,
@@ -65,7 +61,7 @@ data class SimpleIssueReceiptModel(
   val tagId: String?,
   @Schema(title = "등록일시", description = "등록일시", example = "2025-04-17 12:00:00", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val issueDate: @Contextual LocalDateTime,
-  @Schema(title = "사용자", description = "사용자", nullable = true, requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "사용자", description = "사용자", nullable = true)
   val user: SimpleUserModel,
   @Schema(title = "영수증 발행 타입", description = "환불, 결제", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val receiptType: String,

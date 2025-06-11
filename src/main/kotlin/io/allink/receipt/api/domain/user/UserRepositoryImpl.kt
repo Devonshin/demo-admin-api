@@ -3,8 +3,9 @@ package io.allink.receipt.api.domain.user
 import io.allink.receipt.api.common.Constant.Companion.AES256_KEY
 import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.util.AES256Util
-import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.selectAll
+import kotlinx.coroutines.flow.toList
+import org.jetbrains.exposed.v1.r2dbc.andWhere
+import org.jetbrains.exposed.v1.r2dbc.selectAll
 
 /**
  * Package: io.allink.receipt.admin.domain.user
@@ -15,7 +16,7 @@ import org.jetbrains.exposed.sql.selectAll
 class UserRepositoryImpl(
   override val table: UserTable
 ) : UserRepository {
-  override suspend fun findAll(filter: UserFilter): PagedResult<UserModel> = query {
+  override suspend fun findAll(filter: UserFilter): PagedResult<UserModel> {
     val offset = filter.page.page.minus(1).times(filter.page.pageSize)
     val select = table.selectAll()
 
@@ -45,7 +46,7 @@ class UserRepositoryImpl(
       .offset(offset.toLong())
       .toList()
       .map { toModel(it) }
-    PagedResult(
+    return PagedResult(
       items = items,
       totalCount = totalCount,
       currentPage = filter.page.page,

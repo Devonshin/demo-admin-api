@@ -1,6 +1,6 @@
 package io.allink.receipt.api.domain.admin
 
-import java.util.UUID
+import java.util.*
 
 interface AdminService {
 

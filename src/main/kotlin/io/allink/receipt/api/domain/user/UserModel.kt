@@ -1,5 +1,6 @@
 package io.allink.receipt.api.domain.user
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.allink.receipt.api.domain.BaseFilter
 import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.domain.Page
@@ -8,8 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.javatime.datetime
 import java.time.LocalDateTime
 
 /**
@@ -43,7 +44,7 @@ data class UserModel(
   @Schema(title = "성별", description = "성별", nullable = false, requiredMode = RequiredMode.REQUIRED, example = "F|M")
   val gender: String?,
   @Schema(title = "CI 값", description = "CI", nullable = false, requiredMode = RequiredMode.REQUIRED, hidden = true)
-  @Transient
+  @JsonIgnore
   val ci: String?,
   @Schema(title = "생년월일", description = "생년월일", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val birthday: String?,
@@ -116,18 +117,18 @@ enum class UserRole {
 @Serializable
 @Schema(title = "사용자 검색 필터", description = "사용자 검색 필터")
 data class UserFilter(
-  @Schema(title = "휴대폰번호", description = "Eq 검색만 가능", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "휴대폰번호", description = "Eq 검색만 가능")
   val phone: String? = null,
-  @Schema(title = "이름", description = "Start with 검색", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "이름", description = "Start with 검색")
   val name: String? = null,
-  @Schema(title = "닉네임", description = "Eq 검색만 가능", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "닉네임", description = "Eq 검색만 가능")
   val nickName: String? = null,
-  @Schema(title = "연령대", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "연령대")
   val age: Age? = null,
-  @Schema(title = "성별", example = "M|F", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "성별", example = "M|F")
   val gender: String? = null,
   @Schema(
-    title = "정렬", requiredMode = RequiredMode.NOT_REQUIRED, exampleClasses = [Sorter::class],
+    title = "정렬", exampleClasses = [Sorter::class],
     description = """정렬 필드 : name, nickname, phone, gender, birthday, localYn, email, role, regDate, joinSocialType"""
   )
   override val sort: List<Sorter>? = null,
@@ -138,8 +139,8 @@ data class UserFilter(
 @Serializable
 @Schema(title = "나이 대")
 data class Age(
-  @Schema(title = "시작 출생년도", description = "종료 출생년보다 빠른 값", example = "2002", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "시작 출생년도", description = "종료 출생년보다 빠른 값", example = "2002")
   val from: String,
-  @Schema(title = "종료 출생년도", example = "2022", requiredMode = RequiredMode.NOT_REQUIRED)
+  @Schema(title = "종료 출생년도", example = "2022")
   val to: String
 )
