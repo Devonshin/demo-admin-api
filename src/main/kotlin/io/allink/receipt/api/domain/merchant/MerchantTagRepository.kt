@@ -86,8 +86,8 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
     it[modBy] = model.modBy
   }
 
-  override suspend fun find(id: String): MerchantTagModel? = TransactionUtil.withTransaction {
-    table
+  override suspend fun find(id: String): MerchantTagModel? {
+    return table
       .join(
         StoreTable,
         JoinType.LEFT,

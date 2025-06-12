@@ -24,6 +24,7 @@ class BzAgencyServiceImpl(
 ) : BzAgencyService {
 
   val logger: Logger = org.slf4j.LoggerFactory.getLogger(this.javaClass.name)
+
   override suspend fun getAgencies(filter: BzAgencyFilter): PagedResult<BzListAgencyModel> = TransactionUtil.withTransaction {
     bzAgencyRepository.findAllByFilter(filter)
   }

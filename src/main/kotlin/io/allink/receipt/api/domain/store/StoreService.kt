@@ -15,4 +15,6 @@ interface StoreService {
   suspend fun findSearchStores(filter: StoreSearchFilter): PagedResult<StoreSearchModel>
   suspend fun registStore(storeRegistModel: StoreRegistModel, userUuid: UUID): String
   suspend fun modifyStore(storeModifyModel: StoreModifyModel, userUuid: UUID)
+  suspend fun findAllAgencyStore(filter: StoreFilter, agencyId: UUID): PagedResult<StoreModel>
+  suspend fun findStore(id: String, agencyId: UUID): StoreModel?
 }

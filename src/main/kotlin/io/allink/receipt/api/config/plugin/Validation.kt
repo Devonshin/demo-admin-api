@@ -66,7 +66,7 @@ fun Application.configureValidation() {
     validate<StoreRegistModel> { storeRegistModel ->
       if (storeRegistModel.businessNo == null || storeRegistModel.businessNo.isEmpty()) {
         ValidationResult.Invalid("businessNo is required")
-      } else if (storeRegistModel.storeName == null || storeRegistModel.storeName.isEmpty()) {
+      } else if (storeRegistModel.storeName.isEmpty()) {
         ValidationResult.Invalid("storeName is required")
       } else ValidationResult.Valid
     }
@@ -74,9 +74,9 @@ fun Application.configureValidation() {
     validate<StoreModifyModel> { storeModifyModel ->
       if (storeModifyModel.businessNo == null || storeModifyModel.businessNo.isEmpty()) {
         ValidationResult.Invalid("businessNo is required")
-      } else if (storeModifyModel.id == null || storeModifyModel.id.isEmpty()) {
+      } else if (storeModifyModel.id.isEmpty()) {
         ValidationResult.Invalid("id is required")
-      } else if (storeModifyModel.storeName == null || storeModifyModel.storeName.isEmpty()) {
+      } else if (storeModifyModel.storeName.isEmpty()) {
         ValidationResult.Invalid("storeName is required")
       } else ValidationResult.Valid
     }

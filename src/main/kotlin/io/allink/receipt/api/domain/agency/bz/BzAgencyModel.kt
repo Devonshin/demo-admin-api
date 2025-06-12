@@ -45,25 +45,25 @@ data class BzAgencyModel(
   @Schema(
     title = "신청서 파일 경로",
     description = "값의 유무에 따라 대리점 신청서 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
-    example = "/agencies/c7f0d23e-eceb-4434-b489-668c0b61a7f9/applicationFile.pdf | null"
+    example = "/agencies/c7f0d23e-eceb-4434-b489-668c0b61a7f9/application.pdf | null"
   )
   val applicationFilePath: String? = null,
   @Schema(
     title = "사업자 등록증 파일 경로",
     description = "값의 유무에 따라 사업자 등록증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
-    example = "/agencies/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bzFile.pdf | null"
+    example = "/agencies/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bz.pdf | null"
   )
   val bzFilePath: String? = null,
   @Schema(
     title = "대표자 신분증 파일 경로",
     description = "값의 유무에 따라 대표자 신분증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
-    example = "/agencies/c7f0d23e-eceb-4434-b489-668c0b61a7f9/idFile.pdf"
+    example = "/agencies/c7f0d23e-eceb-4434-b489-668c0b61a7f9/id.pdf"
   )
   val idFilePath: String? = null,
   @Schema(
     title = "통장사본 파일 경로",
     description = "값의 유무에 따라 통장 사본 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
-    example = "/agencies/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bankFile.pdf | null"
+    example = "/agencies/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bank.pdf | null"
   )
   val bankFilePath: String? = null,
   @Schema(title = "영수증 제휴 여부", description = "영수증 제휴 상태", example = "true|false")
@@ -127,7 +127,7 @@ data class BzListAgencyModel(
   val businessNo: String?,
   @Schema(title = "상태", description = "대리점 상태", requiredMode = RequiredMode.REQUIRED, example = "ACTIVE, INACTIVE")
   val status: AgencyStatus,
-  val latestLoginAt: @Contextual LocalDateTime?
+  val latestLoginAt: @Contextual LocalDateTime? = null
 ) : BaseModel<UUID>
 
 
@@ -186,14 +186,6 @@ object BzAgencyTable : UUIDTable(name = "bz_agency", columnName = "uuid") {
   val modBy = uuid(name = "mod_by").nullable()
 }
 
-object BzAgencyStoreTable : Table("bz_agency_store") {
-  val id = reference("bz_agency_uuid", BzAgencyTable.id)
-  val storeId = varchar(name = "store_uid", length = 36)
-  val regBy = uuid(name = "reg_by")
-  val regDate = datetime(name = "reg_date").default(nowLocalDateTime()).nullable()
-  override val primaryKey = PrimaryKey(id, storeId, name = "pk_bz_agency_store")
-}
-
 @Serializable
 @Schema(name = "bzAgencyFilter", title = "대리점 검색 필터", description = "대리점 검색 필터")
 data class BzAgencyFilter(
@@ -218,6 +210,12 @@ data class BzAgencyFilter(
   override val sort: List<Sorter>? = null,
 ) : BaseFilter
 
+@Schema(
+  name = "agencyStatus",
+  title = "상태코드",
+  description = "상태값",
+  example = "INITIAL: 초기 등록, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제"
+)
 enum class AgencyStatus(val desc : String) {
   INITIAL("초기 등록"),
   PENDING("생성 중"),

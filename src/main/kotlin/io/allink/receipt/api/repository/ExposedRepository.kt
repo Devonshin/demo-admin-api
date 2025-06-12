@@ -23,6 +23,7 @@ object TransactionUtil {
       addLogger(StdOutSqlLogger)
       block()
     }
+
   suspend fun <T> withTransactionReturn(block: suspend () -> T): T {
     return suspendTransaction (Dispatchers.IO) {
       addLogger(StdOutSqlLogger)

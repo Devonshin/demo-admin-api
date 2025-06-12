@@ -1,14 +1,20 @@
 package io.allink.receipt.api.domain.store
 
 import io.allink.receipt.api.domain.PagedResult
+import io.allink.receipt.api.domain.agency.bz.BzAgencyTable
 import io.allink.receipt.api.domain.merchant.MerchantGroupTable
+import io.allink.receipt.api.domain.store.npoint.NPointStoreTable
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.flow.toList
 import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.SortOrder
+import org.jetbrains.exposed.v1.r2dbc.Query
 import org.jetbrains.exposed.v1.r2dbc.andWhere
 import org.jetbrains.exposed.v1.r2dbc.select
 import org.jetbrains.exposed.v1.r2dbc.selectAll
+import java.util.UUID
 
 /**
  * Package: io.allink.receipt.api.domain.store
@@ -20,13 +26,28 @@ class StoreRepositoryImpl(
   override val table: StoreTable
 ) : StoreRepository {
 
-  override suspend fun findAll(filter: StoreFilter): PagedResult<StoreModel> {
-    val offset = filter.page.page.minus(1).times(filter.page.pageSize)
+  override suspend fun findAll(filter: StoreFilter, bzAgencyUuid: UUID): PagedResult<StoreModel> {
     val select = table.selectAll()
+    select.andWhere { table.bzAgencyId eq bzAgencyUuid }
+    val (totalCount, items) = select(filter, select)
 
+    return PagedResult(
+      items = items,
+      currentPage = filter.page.page,
+      totalCount = totalCount,
+      totalPages = (totalCount + filter.page.pageSize - 1) / filter.page.pageSize
+    )
+  }
+
+  private suspend fun select(
+    filter: StoreFilter,
+    select: Query
+  ): Pair<Int, List<StoreModel>> {
+    val offset = filter.page.page.minus(1).times(filter.page.pageSize)
     filter.name?.let { name ->
       select.andWhere { table.storeName like "$name%" }
     }
+
     filter.franchiseCode?.let {
       select.andWhere { table.franchiseCode eq it }
     }
@@ -50,13 +71,35 @@ class StoreRepositoryImpl(
       .offset(offset.toLong())
       .map { row: ResultRow -> toModel(row) }
       .toList()
+    return Pair(totalCount, items)
+  }
 
+  override suspend fun findAll(filter: StoreFilter): PagedResult<StoreModel> {
+    val select = table.selectAll()
+    val (totalCount, items) = select(filter, select)
     return PagedResult(
       items = items,
       currentPage = filter.page.page,
       totalCount = totalCount,
       totalPages = (totalCount + filter.page.pageSize - 1) / filter.page.pageSize
     )
+  }
+
+
+  override suspend fun find(id: String, agencyId: UUID): StoreModel? {
+    return table
+      .join(StoreBillingTable, JoinType.LEFT, table.id, StoreBillingTable.storeUid)
+      .join(NPointStoreTable, JoinType.LEFT, table.id, NPointStoreTable.id)
+      .join(BzAgencyTable, JoinType.LEFT, table.bzAgencyId, BzAgencyTable.id)
+      .selectAll()
+      .where { table.id eq id }
+      .andWhere { table.bzAgencyId eq agencyId }
+      .orderBy(
+        StoreBillingTable.id, SortOrder.DESC
+      )
+      .limit(1)
+      .map { toModel(it) }
+      .singleOrNull()
   }
 
   override suspend fun searchStores(filter: StoreSearchFilter): PagedResult<StoreSearchModel> {

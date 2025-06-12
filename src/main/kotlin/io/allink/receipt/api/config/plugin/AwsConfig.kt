@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import java.net.URI
+import kotlin.math.log
 
 /**
  * Package: io.allink.receipt.api.config.plugin
@@ -55,14 +56,15 @@ fun localDynamoDbClient(): DynamoDbClient {
 }
 
 fun s3Client(config: ApplicationConfig): S3Client {
+  val accessKeyId = ${?AWS_ACCESS_KEY_ID}.property("aws.accessKeyId").getString()
+  val secretKey = ${?AWS_SECRET_KEY}.property("aws.secretKey").getString()
+
+  logger.info("Connecting to AWS S3 with accessKeyId $accessKeyId")
   return S3Client.builder()
     .region(Region.AP_NORTHEAST_2)
     .credentialsProvider(
       StaticCredentialsProvider.create(
-        AwsBasicCredentials.create(
-          config.property("aws.accessKeyId").getString(),
-          config.property("aws.secretKey").getString()
-        )
+        AwsBasicCredentials.create(accessKeyId,secretKey)
       )
     )
     .build()

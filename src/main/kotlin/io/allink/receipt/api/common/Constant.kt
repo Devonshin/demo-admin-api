@@ -1,6 +1,7 @@
 package io.allink.receipt.api.common
 
 import io.ktor.http.*
+import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
 
 /**
@@ -43,6 +44,11 @@ class Constant {
   }
 }
 
+@Schema(
+  title = "상태코드",
+  description = "상태값",
+  example = "NORMAL,ACTIVE: 정상, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제"
+)
 enum class StatusCode(
   val value: String
 ) {
@@ -53,11 +59,16 @@ enum class StatusCode(
   DELETED("삭제")
 }
 
+@Schema(
+  title = "상태코드",
+  description = "상태값",
+  example = "FAIL: 결제실패, COMPLETE: 결제완료, PENDING: 결제대기, CANCELED: 결제취소"
+)
 enum class BillingStatusCode(
   val value: String
 ) {
   PENDING("대기"),
   COMPLETE("완료"),
-  CANCELD("취소"),
+  CANCELED("취소"),
   FAIL("결제실패"),
 }

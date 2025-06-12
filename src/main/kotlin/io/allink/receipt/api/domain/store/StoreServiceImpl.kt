@@ -3,6 +3,8 @@ import io.allink.receipt.api.common.Constant.Companion.ERECEIPT
 import io.allink.receipt.api.common.Constant.Companion.REVIEWPT
 import io.allink.receipt.api.common.StatusCode
 import io.allink.receipt.api.domain.PagedResult
+import io.allink.receipt.api.domain.agency.bz.AgencyStatus
+import io.allink.receipt.api.domain.agency.bz.BzListAgencyModel
 import io.allink.receipt.api.domain.store.*
 import io.allink.receipt.api.domain.store.npoint.NPointStoreModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreRepository
@@ -30,6 +32,12 @@ class StoreServiceImpl(
 
   val logger: Logger = LoggerFactory.getLogger(StoreServiceImpl::class.java)
 
+  override suspend fun findAllAgencyStore(
+    filter: StoreFilter,
+    agencyId: UUID
+  ): PagedResult<StoreModel> = TransactionUtil.withTransaction {
+    storeRepository.findAll(filter, agencyId)
+  }
   override suspend fun findAllStore(
     filter: StoreFilter
   ): PagedResult<StoreModel> = TransactionUtil.withTransaction {
@@ -37,6 +45,12 @@ class StoreServiceImpl(
   }
 
   override suspend fun findStore(id: String): StoreModel? = TransactionUtil.withTransaction {
+    storeRepository.find(id)?.copy(
+      npointStoreServices = nPointStoreServiceService.getStoreServices(id)
+    )
+  }
+
+  override suspend fun findStore(id: String, agencyId: UUID): StoreModel? = TransactionUtil.withTransaction {
     storeRepository.find(id)?.copy(
       npointStoreServices = nPointStoreServiceService.getStoreServices(id)
     )
@@ -60,12 +74,17 @@ class StoreServiceImpl(
         return@let
       }
 
+      val storeBilling = storeRegistModel.storeBilling?:throw BadRequestException("결제 정보 데이터가 필요합니다")
+      if (storeBilling.tokenUuid.isEmpty()) {
+        throw BadRequestException("결제 토큰이 유효하지 않습니다. tokenUuid")
+      }
+
       val now = DateUtil.nowLocalDateTime()
       val yyMMddHHmm =
         DateUtil.nowLocalDateTimeFormat(now).replace("\\D".toRegex(), "").substring(2, 12)
+
       val registeredServices =
         nPointStoreServiceService.registNPointStoreReviewService(services, storeUid, userUuid, yyMMddHHmm, now)
-      val storeBilling = storeRegistModel.storeBilling?:throw BadRequestException("Store billing is required")
       var totalAmount = 0
       var rewardPoint = 0
       for (registeredService in registeredServices) {
@@ -212,6 +231,12 @@ class StoreServiceImpl(
     email = storeRegistModel.email,
     status = storeRegistModel.status,
     couponAdYn = storeRegistModel.couponAdYn,
+    bzAgency = BzListAgencyModel(
+      id = storeRegistModel.bzAgencyId?.let { UUID.fromString(it) },
+      agencyName = null,
+      businessNo = null,
+      status = AgencyStatus.ACTIVE,
+    ),
     regDate = DateUtil.nowLocalDateTime(),
     regBy = userUuid
   )
@@ -237,6 +262,12 @@ class StoreServiceImpl(
     email = storeModifyModel.email,
     status = storeModifyModel.status,
     couponAdYn = storeModifyModel.couponAdYn,
+    bzAgency = BzListAgencyModel(
+      id = storeModifyModel.bzAgencyId?.let { UUID.fromString(it) },
+      agencyName = null,
+      businessNo = null,
+      status = AgencyStatus.ACTIVE,
+    ),
     modDate = DateUtil.nowLocalDateTime(),
     modBy = userUuid
   )

@@ -1,7 +1,8 @@
 package io.allink.receipt.api.domain.store
 
-import io.allink.receipt.api.common.BillingStatusCode
 import io.allink.receipt.api.domain.PagedResult
+import io.allink.receipt.api.domain.agency.bz.BzAgencyTable
+import io.allink.receipt.api.domain.agency.bz.BzListAgencyModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreTable
 import io.allink.receipt.api.repository.ExposedRepository
@@ -17,6 +18,7 @@ import org.jetbrains.exposed.v1.r2dbc.andWhere
 import org.jetbrains.exposed.v1.r2dbc.insert
 import org.jetbrains.exposed.v1.r2dbc.selectAll
 import org.jetbrains.exposed.v1.r2dbc.update
+import java.util.UUID
 
 /**
  * Package: io.allink.receipt.api.domain.store
@@ -28,9 +30,94 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
   override val table: StoreTable
 
   suspend fun findAll(filter: StoreFilter): PagedResult<StoreModel>
+  suspend fun findAll(filter: StoreFilter, bzAgencyUuid: UUID): PagedResult<StoreModel>
 
   override fun toModel(row: ResultRow): StoreModel {
-    return Companion.toModel(row)
+
+    val storeBilling = if (row[StoreBillingTable.id] != null) {
+      StoreBillingModel(
+        id = row[StoreBillingTable.id].value,
+        storeUid = row[StoreBillingTable.storeUid],
+        storeServiceSeq = row[StoreBillingTable.storeServiceSeq],
+        tokenUuid = row[StoreBillingTable.tokenUuid],
+        status = row[StoreBillingTable.status],
+        billingAmount = row[StoreBillingTable.billingAmount],
+        bankCode = row[StoreBillingTable.bankCode],
+        bankAccountNo = row[StoreBillingTable.bankAccountNo],
+        bankAccountName = row[StoreBillingTable.bankAccountName],
+        regDate = row[StoreBillingTable.regDate],
+        regBy = row[StoreBillingTable.regBy]
+      )
+    } else null
+    val npointStore = if (row[NPointStoreTable.id] != null) {
+      NPointStoreModel(
+        id = row[NPointStoreTable.id],
+        reservedPoints = row[NPointStoreTable.reservedPoints],
+        reviewPoints = row[NPointStoreTable.reviewPoints],
+        cumulativePoints = row[NPointStoreTable.cumulativePoints],
+        regularPaymentAmounts = row[NPointStoreTable.regularPaymentAmounts],
+        status = row[NPointStoreTable.status],
+        serviceStartAt = row[NPointStoreTable.serviceStartAt],
+        serviceEndAt = row[NPointStoreTable.serviceEndAt],
+        pointRenewalType = row[NPointStoreTable.pointRenewalType],
+        regDate = row[NPointStoreTable.regDate],
+        modDate = row[NPointStoreTable.modDate],
+        regBy = row[NPointStoreTable.regBy],
+        modBy = row[NPointStoreTable.modBy]
+      )
+    } else null
+
+    val bzAgency = if (row[BzAgencyTable.id] != null) {
+      BzListAgencyModel(
+        id = row[BzAgencyTable.id].value,
+        agencyName = row[BzAgencyTable.agencyName],
+        businessNo = row[BzAgencyTable.businessNo],
+        status = row[BzAgencyTable.status],
+      )
+    } else null
+
+    return StoreModel(
+      id = row[table.id],
+      storeName = row[table.storeName],
+      zoneCode = row[table.zoneCode],
+      addr1 = row[table.addr1],
+      addr2 = row[table.addr2],
+      deleteDate = row[table.deleteDate],
+      franchiseCode = row[table.franchiseCode],
+      mapUrl = row[table.mapUrl],
+      lat = row[table.lat],
+      lon = row[table.lon],
+      tel = row[table.tel],
+      mobile = row[table.mobile],
+      managerName = row[table.managerName],
+      siteLink = row[table.siteLink],
+      workType = row[table.workType],
+      businessNo = row[table.businessNo],
+      ceoName = row[table.ceoName],
+      businessType = row[table.businessType],
+      eventType = row[table.eventType],
+      email = row[table.email],
+      businessNoLaw = row[table.businessNoLaw],
+      storeType = row[table.storeType],
+      iconUrl = row[table.iconUrl],
+      logoUrl = row[table.logoUrl],
+      receiptWidthInch = row[table.receiptWidthInch],
+      status = row[table.status],
+      partnerLoginId = row[table.partnerLoginId],
+      partnerLoginPassword = null,
+      couponAdYn = row[table.couponAdYn],
+      applicationFilePath = row[table.applicationFilePath],
+      bzFilePath = row[table.bzFilePath],
+      idFilePath = row[table.idFilePath],
+      bankFilePath = row[table.bankFilePath],
+      storeBilling = storeBilling,
+      nPointStore = npointStore,
+      bzAgency = bzAgency,
+      regBy = row[table.regBy],
+      modBy = row[table.modBy],
+      regDate = row[table.regDate],
+      modDate = row[table.modDate],
+    )
   }
 
   override fun toRow(model: StoreModel): StoreTable.(UpdateBuilder<*>) -> Unit = {
@@ -61,10 +148,15 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
     it[receiptWidthInch] = model.receiptWidthInch
     it[partnerLoginId] = model.partnerLoginId
     it[partnerLoginPassword] = model.partnerLoginPassword
+    it[applicationFilePath] = model.applicationFilePath
+    it[bzFilePath] = model.bzFilePath
+    it[idFilePath] = model.idFilePath
+    it[bankFilePath] = model.bankFilePath
     it[regDate] = model.regDate
     it[regBy] = model.regBy
     it[deleteDate] = model.deleteDate
     it[couponAdYn] = model.couponAdYn
+    it[bzAgencyId] = model.bzAgency?.id
   }
 
   override fun toUpdateRow(model: StoreModel): StoreTable.(UpdateStatement) -> Unit = {
@@ -94,10 +186,15 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
     it[receiptWidthInch] = model.receiptWidthInch
     it[partnerLoginId] = model.partnerLoginId
     it[partnerLoginPassword] = model.partnerLoginPassword
+    it[applicationFilePath] = model.applicationFilePath
+    it[bzFilePath] = model.bzFilePath
+    it[idFilePath] = model.idFilePath
+    it[bankFilePath] = model.bankFilePath
     it[modDate] = model.modDate
     it[modBy] = model.modBy
     it[deleteDate] = model.deleteDate
     it[couponAdYn] = model.couponAdYn
+    it[bzAgencyId] = model.bzAgency?.id
   }
 
   //  가맹점 등록
@@ -119,6 +216,7 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
     return table
       .join(StoreBillingTable, JoinType.LEFT, table.id, StoreBillingTable.storeUid)
       .join(NPointStoreTable, JoinType.LEFT, table.id, NPointStoreTable.id)
+      .join(BzAgencyTable, JoinType.LEFT, table.bzAgencyId, BzAgencyTable.id)
       .selectAll()
       .where { table.id eq id }
       .orderBy(
@@ -150,73 +248,6 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
       }
     }
 
-  companion object {
-    fun toModel(row: ResultRow): StoreModel {
-      return StoreModel(
-        id = row[StoreTable.id],
-        storeName = row[StoreTable.storeName],
-        zoneCode = row[StoreTable.zoneCode],
-        addr1 = row[StoreTable.addr1],
-        addr2 = row[StoreTable.addr2],
-        deleteDate = row[StoreTable.deleteDate],
-        franchiseCode = row[StoreTable.franchiseCode],
-        mapUrl = row[StoreTable.mapUrl],
-        lat = row[StoreTable.lat],
-        lon = row[StoreTable.lon],
-        tel = row[StoreTable.tel],
-        mobile = row[StoreTable.mobile],
-        managerName = row[StoreTable.managerName],
-        siteLink = row[StoreTable.siteLink],
-        workType = row[StoreTable.workType],
-        businessNo = row[StoreTable.businessNo],
-        ceoName = row[StoreTable.ceoName],
-        businessType = row[StoreTable.businessType],
-        eventType = row[StoreTable.eventType],
-        email = row[StoreTable.email],
-        businessNoLaw = row[StoreTable.businessNoLaw],
-        storeType = row[StoreTable.storeType],
-        iconUrl = row[StoreTable.iconUrl],
-        logoUrl = row[StoreTable.logoUrl],
-        receiptWidthInch = row[StoreTable.receiptWidthInch],
-        status = row[StoreTable.status],
-        partnerLoginId = row[StoreTable.partnerLoginId],
-        partnerLoginPassword = row[StoreTable.partnerLoginPassword],
-        regBy = row[StoreTable.regBy],
-        modBy = row[StoreTable.modBy],
-        regDate = row[StoreTable.regDate],
-        modDate = row[StoreTable.modDate],
-        couponAdYn = row[StoreTable.couponAdYn],
-        storeBilling = StoreBillingModel(
-          id = row[StoreBillingTable.id].value,
-          storeUid = row[StoreBillingTable.storeUid],
-          storeServiceSeq = row[StoreBillingTable.storeServiceSeq],
-          tokenUuid = row[StoreBillingTable.tokenUuid],
-          status = row[StoreBillingTable.status],
-          billingAmount = row[StoreBillingTable.billingAmount],
-          bankCode = row[StoreBillingTable.bankCode],
-          bankAccountNo = row[StoreBillingTable.bankAccountNo],
-          bankAccountName = row[StoreBillingTable.bankAccountName],
-          regDate = row[StoreBillingTable.regDate],
-          regBy = row[StoreBillingTable.regBy]
-        ),
-        nPointStore = NPointStoreModel(
-          id = row[NPointStoreTable.id],
-          reservedPoints = row[NPointStoreTable.reservedPoints],
-          reviewPoints = row[NPointStoreTable.reviewPoints],
-          cumulativePoints = row[NPointStoreTable.cumulativePoints],
-          regularPaymentAmounts = row[NPointStoreTable.regularPaymentAmounts],
-          status = row[NPointStoreTable.status],
-          serviceStartAt = row[NPointStoreTable.serviceStartAt],
-          serviceEndAt = row[NPointStoreTable.serviceEndAt],
-          pointRenewalType = row[NPointStoreTable.pointRenewalType],
-          regDate = row[NPointStoreTable.regDate],
-          modDate = row[NPointStoreTable.modDate],
-          regBy = row[NPointStoreTable.regBy],
-          modBy = row[NPointStoreTable.modBy]
-        )
-      )
-    }
-  }
-
   suspend fun searchStores(filter: StoreSearchFilter): PagedResult<StoreSearchModel>
+  suspend fun find(id: String, agencyId: UUID): StoreModel?
 }

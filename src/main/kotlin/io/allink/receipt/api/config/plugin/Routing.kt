@@ -23,6 +23,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sse.*
 import io.ktor.sse.*
 import org.koin.ktor.ext.get
+import java.lang.Thread.sleep
 
 fun Application.configureRouting() {
 
@@ -55,11 +56,13 @@ fun Application.configureRouting() {
       merchantTagRoutes(get())
       pointRoutes(get())
       agencyRoutes(get())
+      fileRoutes(get())
     }
-    fileRoutes(get())
 
     sse("/hello") {
       send(ServerSentEvent("world"))
+      sleep(1000)
+      send(ServerSentEvent("world2"))
     }
   }
 }

@@ -190,11 +190,12 @@ fun Application.configureStatusPage() {
 
     exception<Throwable> { call, cause ->
       logger.error("Unhandled exception", cause)
+      val rootCause = cause.cause
       call.respond(
         status = HttpStatusCode.InternalServerError, message = Response(
           ErrorResponse(
             code = "INTERNAL_SERVER_ERROR",
-            message = "Unknown error"
+            message = "${rootCause?.message?:cause.message}"
           )
         )
       )

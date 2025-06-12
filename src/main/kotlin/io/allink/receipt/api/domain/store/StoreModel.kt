@@ -1,8 +1,9 @@
 package io.allink.receipt.api.domain.store
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import io.allink.receipt.api.common.StatusCode
 import io.allink.receipt.api.domain.*
+import io.allink.receipt.api.domain.agency.bz.BzAgencyTable
+import io.allink.receipt.api.domain.agency.bz.BzListAgencyModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceModifyModel
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.javatime.datetime
 import java.time.LocalDateTime
@@ -72,9 +74,10 @@ data class StoreModel(
   @Schema(title = "영수증 너비 인치", description = "영수증 너비 인치")
   val receiptWidthInch: String? = null,
   @Schema(
+    name = "storeStatus",
     title = "가맹점 상태",
     description = "가맹점 상태코드",
-    example = "ACTIVE",
+    example = "ACTIVE,NORMAL: 정상, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제",
     requiredMode = RequiredMode.REQUIRED,
     allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"]
   )
@@ -82,8 +85,32 @@ data class StoreModel(
   @Schema(title = "가맹점 로그인 아이디", description = "가맹점 로그인 아이디")
   val partnerLoginId: String? = null,
   @Schema(title = "가맹점 로그인 패스워드", description = "가맹점 로그인 패스워드", hidden = true)
-  @JsonIgnore
+  @Transient
   val partnerLoginPassword: String? = null,
+  @Schema(
+    title = "신청서 파일 경로",
+    description = "값의 유무에 따라 대리점 신청서 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/application.pdf | null"
+  )
+  val applicationFilePath: String? = null,
+  @Schema(
+    title = "사업자 등록증 파일 경로",
+    description = "값의 유무에 따라 사업자 등록증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bz.pdf | null"
+  )
+  val bzFilePath: String? = null,
+  @Schema(
+    title = "대표자 신분증 파일 경로",
+    description = "값의 유무에 따라 대표자 신분증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/id.pdf"
+  )
+  val idFilePath: String? = null,
+  @Schema(
+    title = "통장사본 파일 경로",
+    description = "값의 유무에 따라 통장 사본 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bank.pdf | null"
+  )
+  val bankFilePath: String? = null,
   @Schema(title = "포인트 가맹점 정보", description = "포인트 가맹점 정보")
   val nPointStore: NPointStoreModel? = null,
   @Schema(title = "등록일시", description = "등록일시", example = "2025-04-17 12:00:00.213123")
@@ -102,6 +129,8 @@ data class StoreModel(
   val couponAdYn: Boolean? = false,
   @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보")
   val storeBilling: StoreBillingModel? = null,
+  @Schema(title = "가맹점 영업 대리점", description = "해당 가맹점의 영업 대리점")
+  val bzAgency: BzListAgencyModel? = null,
 ) : BaseModel<String>
 
 @Serializable
@@ -176,10 +205,35 @@ data class StoreRegistModel(
   @Schema(title = "이메일", description = "이메일")
   val email: String? = null,
   @Schema(
+    title = "신청서 파일 경로",
+    description = "값의 유무에 따라 대리점 신청서 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/application.pdf | null"
+  )
+  val applicationFilePath: String? = null,
+  @Schema(
+    title = "사업자 등록증 파일 경로",
+    description = "값의 유무에 따라 사업자 등록증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bz.pdf | null"
+  )
+  val bzFilePath: String? = null,
+  @Schema(
+    title = "대표자 신분증 파일 경로",
+    description = "값의 유무에 따라 대표자 신분증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/id.pdf"
+  )
+  val idFilePath: String? = null,
+  @Schema(
+    title = "통장사본 파일 경로",
+    description = "값의 유무에 따라 통장 사본 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bank.pdf | null"
+  )
+  val bankFilePath: String? = null,
+  @Schema(
+    name = "storeStatus",
     title = "가맹점 상태",
     description = "가맹점 상태코드",
-    example = "ACTIVE",
     requiredMode = RequiredMode.REQUIRED,
+    example = "ACTIVE,NORMAL: 정상, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제",
     allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"]
   )
   val status: StatusCode? = null,
@@ -189,6 +243,8 @@ data class StoreRegistModel(
   val couponAdYn: Boolean? = false,
   @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보")
   val storeBilling: StoreBillingRegistModel? = null,
+  @Schema(title = "가맹점 영업 대리점 고유아이디", description = "해당 가맹점의 영업 대리점의 고유아이디")
+  val bzAgencyId: String? = null,
 )
 
 @Serializable
@@ -230,9 +286,34 @@ data class StoreModifyModel(
   @Schema(title = "이메일", description = "이메일")
   val email: String? = null,
   @Schema(
+    title = "신청서 파일 경로",
+    description = "값의 유무에 따라 대리점 신청서 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/application.pdf | null"
+  )
+  val applicationFilePath: String? = null,
+  @Schema(
+    title = "사업자 등록증 파일 경로",
+    description = "값의 유무에 따라 사업자 등록증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bz.pdf | null"
+  )
+  val bzFilePath: String? = null,
+  @Schema(
+    title = "대표자 신분증 파일 경로",
+    description = "값의 유무에 따라 대표자 신분증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/id.pdf | null"
+  )
+  val idFilePath: String? = null,
+  @Schema(
+    title = "통장사본 파일 경로",
+    description = "값의 유무에 따라 통장 사본 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+    example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bank.pdf | null"
+  )
+  val bankFilePath: String? = null,
+  @Schema(
+    name = "storeStatus",
     title = "가맹점 상태",
     description = "가맹점 상태코드",
-    example = "ACTIVE",
+    example = "ACTIVE,NORMAL: 정상, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제",
     requiredMode = RequiredMode.REQUIRED,
     allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"]
   )
@@ -243,6 +324,8 @@ data class StoreModifyModel(
   val couponAdYn: Boolean? = false,
   @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보")
   val storeBilling: StoreBillingRegistModel? = null,
+  @Schema(title = "가맹점 영업 대리점 고유아이디", description = "해당 가맹점의 영업 대리점의 고유아이디")
+  val bzAgencyId: String? = null
 )
 
 object StoreTable : Table("store") {
@@ -252,8 +335,6 @@ object StoreTable : Table("store") {
   val zoneCode = varchar("zone_code", length = 20).nullable()
   val addr1 = varchar("addr1", length = 255).nullable()
   val addr2 = varchar("addr2", length = 255).nullable()
-  val regDate = datetime("reg_date").nullable()
-  val deleteDate = datetime("delete_date").nullable()
   val iconUrl = varchar("icon_url", length = 255).nullable()
   val logoUrl = varchar("logo_url", length = 255).nullable()
   val franchiseCode = varchar("franchise_code", length = 30).nullable()
@@ -276,9 +357,16 @@ object StoreTable : Table("store") {
   val email = varchar("email", length = 255).nullable()
   val businessNoLaw = varchar("business_no_law", length = 30).nullable()
   val couponAdYn = bool("coupon_ad_yn").nullable()
+  val applicationFilePath = varchar(name = "application_file_path", length = 255).nullable()
+  val bzFilePath = varchar(name = "bz_file_path", length = 255).nullable()
+  val idFilePath = varchar(name = "id_file_path", length = 255).nullable()
+  val bankFilePath = varchar(name = "bank_file_path", length = 255).nullable()
+  val bzAgencyId = reference("bz_agency_uuid", BzAgencyTable.id).nullable()
+  val regDate = datetime("reg_date").nullable()
+  val regBy = uuid("reg_by").nullable()
   val modDate = datetime("mod_date").nullable()
   val modBy = uuid("mod_by").nullable()
-  val regBy = uuid("reg_by").nullable()
+  val deleteDate = datetime("delete_date").nullable()
   override val primaryKey = PrimaryKey(id)
 }
 

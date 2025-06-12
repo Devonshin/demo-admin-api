@@ -2,6 +2,9 @@ package io.allink.receipt.api.domain.store
 
 import io.allink.receipt.api.common.errorResponse
 import io.allink.receipt.api.domain.Response
+import io.allink.receipt.api.domain.admin.BzAgencyMasterRole
+import io.allink.receipt.api.domain.admin.BzAgencyStaffRole
+import io.allink.receipt.api.domain.admin.toRole
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.post
 import io.ktor.http.*
@@ -42,7 +45,16 @@ fun Route.storeRoutes(
       }
     }) {
       val filter = call.receive<StoreFilter>()
-      call.respond(HttpStatusCode.OK, Response(data = storeService.findAllStore(filter)))
+      val principal: JWTPrincipal = call.principal()!!
+      val payload = principal.payload
+      val role = payload.getClaim("role").asString()
+      val toRole = role.toRole()
+
+      val stores = if (toRole is BzAgencyMasterRole || toRole is BzAgencyStaffRole) {
+        storeService.findAllAgencyStore(filter, UUID.fromString(payload.getClaim("agencyId").asString()))
+      } else storeService.findAllStore(filter)
+
+      call.respond(HttpStatusCode.OK, Response(data = stores))
     }
 
     get("/detail/{storeId}", {
@@ -62,10 +74,18 @@ fun Route.storeRoutes(
       }
     }) {
       val id = call.request.pathVariables["storeId"] ?: ""
+      val principal: JWTPrincipal = call.principal()!!
+      val payload = principal.payload
+      val role = payload.getClaim("role").asString()
+      val toRole = role.toRole()
+      val store = if (toRole is BzAgencyMasterRole || toRole is BzAgencyStaffRole) {
+        storeService.findStore(id, UUID.fromString(payload.getClaim("agencyId").asString()))
+      } else storeService.findStore(id)
+
       call.respond(
         HttpStatusCode.OK,
         Response(
-          data = storeService.findStore(id)
+          data = store
         )
       )
     }
@@ -114,7 +134,15 @@ fun Route.storeRoutes(
       val storeRegistModel = call.receive<StoreRegistModel>()
       val principal: JWTPrincipal = call.principal()!!
       val userUuid = principal.payload.getClaim("uUuid").asString()
-      val registStoreUid = storeService.registStore(storeRegistModel, UUID.fromString(userUuid))
+      val payload = principal.payload
+      val role = payload.getClaim("role").asString()
+      val toRole = role.toRole()
+      val registStoreUid = if (toRole is BzAgencyMasterRole) {
+        storeService.registStore(
+          storeRegistModel.copy(bzAgencyId = payload.getClaim("agencyId").asString()),UUID.fromString(userUuid))
+      } else {
+        storeService.registStore(storeRegistModel, UUID.fromString(userUuid))
+      }
       call.respond(HttpStatusCode.OK, Response(data = storeService.findStore(registStoreUid)))
     }
 
@@ -138,7 +166,15 @@ fun Route.storeRoutes(
       val storeModifyModel = call.receive<StoreModifyModel>()
       val principal: JWTPrincipal = call.principal()!!
       val userUuid = principal.payload.getClaim("uUuid").asString()
-      storeService.modifyStore(storeModifyModel, UUID.fromString(userUuid))
+      val payload = principal.payload
+      val role = payload.getClaim("role").asString()
+      val toRole = role.toRole()
+      if (toRole is BzAgencyMasterRole) {
+        storeService.modifyStore(
+          storeModifyModel.copy(bzAgencyId = payload.getClaim("agencyId").asString()),UUID.fromString(userUuid))
+      } else {
+        storeService.modifyStore(storeModifyModel, UUID.fromString(userUuid))
+      }
       call.respond(HttpStatusCode.OK, Response(data = storeService.findStore(storeModifyModel.id)))
     }
 

@@ -1,6 +1,5 @@
 package io.allink.receipt.api.domain.user
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import io.allink.receipt.api.domain.BaseFilter
 import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.domain.Page
@@ -9,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.javatime.datetime
 import java.time.LocalDateTime
@@ -44,8 +44,8 @@ data class UserModel(
   @Schema(title = "성별", description = "성별", nullable = false, requiredMode = RequiredMode.REQUIRED, example = "F|M")
   val gender: String?,
   @Schema(title = "CI 값", description = "CI", nullable = false, requiredMode = RequiredMode.REQUIRED, hidden = true)
-  @JsonIgnore
-  val ci: String?,
+  @Transient
+  val ci: String? = null,
   @Schema(title = "생년월일", description = "생년월일", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val birthday: String?,
   @Schema(title = "내국인여부", description = "내국인여부값", example = "Y|N")

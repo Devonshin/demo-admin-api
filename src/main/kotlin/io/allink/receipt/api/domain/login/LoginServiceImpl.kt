@@ -94,6 +94,7 @@ class LoginServiceImpl(
         .withClaim("lUuid", loginInfo.id.toString())
         .withClaim("uUuid", loginInfo.userUuid.toString())
         .withClaim("role", adminModel.role.toRoleString())
+        .withClaim("agencyId", adminModel.agencyUuid?.toString() ?: "")
         .withExpiresAt(nowInstant(expireAt))
         .sign(Algorithm.HMAC256(config.propertyOrNull("jwt.secret")?.getString()))
 
@@ -109,16 +110,18 @@ class LoginServiceImpl(
       val expireAt =
         nowLocalDateTime().plusSeconds(config.propertyOrNull("jwt.expiresIn")?.getString()?.toLong() ?: 0L)!!
       val nowLocalDateTimeFormat = nowLocalDateTimeFormat(expireAt)
-      val username = principal.payload.getClaim("username").asString()
-      val role = principal.payload.getClaim("role").asString()!!
+      val payload = principal.payload
+      val username = payload.getClaim("username").asString()
+      val role = payload.getClaim("role").asString()!!
 
       val token = JWT.create()
         .withAudience(config.propertyOrNull("jwt.audience")?.getString())
         .withIssuer(config.propertyOrNull("jwt.issuer")?.getString())
         .withClaim("username", username)
-        .withClaim("lUuid", principal.payload.getClaim("lUuid").asString())
-        .withClaim("uUuid", principal.payload.getClaim("uUuid").asString())
+        .withClaim("lUuid", payload.getClaim("lUuid").asString())
+        .withClaim("uUuid", payload.getClaim("uUuid").asString())
         .withClaim("role", role)
+        .withClaim("agencyId", payload.getClaim("agencyId").asString())
         .withExpiresAt(nowInstant(expireAt))
         .sign(Algorithm.HMAC256(config.propertyOrNull("jwt.secret")?.getString()))
 

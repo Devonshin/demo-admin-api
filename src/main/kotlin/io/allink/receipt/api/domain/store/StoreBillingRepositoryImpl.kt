@@ -1,10 +1,6 @@
 package io.allink.receipt.api.domain.store
 
 import io.allink.receipt.api.common.BillingStatusCode
-import io.allink.receipt.api.common.Constant
-import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceTable.modBy
-import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceTable.modDate
-import io.allink.receipt.api.util.DateUtil
 import org.jetbrains.exposed.v1.r2dbc.update
 
 /**
@@ -23,9 +19,7 @@ class StoreBillingRepositoryImpl (
         table.status eq BillingStatusCode.PENDING
       }
     ) {
-      it[status] = BillingStatusCode.CANCELD
-      it[modBy] = Constant.Companion.SYSTEM_UUID
-      it[modDate] = DateUtil.nowLocalDateTime()
+      it[status] = BillingStatusCode.CANCELED
     }
   }
 }
