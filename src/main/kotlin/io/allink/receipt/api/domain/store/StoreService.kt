@@ -10,11 +10,11 @@ import java.util.*
  */
 
 interface StoreService {
-  suspend fun findAllStore(filter: StoreFilter): PagedResult<StoreModel>
+  suspend fun findAllStore(filter: StoreFilter): PagedResult<StoreSearchModel>
   suspend fun findStore(id: String): StoreModel?
   suspend fun findSearchStores(filter: StoreSearchFilter): PagedResult<StoreSearchModel>
   suspend fun registStore(storeRegistModel: StoreRegistModel, userUuid: UUID): String
   suspend fun modifyStore(storeModifyModel: StoreModifyModel, userUuid: UUID)
-  suspend fun findAllAgencyStore(filter: StoreFilter, agencyId: UUID): PagedResult<StoreModel>
+  suspend fun findAllAgencyStore(filter: StoreFilter, agencyId: UUID): PagedResult<StoreSearchModel>
   suspend fun findStore(id: String, agencyId: UUID): StoreModel?
 }

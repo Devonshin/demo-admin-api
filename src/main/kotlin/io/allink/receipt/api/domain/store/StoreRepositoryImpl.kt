@@ -1,5 +1,6 @@
 package io.allink.receipt.api.domain.store
 
+import io.allink.receipt.api.common.StatusCode
 import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.agency.bz.BzAgencyTable
 import io.allink.receipt.api.domain.merchant.MerchantGroupTable
@@ -26,7 +27,7 @@ class StoreRepositoryImpl(
   override val table: StoreTable
 ) : StoreRepository {
 
-  override suspend fun findAll(filter: StoreFilter, bzAgencyUuid: UUID): PagedResult<StoreModel> {
+  override suspend fun findAll(filter: StoreFilter, bzAgencyUuid: UUID): PagedResult<StoreSearchModel> {
     val select = table.selectAll()
     select.andWhere { table.bzAgencyId eq bzAgencyUuid }
     val (totalCount, items) = select(filter, select)
@@ -42,7 +43,7 @@ class StoreRepositoryImpl(
   private suspend fun select(
     filter: StoreFilter,
     select: Query
-  ): Pair<Int, List<StoreModel>> {
+  ): Pair<Int, List<StoreSearchModel>> {
     val offset = filter.page.page.minus(1).times(filter.page.pageSize)
     filter.name?.let { name ->
       select.andWhere { table.storeName like "$name%" }
@@ -69,12 +70,12 @@ class StoreRepositoryImpl(
     val totalCount = select.count().toInt()
     val items = select.limit(filter.page.pageSize)
       .offset(offset.toLong())
-      .map { row: ResultRow -> toModel(row) }
+      .map { row: ResultRow -> toListModel(row) }
       .toList()
     return Pair(totalCount, items)
   }
 
-  override suspend fun findAll(filter: StoreFilter): PagedResult<StoreModel> {
+  override suspend fun findAll(filter: StoreFilter): PagedResult<StoreSearchModel> {
     val select = table.selectAll()
     val (totalCount, items) = select(filter, select)
     return PagedResult(
@@ -166,5 +167,21 @@ class StoreRepositoryImpl(
       deviceType = deviceType
     )
   }
+
+  fun toListModel(row: ResultRow): StoreSearchModel {
+    return StoreSearchModel(
+      id = row[table.id],
+      storeName = row[table.storeName],
+      franchiseCode = row[table.franchiseCode],
+      businessNo = row[table.businessNo],
+      ceoName = row[table.ceoName],
+      tel = row[table.tel],
+      businessType = row[table.businessType],
+      eventType = row[table.eventType],
+      status = row[table.status]?: StatusCode.NORMAL,
+      regDate = row[table.regDate]
+    )
+  }
+
 
 }

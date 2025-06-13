@@ -19,16 +19,16 @@ class DateUtil {
 
   companion object {
 
-    val zoneId: ZoneId = ZoneId.of("Asia/Seoul")
+    val zoneId: ZoneId = ZoneId.systemDefault()
     fun nowLocalDateTime(): LocalDateTime {
-      return LocalDateTime.now(zoneId)
+      return LocalDateTime.now()
     }
 
     fun nowLocalDateTimeStr(): String {
-      return LocalDateTime.now(zoneId).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+      return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
     }
     fun nowLocalDateTimeStrMs(): String {
-      return LocalDateTime.now(zoneId).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
+      return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
     }
 
     fun nowLocalDateTimeFormat(dateTime: LocalDateTime): String {
@@ -36,11 +36,11 @@ class DateUtil {
     }
 
     fun nowInstant(dateTime: LocalDateTime): Instant {
-      return dateTime.atZone(zoneId).toInstant()
+      return dateTime.toInstant(zoneId.rules.getOffset(dateTime))
     }
 
     fun nowInstant(): Instant {
-      return LocalDateTime.now(zoneId).atZone(zoneId).toInstant()
+      return LocalDateTime.now().atZone(zoneId).toInstant()
     }
 
 

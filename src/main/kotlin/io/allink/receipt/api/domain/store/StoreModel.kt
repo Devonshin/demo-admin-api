@@ -170,6 +170,17 @@ data class StoreSearchModel(
   val eventType: String? = null,
   @Schema(title = "단말기 구분", description = "단말기 구분", example = "CAT, OKPOS,...")
   val deviceType: String? = null,
+  @Schema(
+    name = "storeStatus",
+    title = "가맹점 상태",
+    description = "가맹점 상태코드",
+    example = "ACTIVE,NORMAL: 정상, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제",
+    requiredMode = RequiredMode.REQUIRED,
+    allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"]
+  )
+  val status: StatusCode? = null,
+  @Schema(title = "등록일시", description = "등록일시", example = "2025-04-17 12:00:00.213123")
+  val regDate: @Contextual LocalDateTime? = null,
 ) : BaseModel<String>
 
 

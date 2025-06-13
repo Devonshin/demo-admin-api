@@ -29,8 +29,8 @@ import java.util.UUID
 interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
   override val table: StoreTable
 
-  suspend fun findAll(filter: StoreFilter): PagedResult<StoreModel>
-  suspend fun findAll(filter: StoreFilter, bzAgencyUuid: UUID): PagedResult<StoreModel>
+  suspend fun findAll(filter: StoreFilter): PagedResult<StoreSearchModel>
+  suspend fun findAll(filter: StoreFilter, bzAgencyUuid: UUID): PagedResult<StoreSearchModel>
 
   override fun toModel(row: ResultRow): StoreModel {
 

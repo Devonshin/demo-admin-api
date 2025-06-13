@@ -35,12 +35,12 @@ class StoreServiceImpl(
   override suspend fun findAllAgencyStore(
     filter: StoreFilter,
     agencyId: UUID
-  ): PagedResult<StoreModel> = TransactionUtil.withTransaction {
+  ): PagedResult<StoreSearchModel> = TransactionUtil.withTransaction {
     storeRepository.findAll(filter, agencyId)
   }
   override suspend fun findAllStore(
     filter: StoreFilter
-  ): PagedResult<StoreModel> = TransactionUtil.withTransaction {
+  ): PagedResult<StoreSearchModel> = TransactionUtil.withTransaction {
     storeRepository.findAll(filter)
   }
 

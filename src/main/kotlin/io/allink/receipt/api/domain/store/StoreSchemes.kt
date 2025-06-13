@@ -58,7 +58,7 @@ fun storeSearchRequest(): SimpleBodyConfig.() -> Unit = {
 
 fun storeListResponse(): ResponseConfig.() -> Unit = {
   description = "성공 응답"
-  body<Response<PagedResult<StoreModel>>> {
+  body<Response<PagedResult<StoreSearchModel>>> {
     example("가맹점 목록 응답") {
       value = Response(
         data = PagedResult(
@@ -309,4 +309,17 @@ private val storeExample = StoreModel(
     storeServiceSeq = "2506101100",
     status = BillingStatusCode.COMPLETE
   ),
+)
+
+private val storeListExample = StoreSearchModel(
+  id = "store-123",
+  storeName = "매장명",
+  businessNo = "123-45-67890",
+  franchiseCode = "FRANCHISE_1",
+  tel = "021032001",
+  ceoName = "저것참",
+  businessType = "1231212345",
+  eventType = "퉁신판매업",
+  status = StatusCode.NORMAL,
+  regDate = LocalDateTime.now()
 )
