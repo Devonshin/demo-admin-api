@@ -28,6 +28,7 @@ class StoreServiceImpl(
   private val nPointStoreRepository: NPointStoreRepository,
   private val nPointStoreServiceService: NPointStoreServiceService,
   private val storeBillingService: StoreBillingService,
+  private val storeBillingTokenRepository: StoreBillingTokenRepository,
 ) : StoreService {
 
   val logger: Logger = LoggerFactory.getLogger(StoreServiceImpl::class.java)
@@ -38,6 +39,7 @@ class StoreServiceImpl(
   ): PagedResult<StoreSearchModel> = TransactionUtil.withTransaction {
     storeRepository.findAll(filter, agencyId)
   }
+
   override suspend fun findAllStore(
     filter: StoreFilter
   ): PagedResult<StoreSearchModel> = TransactionUtil.withTransaction {
@@ -45,20 +47,25 @@ class StoreServiceImpl(
   }
 
   override suspend fun findStore(id: String): StoreModel? = TransactionUtil.withTransaction {
-    storeRepository.find(id)?.copy(
-      npointStoreServices = nPointStoreServiceService.getStoreServices(id)
+    val store = storeRepository.find(id)
+    store?.copy(
+      npointStoreServices = nPointStoreServiceService.getStoreServices(id),
+      storeBillingTokens = storeBillingTokenRepository.findAllByBusinessNo(store.businessNo ?: "")
     )
   }
 
   override suspend fun findStore(id: String, agencyId: UUID): StoreModel? = TransactionUtil.withTransaction {
-    storeRepository.find(id)?.copy(
-      npointStoreServices = nPointStoreServiceService.getStoreServices(id)
+    val store = storeRepository.find(id, agencyId)
+    store?.copy(
+      npointStoreServices = nPointStoreServiceService.getStoreServices(id),
+      storeBillingTokens = storeBillingTokenRepository.findAllByBusinessNo(store.businessNo ?: "")
     )
   }
 
-  override suspend fun findSearchStores(filter: StoreSearchFilter): PagedResult<StoreSearchModel> = TransactionUtil.withTransaction {
-    storeRepository.searchStores(filter)
-  }
+  override suspend fun findSearchStores(filter: StoreSearchFilter): PagedResult<StoreSearchModel> =
+    TransactionUtil.withTransaction {
+      storeRepository.searchStores(filter)
+    }
 
   override suspend fun registStore(
     storeRegistModel: StoreRegistModel,
@@ -74,7 +81,7 @@ class StoreServiceImpl(
         return@let
       }
 
-      val storeBilling = storeRegistModel.storeBilling?:throw BadRequestException("결제 정보 데이터가 필요합니다")
+      val storeBilling = storeRegistModel.storeBilling ?: throw BadRequestException("결제 정보 데이터가 필요합니다")
       if (storeBilling.tokenUuid.isEmpty()) {
         throw BadRequestException("결제 토큰이 유효하지 않습니다. tokenUuid")
       }
@@ -89,7 +96,7 @@ class StoreServiceImpl(
       var rewardPoint = 0
       for (registeredService in registeredServices) {
         totalAmount += registeredService.serviceCharge!! + registeredService.rewardDeposit!!
-        if(registeredService.serviceCode == REVIEWPT) {
+        if (registeredService.serviceCode == REVIEWPT) {
           val serviceCodes = nPointStoreServiceService.getServiceCodes()
           val ereceipt = serviceCodes[ERECEIPT]
           totalAmount -= (registeredService.serviceCharge / 30) * ((30 - now.dayOfMonth + 1)) + (ereceipt?.price!! / 30) * ((30 - now.dayOfMonth + 1))
@@ -160,7 +167,7 @@ class StoreServiceImpl(
       val registeredServices =
         nPointStoreServiceService.registNPointStoreReviewService(services, storeUid, userUuid, yyMMddHHmm, now)
 
-      val storeBilling = storeModifyModel.storeBilling?:throw BadRequestException("Store billing is required")
+      val storeBilling = storeModifyModel.storeBilling ?: throw BadRequestException("Store billing is required")
       var amount = 0
       var rewardPoint = 0
       for (registeredService in registeredServices) {

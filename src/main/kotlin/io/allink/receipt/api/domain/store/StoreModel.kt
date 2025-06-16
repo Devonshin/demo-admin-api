@@ -127,6 +127,8 @@ data class StoreModel(
   val npointStoreServices: List<NPointStoreServiceModel>? = null,
   @Schema(title = "쿠폰 광고", description = "가맹점의 쿠폰 광고 여부, 쿠폰 이미지 등록 필수", example = "true|false")
   val couponAdYn: Boolean? = false,
+  @Schema(title = "가맹점 등록된 카드 토큰 목록", description = "가맹점의 카드 토큰 정보 목록")
+  val storeBillingTokens: List<StoreBillingTokenModel>? = null,
   @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보")
   val storeBilling: StoreBillingModel? = null,
   @Schema(title = "가맹점 영업 대리점", description = "해당 가맹점의 영업 대리점")

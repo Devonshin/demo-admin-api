@@ -85,6 +85,9 @@ fun Application.configureFrameworks() {
       single<StoreBillingRepository>{
         StoreBillingRepositoryImpl(StoreBillingTable)
       }
+      single<StoreBillingTokenRepository>{
+        StoreBillingTokenRepositoryImpl(StoreBillingTokenTable)
+      }
       /**
        * Services
        * */
@@ -101,7 +104,7 @@ fun Application.configureFrameworks() {
         UserServiceImpl(get())
       }
       single<StoreService> {
-        StoreServiceImpl(get(), get(), get(), get())
+        StoreServiceImpl(get(), get(), get(), get(), get())
       }
       single<IssueReceiptService> {
         IssueReceiptServiceImpl(get())

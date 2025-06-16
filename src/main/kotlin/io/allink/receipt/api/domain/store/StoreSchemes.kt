@@ -62,7 +62,7 @@ fun storeListResponse(): ResponseConfig.() -> Unit = {
     example("가맹점 목록 응답") {
       value = Response(
         data = PagedResult(
-          items = listOf(storeExample),
+          items = listOf(storeListExample),
           totalPages = 1000,
           totalCount = 20000,
           currentPage = 1
@@ -309,6 +309,17 @@ private val storeExample = StoreModel(
     storeServiceSeq = "2506101100",
     status = BillingStatusCode.COMPLETE
   ),
+  storeBillingTokens = listOf(
+    StoreBillingTokenModel(
+      id = UUID.fromString("611b2187-b838-46a1-9b21-87b838b6a17a"),
+      businessNo = "123-45-67890",
+      token = "5678-****-****-1234",
+      tokenInfo = "국민카드=1234-****-****-1234",
+      status = StatusCode.ACTIVE,
+      regDate = LocalDateTime.now(),
+      regBy = UUID.fromString("611b2187-b838-46a1-9b21-87b838b6a17a")
+    )
+  )
 )
 
 private val storeListExample = StoreSearchModel(

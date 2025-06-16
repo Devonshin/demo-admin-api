@@ -55,6 +55,8 @@ interface StoreBillingTokenRepository : ExposedRepository<StoreBillingTokenTable
       .singleOrNull()
   }
 
+  suspend fun findAllByBusinessNo(businessNo: String): List<StoreBillingTokenModel>?
+
   override suspend fun delete(id: UUID): Int {
     TODO("Not yet implemented")
   }

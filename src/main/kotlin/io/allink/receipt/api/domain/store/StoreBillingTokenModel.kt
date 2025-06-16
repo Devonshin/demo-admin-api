@@ -1,5 +1,6 @@
 package io.allink.receipt.api.domain.store
 
+import io.allink.receipt.api.common.StatusCode
 import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.domain.store.StoreTable
 import io.swagger.v3.oas.annotations.media.Schema
@@ -28,7 +29,7 @@ data class StoreBillingTokenModel(
   @Schema(title = "토큰추가정보", description = "토큰추가정보")
   val tokenInfo: String? = null,
   @Schema(title = "상태", description = "토큰 상태")
-  val status: String,
+  val status: StatusCode,
   @Schema(title = "등록일시", description = "토큰 등록일시")
   val regDate: @Contextual LocalDateTime? = null,
   @Schema(title = "등록인 고유아이디", description = "토큰을 등록한 사람의 고유아이디")
@@ -39,10 +40,10 @@ data class StoreBillingTokenModel(
 object StoreBillingTokenTable : Table("store_billing_token") {
 
   val id = uuid("token_uuid") // 토큰 고유아이디
-  val businessNo = varchar("business_no", 20).index()
+  val businessNo = varchar("business_no", 12).index()
   val token = varchar("token", 255) // SK결제토큰
-  val tokenInfo = varchar("tokenInfo", 255).nullable() // 토큰추가정보
-  val status = varchar("status", 10) // 상태
+  val tokenInfo = varchar("token_info", 255).nullable() // 토큰추가정보
+  val status = enumerationByName<StatusCode>("status", length = 20) // 상태
   val regDate = datetime("reg_date").nullable() // 등록일시
   val regBy = uuid("reg_by") // 등록인 고유아이디
 
