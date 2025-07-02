@@ -50,7 +50,7 @@ class NPointStoreServiceServiceImpl(
     yyMMddHHmm: String,
     now: LocalDateTime
   ): List<NPointStoreServiceModifyModel> = TransactionUtil.withTransaction {
-    nPointStoreServiceRepository.cancelAllStoreService(storeUid)
+    cancelNPointStoreServices(storeUid)
     val merchantSelectedServices = merchantSelectedServices.associateBy {
       it.serviceCode
     }

@@ -99,7 +99,7 @@ data class BzAgencyModel(
     example = "ACTIVE, INACTIVE",
     defaultValue = "ACTIVE"
   )
-  val status: AgencyStatus,
+  val status: AgencyStatus? = null,
   @Schema(
     title = "등록 일시",
     description = "대리점 정보 등록 일시",
@@ -180,7 +180,7 @@ object BzAgencyTable : UUIDTable(name = "bz_agency", columnName = "uuid") {
   val bankAccountName = varchar(name = "bank_account_name", length = 50).nullable()
   val bankAccountNo = varchar(name = "bank_account_no", length = 50).nullable()
   val status = enumerationByName("status", 20, AgencyStatus::class)
-  val regDate = datetime(name = "reg_date").default(nowLocalDateTime()).nullable()
+  val regDate = datetime(name = "reg_date").default(nowLocalDateTime())
   val regBy = uuid(name = "reg_by")
   val modDate = datetime(name = "mod_date").nullable()
   val modBy = uuid(name = "mod_by").nullable()

@@ -1,5 +1,6 @@
 package io.allink.receipt.api.domain.code
 
+import io.allink.receipt.api.repository.TransactionUtil
 import kotlinx.coroutines.flow.toList
 import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.v1.r2dbc.selectAll
@@ -8,8 +9,8 @@ class ServiceCodeRepositoryImpl(
   override val table: ServiceCodeTable
 ) : ServiceCodeRepository {
 
-  override suspend fun findAll(groupCode: String): List<ServiceCodeModel> {
-    return table.selectAll().where(
+  override suspend fun findAll(groupCode: String): List<ServiceCodeModel> = TransactionUtil.withTransaction {
+    table.selectAll().where(
       table.serviceGroup eq groupCode
     ).toList().let {
       return@let it.map { code ->

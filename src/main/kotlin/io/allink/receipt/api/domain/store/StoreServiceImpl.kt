@@ -87,8 +87,7 @@ class StoreServiceImpl(
       }
 
       val now = DateUtil.nowLocalDateTime()
-      val yyMMddHHmm =
-        DateUtil.nowLocalDateTimeFormat(now).replace("\\D".toRegex(), "").substring(2, 12)
+      val yyMMddHHmm = DateUtil.nowInstant(now).epochSecond.toString().takeLast(10)
 
       val registeredServices =
         nPointStoreServiceService.registNPointStoreReviewService(services, storeUid, userUuid, yyMMddHHmm, now)
@@ -161,9 +160,9 @@ class StoreServiceImpl(
         nPointStoreServiceService.cancelNPointStoreServices(storeUid)
         return@let
       }
+
       val now = DateUtil.nowLocalDateTime()
-      val yyMMddHHmm =
-        DateUtil.nowLocalDateTimeFormat(now).replace("\\D".toRegex(), "").substring(2, 12)
+      val yyMMddHHmm = DateUtil.nowInstant(now).epochSecond.toString().takeLast(10)
       val registeredServices =
         nPointStoreServiceService.registNPointStoreReviewService(services, storeUid, userUuid, yyMMddHHmm, now)
 

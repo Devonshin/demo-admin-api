@@ -23,9 +23,8 @@ fun Application.configureHTTP() {
     allowHeader(HttpHeaders.Authorization)
     allowHeader(HttpHeaders.ContentType)
 
-    allowCredentials = true // 쿠키 및 인증 정보 전송 허용 여부
     logger.info("env = $env")
-    if (env != null && !env.contains("production")) {
+    if (env != null && !env.equals("production", ignoreCase = true)) {
       anyHost()
     } else {
       allowHost("allink.io", schemes = listOf("http", "https"))

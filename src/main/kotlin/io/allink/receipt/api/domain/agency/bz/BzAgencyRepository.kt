@@ -27,9 +27,9 @@ interface BzAgencyRepository : ExposedRepository<BzAgencyTable, UUID, BzAgencyMo
 
   override suspend fun create(model: BzAgencyModel): BzAgencyModel {
     val createdId = table.insertAndGetId {
-      toRow(model)
-    }.value
-    return model.copy(id = createdId)
+      toRow(model)(it)
+    }
+    return model.copy(id = createdId.value)
   }
 
   override suspend fun update(model: BzAgencyModel): Int {
@@ -139,8 +139,8 @@ interface BzAgencyRepository : ExposedRepository<BzAgencyTable, UUID, BzAgencyMo
     it[settlementBank] = model.settlementBank
     it[bankAccountName] = model.bankAccountName
     it[bankAccountNo] = model.bankAccountNo
-    it[status] = model.status
-    it[regDate] = model.regDate
+    it[status] = model.status!!
+    it[regDate] = model.regDate!!
     it[regBy] = model.regBy!!
   }
 
@@ -169,7 +169,7 @@ interface BzAgencyRepository : ExposedRepository<BzAgencyTable, UUID, BzAgencyMo
     it[settlementBank] = model.settlementBank
     it[bankAccountName] = model.bankAccountName
     it[bankAccountNo] = model.bankAccountNo
-    it[status] = model.status
+    it[status] = model.status!!
     it[modDate] = model.modDate
     it[modBy] = model.modBy
   }

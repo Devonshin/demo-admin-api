@@ -20,7 +20,9 @@ class LoginInfoRepositoryImpl(
 ) : LoginInfoRepository {
 
   override suspend fun create(model: LoginInfoModel): LoginInfoModel {
-    val created = table.insertAndGetId(toRow(model))
+    val created = table.insertAndGetId {
+      toRow(model)(it)
+    }
     model.id = created.value
     return model
   }

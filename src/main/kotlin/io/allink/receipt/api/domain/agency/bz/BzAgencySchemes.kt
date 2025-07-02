@@ -149,8 +149,8 @@ fun agencyCreate(): SimpleBodyConfig.() -> Unit = {
       bankAccountName = "홍길동",
       bankAccountNo = "123-456-789012",
       status = AgencyStatus.ACTIVE,
-      regDate = null,
-      regBy = null,
+      regDate = LocalDateTime.now(),
+      regBy = UUID.fromString("c7f0d23e-eceb-4434-b489-668c0b61a7f9"),
       modDate = null,
       modBy = null,
     )

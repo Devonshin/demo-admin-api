@@ -51,7 +51,7 @@ fun Application.configureValidation() {
     }
 
     validate<BzAgencyModel> { agency ->
-      if (agency.id == null) ValidationResult.Invalid("Agency uuid is required")
+      if (agency.id == null) ValidationResult.Invalid("Agency id is required")
       businessNoValidator(agency.businessNo)
     }
 

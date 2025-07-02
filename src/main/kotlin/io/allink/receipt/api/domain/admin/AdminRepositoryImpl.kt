@@ -21,7 +21,9 @@ class AdminRepositoryImpl(
 ) : AdminRepository {
 
   override suspend fun create(model: AdminModel): AdminModel {
-    val created = table.insertAndGetId(toRow(model))
+    val created = table.insertAndGetId {
+      toRow(model)(it)
+    }
     model.id = created.value
     return model
   }

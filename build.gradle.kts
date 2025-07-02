@@ -59,7 +59,6 @@ dependencies {
   implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
   implementation("io.ktor:ktor-server-netty")
   implementation("ch.qos.logback:logback-classic:$logback_version")
-  implementation("ch.qos.logback:logback-classic:1.4.12")
   implementation("org.codehaus.janino:janino:3.1.12")
 
   implementation("software.amazon.awssdk:sns:2.20.+")
