@@ -6,7 +6,7 @@ import io.allink.receipt.api.domain.agency.bz.BzAgencyTable
 import io.allink.receipt.api.domain.agency.bz.BzListAgencyModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceModel
-import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceModifyModel
+import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceRegistModel
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
@@ -130,7 +130,7 @@ data class StoreModel(
   @Schema(title = "가맹점 등록된 카드 토큰 목록", description = "가맹점의 카드 토큰 정보 목록")
   val storeBillingTokens: List<StoreBillingTokenModel>? = null,
   @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보")
-  val storeBilling: StoreBillingModel? = null,
+  var storeBilling: StoreBillingModel? = null,
   @Schema(title = "가맹점 영업 대리점", description = "해당 가맹점의 영업 대리점")
   val bzAgency: BzListAgencyModel? = null,
 ) : BaseModel<String>
@@ -205,8 +205,8 @@ data class StoreRegistModel(
   val managerName: String? = null,
   @Schema(title = "워크타입", description = "워크타입")
   val workType: String? = null,
-  @Schema(title = "사업자 등록번호", description = "사업자 등록번호", requiredMode = RequiredMode.REQUIRED)
-  val businessNo: String? = null,
+  @Schema(title = "사업자 등록번호", description = "사업자 등록번호", requiredMode = RequiredMode.REQUIRED, example = "123-45-67890")
+  val businessNo: String,
   @Schema(title = "법인 등록번호", description = "법인 등록번호")
   val businessNoLaw: String? = null,
   @Schema(title = "대표자명", description = "대표자명", requiredMode = RequiredMode.REQUIRED)
@@ -250,12 +250,12 @@ data class StoreRegistModel(
     allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"]
   )
   val status: StatusCode? = null,
-  @Schema(title = "네이버 포인트 리뷰 서비스", description = "네이버 포인트 리뷰 서비스")
-  val npointStoreServices: List<NPointStoreServiceModifyModel>? = null,
+  @Schema(title = "가맹점에서 사용할 서비스", description = "가맹점에서 사용할 서비스, 중요 사항 : 결제 정보(storeBilling) 필수, npointStoreServices 데이터가 전달될 시 결제 정보도 같이 전달되야 합니다. ")
+  val npointStoreServices: List<NPointStoreServiceRegistModel>? = null,
+  @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보, 개발환경에서는 무조건 성공 처리 됩니다. 실제 테스트는 운영환경에서만 가능합니다.")
+  val storeBilling: StoreBillingRegistModel? = null,
   @Schema(title = "쿠폰 광고", description = "가맹점의 쿠폰 광고 여부, 쿠폰 이미지 등록 필수", example = "true|false")
   val couponAdYn: Boolean? = false,
-  @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보")
-  val storeBilling: StoreBillingRegistModel? = null,
   @Schema(title = "가맹점 영업 대리점 고유아이디", description = "해당 가맹점의 영업 대리점의 고유아이디")
   val bzAgencyId: String? = null,
 )
@@ -331,12 +331,12 @@ data class StoreModifyModel(
     allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"]
   )
   val status: StatusCode? = null,
-  @Schema(title = "네이버 포인트 리뷰 서비스", description = "네이버 포인트 리뷰 서비스")
-  val npointStoreServices: List<NPointStoreServiceModifyModel>? = listOf(),
+  @Schema(title = "가맹점에서 사용할 서비스", description = "중요 사항 : 결제 정보(storeBilling) 필수, npointStoreServices 데이터가 전달될 시 결제 정보도 같이 전달되야 합니다. 서비스나 결제 정보의 변경이 필요한 경우만 값을 세팅하고, 유지 시에는 null로 설정하세요. 가맹점 수정 시 같이 전달된 서비스 목록과 결제 정보는 익월 1일부터 반영됩니다. ")
+  val npointStoreServices: List<NPointStoreServiceRegistModel>? = listOf(),
+  @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보, 개발환경에서는 무조건 성공 처리 됩니다. 실제 테스트는 운영환경에서만 가능합니다.")
+  val storeBilling: StoreBillingRegistModel? = null,
   @Schema(title = "쿠폰 광고", description = "가맹점의 쿠폰 광고 여부, 쿠폰 이미지 등록 필수", example = "true|false")
   val couponAdYn: Boolean? = false,
-  @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보")
-  val storeBilling: StoreBillingRegistModel? = null,
   @Schema(title = "가맹점 영업 대리점 고유아이디", description = "해당 가맹점의 영업 대리점의 고유아이디")
   val bzAgencyId: String? = null
 )

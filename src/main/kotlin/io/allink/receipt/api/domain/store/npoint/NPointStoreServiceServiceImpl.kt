@@ -37,36 +37,37 @@ class NPointStoreServiceServiceImpl(
       ?: emptyList()
   }
 
+  //활성화가 아닌 상태만 무효처리한다
   override suspend fun cancelNPointStoreServices(storeUid: String) = TransactionUtil.withTransaction {
     nPointStoreServiceRepository.cancelAllStoreService(storeUid)
-    logger.info("Canceled all services for storeUid: $storeUid")
+    logger.info("Canceled npoint services for storeUid: $storeUid")
   }
 
   //이용 서비스 등록
-  override suspend fun registNPointStoreReviewService(
-    merchantSelectedServices: List<NPointStoreServiceModifyModel>,
+  override suspend fun registNPointStoreService(
+    merchantSelectedServices: List<NPointStoreServiceRegistModel>,
     storeUid: String,
     userUuid: UUID,
-    yyMMddHHmm: String,
+    storeServiceSeq: Int,
     now: LocalDateTime
-  ): List<NPointStoreServiceModifyModel> = TransactionUtil.withTransaction {
-    cancelNPointStoreServices(storeUid)
-    val merchantSelectedServices = merchantSelectedServices.associateBy {
+  ): List<NPointStoreServiceRegistModel> = TransactionUtil.withTransaction {
+    cancelNPointStoreServices(storeUid) //기존 등록 데이터 무효처리 - 활성화가 아닌 상태만 무효처리한다, 이후에 결제 시 기존 활성 서비스들은 만료처리
+    val selectedServices = merchantSelectedServices.associateBy {
       it.serviceCode
     }
     val services = getServiceCodes()
-    val validatedSelectedReviewServices = validateSelectedService(merchantSelectedServices, services)
-    merchantSelectedServices[DLVRVIEWPT]?.let { service ->
+    val validatedSelectedReviewServices = validateSelectedService(selectedServices, services)
+    selectedServices[DLVRVIEWPT]?.let { service ->
       validatedSelectedReviewServices.add(initDefService(services[DLVRVIEWPT]!!))
     }
-    merchantSelectedServices[CPNADVTZ]?.let { service ->
+    selectedServices[CPNADVTZ]?.let { service ->
       validatedSelectedReviewServices.add(initDefService(services[CPNADVTZ]!!))
     }
     for (reviewServiceModel in validatedSelectedReviewServices) {
       nPointStoreServiceRepository.create(
         NPointStoreServiceModel(
           id = NPointStoreServiceId(
-            storeServiceSeq = yyMMddHHmm,
+            storeServiceSeq = storeServiceSeq,
             storeUid = storeUid,
             serviceCode = reviewServiceModel.serviceCode,
           ),
@@ -74,7 +75,7 @@ class NPointStoreServiceServiceImpl(
           rewardDeposit = reviewServiceModel.rewardDeposit,
           rewardPoint = reviewServiceModel.rewardPoint,
           serviceCommission = reviewServiceModel.serviceCommission,
-          status = StatusCode.ACTIVE,
+          status = StatusCode.PENDING, //최초엔 대기 상태로, 이후 결제가 완료되면 ACTIVE로 변경한다
           regDate = now,
           regBy = userUuid
         )
@@ -85,7 +86,7 @@ class NPointStoreServiceServiceImpl(
 
   private fun initDefService(
     service: ServiceCodeModel
-  ): NPointStoreServiceModifyModel = NPointStoreServiceModifyModel(
+  ): NPointStoreServiceRegistModel = NPointStoreServiceRegistModel(
     serviceCode = service.id!!,
     serviceCharge = 0,
     rewardDeposit = 0,
@@ -107,9 +108,9 @@ class NPointStoreServiceServiceImpl(
   }
 
   fun validateSelectedService(
-    merchantSelectedServices: Map<String, NPointStoreServiceModifyModel>,
+    merchantSelectedServices: Map<String, NPointStoreServiceRegistModel>,
     services: Map<String, ServiceCodeModel>
-  ): MutableList<NPointStoreServiceModifyModel> {
+  ): MutableList<NPointStoreServiceRegistModel> {
     val eReceiptServiceCode = services[ERECEIPT]!!
     merchantSelectedServices[REVIEWPRJ]?.let { merchantService ->
       val reviewProjectServiceCode = services[REVIEWPRJ]!!
@@ -117,16 +118,14 @@ class NPointStoreServiceServiceImpl(
       return mutableListOf(
         merchantService.copy(
           serviceCode = ERECEIPT,
-          serviceCharge = eReceiptServiceCode.price,
+          serviceCharge = 0/*eReceiptServiceCode.price*/,
           rewardDeposit = 0,
           rewardPoint = 0,
           serviceCommission = 0,
-          status = StatusCode.ACTIVE,
         ),
         merchantService.copy(
           serviceCode = REVIEWPRJ,
           serviceCharge = reviewProjectServiceCode.price,
-          status = StatusCode.ACTIVE,
         )
       )
     }
@@ -140,12 +139,10 @@ class NPointStoreServiceServiceImpl(
           rewardDeposit = 0,
           rewardPoint = 0,
           serviceCommission = 0,
-          status = StatusCode.ACTIVE,
         ),
         merchantService.copy(
           serviceCode = REVIEWPT,
           serviceCharge = reviewServiceCode.price,
-          status = StatusCode.ACTIVE,
         )
       )
     }
@@ -157,7 +154,7 @@ class NPointStoreServiceServiceImpl(
     return mutableListOf()
   }
 
-  fun validateDepositAndCommissionAmount(selectedService: NPointStoreServiceModifyModel, serviceCodeModel: ServiceCodeModel) {
+  fun validateDepositAndCommissionAmount(selectedService: NPointStoreServiceRegistModel, serviceCodeModel: ServiceCodeModel) {
     val rewardDeposit = selectedService.rewardDeposit
     val rewardCommission = selectedService.serviceCommission
     val serviceCode = selectedService.serviceCode

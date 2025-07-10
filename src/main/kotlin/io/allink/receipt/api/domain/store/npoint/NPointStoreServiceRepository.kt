@@ -100,8 +100,8 @@ interface NPointStoreServiceRepository :
       .singleOrNull()
   }
 
-  suspend fun findAllStoreService(storeUid: String): Map<String, List<NPointStoreServiceModel>>
-  suspend fun findAllStoreService(yyMMddHHmm: String, storeUid: String): List<NPointStoreServiceModel>
+  suspend fun findAllStoreService(storeUid: String): Map<Int, List<NPointStoreServiceModel>>
+  suspend fun findAllStoreService(storeServiceSeq: Int, storeUid: String): List<NPointStoreServiceModel>
 
   suspend fun delete(id: NPointStoreServiceId): Int {
     TODO("Not yet implemented")

@@ -17,12 +17,27 @@ class StoreBillingTokenRepositoryImpl(
   override val table: StoreBillingTokenTable
 ) : StoreBillingTokenRepository {
 
-  override suspend fun findAllByBusinessNo(businessNo: String): List<StoreBillingTokenModel>? {
+  override suspend fun findAllActiveByBusinessNo(businessNo: String): List<StoreBillingTokenModel>? {
+    if (businessNo.isEmpty()) {
+      return emptyList()
+    }
     return table.selectAll()
       .where {
         table.businessNo eq businessNo
       }.andWhere {
         table.status eq StatusCode.ACTIVE
+      }
+      .map { toModel(it) }
+      .toList()
+  }
+
+  override suspend fun findAllByBusinessNo(businessNo: String): List<StoreBillingTokenModel>? {
+    if (businessNo.isEmpty()) {
+      return emptyList()
+    }
+    return table.selectAll()
+      .where {
+        table.businessNo eq businessNo
       }
       .map { toModel(it) }
       .toList()

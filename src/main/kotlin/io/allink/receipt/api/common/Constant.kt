@@ -47,7 +47,7 @@ class Constant {
 @Schema(
   title = "상태코드",
   description = "상태값",
-  example = "NORMAL,ACTIVE: 정상, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제"
+  example = "NORMAL,ACTIVE: 정상, INACTIVE: 중지, EXPIRED: 만료, PENDING: 대기, DELETED: 삭제"
 )
 enum class StatusCode(
   val value: String
@@ -56,19 +56,21 @@ enum class StatusCode(
   NORMAL("정상"),
   INACTIVE("중지"),
   PENDING("대기"),
+  EXPIRED("만료"),
   DELETED("삭제")
 }
 
 @Schema(
   title = "상태코드",
-  description = "상태값",
-  example = "FAIL: 결제실패, COMPLETE: 결제완료, PENDING: 결제대기, CANCELED: 결제취소"
+  description = "상태값: PENDING 시 결제 시도. FAIL, COMPLETE는 시스템만 할당 가능. ",
+  example = "FAIL: 결제실패, COMPLETE: 결제완료, TEMP_READY: 익월 1일까지 대기, PENDING: 즉시 결제 대기, CANCELED: 결제취소"
 )
 enum class BillingStatusCode(
   val value: String
 ) {
-  PENDING("대기"),
-  COMPLETE("완료"),
-  CANCELED("취소"),
+  TEMP_READY("익월 1일까지 대기"),
+  PENDING("즉시 결제 대기"),
+  COMPLETE("결제완료"),
+  CANCELED("결제취소"),
   FAIL("결제실패"),
 }

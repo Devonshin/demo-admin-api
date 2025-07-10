@@ -50,7 +50,7 @@ fun Application.configureRouting() {
         }
       }
       userRoutes(get())
-      storeRoutes(get())
+      storeRoutes(get(), get())
       serviceCodeRoutes(get())
       issueReceiptRoutes(get())
       merchantTagRoutes(get())

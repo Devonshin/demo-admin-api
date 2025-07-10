@@ -70,8 +70,10 @@ dependencies {
   implementation("io.github.smiley4:ktor-openapi:5.0.2")
   implementation("io.github.smiley4:ktor-redoc:5.0.2")
   implementation("io.swagger.core.v3:swagger-core:2.2.30")
-
-
+  implementation("io.ktor:ktor-client-core:${ktor_version}")
+  implementation("io.ktor:ktor-client-cio-jvm:${ktor_version}")
+  implementation("io.ktor:ktor-client-content-negotiation:${ktor_version}")
+  implementation("io.ktor:ktor-serialization-kotlinx-json:${ktor_version}")
   testImplementation("io.mockk:mockk:1.14.0")
   testImplementation("io.ktor:ktor-server-test-host")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")

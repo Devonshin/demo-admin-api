@@ -7,9 +7,11 @@ import io.allink.receipt.api.domain.code.ServiceCodeModel
 import io.allink.receipt.api.domain.code.ServiceCodeStatus
 import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceId
 import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceModel
-import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceModifyModel
+import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceRegistModel
 import io.github.smiley4.ktoropenapi.config.ResponseConfig
 import io.github.smiley4.ktoropenapi.config.SimpleBodyConfig
+import io.swagger.v3.oas.annotations.media.Schema
+import kotlinx.serialization.Contextual
 import java.time.LocalDateTime
 import java.util.*
 
@@ -101,9 +103,21 @@ fun storeDetailResponse(): ResponseConfig.() -> Unit = {
   }
 }
 
+fun storeBillingTokenListResponse(): ResponseConfig.() -> Unit = {
+  description = "성공 응답"
+  body<Response<StoreModel>> {
+    example("카드 토큰 데이터 목록 응답") {
+      description = "카드 토큰 데이터 목록 응답"
+      value = Response(
+        data = listOf(storeBillingTokenExample)
+      )
+    }
+  }
+}
+
 
 fun storeRegisterRequest(): SimpleBodyConfig.() -> Unit = {
-  description = "가맹점 등록/수정 요청 데이터"
+  description = "가맹점 등록 요청 데이터"
   example("store-regist-request") {
     value = StoreRegistModel(
       storeName = "매장명",
@@ -122,30 +136,29 @@ fun storeRegisterRequest(): SimpleBodyConfig.() -> Unit = {
       businessNoLaw = null,
       status = StatusCode.NORMAL,
       npointStoreServices = listOf(
-        NPointStoreServiceModifyModel(
+        NPointStoreServiceRegistModel(
           serviceCode = "REVIEWPRJ",
           serviceCharge = 50_000,
           rewardDeposit = 300_000,
           rewardPoint = 500,
-          serviceCommission = 500,
-          status = StatusCode.ACTIVE
+          serviceCommission = 500
         ),
-        NPointStoreServiceModifyModel(
+        NPointStoreServiceRegistModel(
           serviceCode = "DLVRVIEWPT",
           serviceCharge = 0,
           rewardDeposit = 0,
           rewardPoint = 500,
-          serviceCommission = 500,
-          status = StatusCode.ACTIVE
+          serviceCommission = 500
         )
       ),
       couponAdYn = false,
       storeBilling = StoreBillingRegistModel(
-        tokenUuid = "611b2187-b838-46a1-9b21-87b838b6a17a",
+        tokenUuid = UUID.fromString("611b2187-b838-46a1-9b21-87b838b6a17a"),
         billingAmount = 5000,
         bankCode = "001",
         bankAccountNo = "1231-23123-123",
-        bankAccountName = "홍길동"
+        bankAccountName = "홍길동",
+        status = BillingStatusCode.PENDING,
       ),
     )
   }
@@ -172,34 +185,43 @@ fun storeModifyRequest(): SimpleBodyConfig.() -> Unit = {
       businessNoLaw = null,
       status = StatusCode.NORMAL,
       npointStoreServices = listOf(
-        NPointStoreServiceModifyModel(
+        NPointStoreServiceRegistModel(
           serviceCode = "REVIEWPRJ",
           serviceCharge = 50_000,
           rewardDeposit = 300_000,
           rewardPoint = 500,
-          serviceCommission = 500,
-          status = StatusCode.ACTIVE
+          serviceCommission = 500
         ),
-        NPointStoreServiceModifyModel(
+        NPointStoreServiceRegistModel(
           serviceCode = "DLVRVIEWPT",
           serviceCharge = 0,
           rewardDeposit = 0,
           rewardPoint = 500,
-          serviceCommission = 500,
-          status = StatusCode.ACTIVE
+          serviceCommission = 500
         )
       ),
       couponAdYn = false,
       storeBilling = StoreBillingRegistModel(
-        tokenUuid = "611b2187-b838-46a1-9b21-87b838b6a17a",
+        tokenUuid = UUID.fromString("611b2187-b838-46a1-9b21-87b838b6a17a"),
         billingAmount = 5000,
         bankCode = "001",
         bankAccountNo = "1231-23123-123",
-        bankAccountName = "홍길동"
+        bankAccountName = "홍길동",
+        status = BillingStatusCode.PENDING,
       ),
     )
   }
 }
+
+private val storeBillingTokenExample = StoreBillingTokenModel(
+  id = UUID.fromString("611b2187-b838-46a1-9b21-87b838b6a17a"),
+  businessNo = "123-45-67890",
+  token = "611b2187-b838-46a1=9b21-87b838b6a17a",
+  tokenInfo = "신한카드***",
+  status = StatusCode.ACTIVE,
+  regDate = LocalDateTime.now(),
+  regBy = UUID.fromString("611b2187-b838-46a1-9b21-87b838b6a17a"),
+)
 
 private val storeSearchExample = StoreSearchModel(
   id = "store-123",
@@ -239,7 +261,7 @@ private val storeExample = StoreModel(
   iconUrl = null,
   logoUrl = "https://logourl.com",
   receiptWidthInch = null,
-  status = StatusCode.NORMAL,
+  status = StatusCode.ACTIVE,
   partnerLoginId = null,
   regDate = LocalDateTime.now(),
   modDate = LocalDateTime.now(),
@@ -248,7 +270,7 @@ private val storeExample = StoreModel(
   npointStoreServices = listOf(
     NPointStoreServiceModel(
       id = NPointStoreServiceId(
-        storeServiceSeq = "2506101100",
+        storeServiceSeq = 1506101100,
         storeUid = "store-123",
         serviceCode = "DLVRVIEWPT",
       ),
@@ -272,7 +294,7 @@ private val storeExample = StoreModel(
     ),
     NPointStoreServiceModel(
       id = NPointStoreServiceId(
-        storeServiceSeq = "2506101100",
+        storeServiceSeq = 1506101100,
         storeUid = "store-123",
         serviceCode = "DLVRVIEWPT",
       ),
@@ -305,8 +327,8 @@ private val storeExample = StoreModel(
     bankAccountName = "홍길동",
     regDate = LocalDateTime.now(),
     regBy = UUID.fromString("611b2187-b838-46a1-9b21-87b838b6a17a"),
-    id = 123u,
-    storeServiceSeq = "2506101100",
+    id = 123,
+    storeServiceSeq = 1506101100,
     status = BillingStatusCode.COMPLETE
   ),
   storeBillingTokens = listOf(
@@ -331,6 +353,6 @@ private val storeListExample = StoreSearchModel(
   ceoName = "저것참",
   businessType = "1231212345",
   eventType = "퉁신판매업",
-  status = StatusCode.NORMAL,
+  status = StatusCode.ACTIVE,
   regDate = LocalDateTime.now()
 )

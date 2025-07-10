@@ -48,7 +48,7 @@ data class NPointStoreServiceModel(
 
 @Serializable
 @Schema(name = "nPointStoreServiceModifyModel", title = "NPoint 서비스 등록/수정 정보", description = "NPoint 가맹점 관련 서비스 정보")
-data class NPointStoreServiceModifyModel(
+data class NPointStoreServiceRegistModel(
   @Schema(title = "서비스 코드", description = "서비스 고유 코드", example = "광고:ADVERTIZE, 전자영수증:ERECEIPT, 네이버 999+리뷰:REVIEWPRJ, 네이버 리뷰 리워드: REVIEWPT, 배달리뷰 리워드: DLVRVIEWPT")
   val serviceCode: String,
   @Schema(title = "기본료", description = "기본 요금")
@@ -58,13 +58,11 @@ data class NPointStoreServiceModifyModel(
   @Schema(title = "리워드 포인트", description = "지급할 포인트")
   val rewardPoint: Int? = null,
   @Schema(title = "리워드 수수료", description = "서비스 리워드 수수료")
-  val serviceCommission: Int? = null,
-  @Schema(title = "상태", description = "서비스 상태", example = "ACTIVE", requiredMode = Schema.RequiredMode.NOT_REQUIRED, defaultValue = "ACTIVE")
-  val status: StatusCode = StatusCode.ACTIVE
+  val serviceCommission: Int? = null
 )
 
 object NPointStoreServiceTable : Table("n_point_store_service") {
-  val id = varchar( "store_service_seq", 10)
+  val id = integer( "store_service_seq")
   val storeUid = reference("store_uid", StoreTable.id) // 가맹점
   val serviceCode = reference("service_code", ServiceCodeTable.serviceCode) // 서비스 아이디
   val serviceCharge = integer("service_charge") // 서비스 기본료
@@ -82,8 +80,8 @@ object NPointStoreServiceTable : Table("n_point_store_service") {
 
 @Serializable
 data class NPointStoreServiceId (
-  @Schema(title = "가맹점 서비스 등록일", description = "가맹점 서비스 등록일 yyMMddHHmm")
-  val storeServiceSeq: String,
+  @Schema(title = "가맹점 서비스 등록 순번", description = "가맹점 서비스 등록 순번")
+  val storeServiceSeq: Int,
   @Schema(title = "가맹점 고유아이디", description = "가맹점 고유아이디")
   val storeUid: String,
   @Schema(title = "서비스 코드", description = "서비스 고유 코드", example = "광고:ADVERTIZE, 전자영수증:ERECEIPT, 네이버 999+리뷰:REVIEWPRJ, 네이버 리뷰 리워드: REVIEWPT, 배달리뷰 리워드: DLVRVIEWPT")

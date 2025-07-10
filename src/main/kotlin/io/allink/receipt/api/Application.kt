@@ -9,13 +9,13 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-  configureHTTP()
   configureMonitoring()
   configureStatusPage()
   configureValidation()
   configureSerialization()
   configureDatabases()
   configureFrameworks()
+  configureHTTP()
   configureSecurity()
   configureRouting()
   configureOpenApi()

@@ -85,12 +85,12 @@ fun Application.configureValidation() {
 
 fun businessNoValidator(businessNo: String?): ValidationResult =
   if (businessNo != null && !isValidBusinessNo(businessNo)) {
-    ValidationResult.Invalid("사업자 등록 번호가 유효하지 않습니다. ")
+    ValidationResult.Invalid("사업자 등록 번호[$businessNo]가 유효하지 않습니다. 예)123-45-67890")
   } else ValidationResult.Valid
 
 fun isValidBusinessNo(businessNo: String): Boolean {
+  if (!Regex("\\d{3}-\\d{2}-\\d{5}").matches(businessNo)) return false
   val businessNo = businessNo.replace("\\D", "")
-  if (!Regex("\\d{10}").matches(businessNo)) return false
   val weights = listOf(1, 3, 7, 1, 3, 7, 1, 3, 5)
   var checkDigit = 0
   weights.forEachIndexed { index, weight ->

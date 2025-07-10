@@ -7,6 +7,7 @@ import io.allink.receipt.api.domain.ErrorResponse
 import io.allink.receipt.api.domain.Response
 import io.allink.receipt.api.exception.ApiException
 import io.ktor.http.*
+import io.ktor.serialization.JsonConvertException
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.requestvalidation.*
@@ -68,6 +69,19 @@ fun Application.configureStatusPage() {
           ErrorResponse(
             code = status.value.toString(),
             message = "파라미터가 유효하지 않음 :${status.description}"
+          )
+        )
+      )
+    }
+
+    exception<ApiException> { call, cause ->
+      logger.error("ApiException : {}", cause.message, cause)
+      call.respond(
+        HttpStatusCode.BadRequest,
+        Response(
+          ErrorResponse(
+            code = cause.code,
+            message = cause.message
           )
         )
       )
@@ -139,6 +153,7 @@ fun Application.configureStatusPage() {
     exception<BadRequestException> { call, cause ->
       logger.error("BadRequestException : {}", cause.message, cause)
       val rootCause = cause.cause
+
       call.respond(
         HttpStatusCode.BadRequest,
         Response(
@@ -170,19 +185,6 @@ fun Application.configureStatusPage() {
           ErrorResponse(
             code = "BAD_REQUEST",
             message = "Resource not found [${cause.message}]"
-          )
-        )
-      )
-    }
-
-    exception<ApiException> { call, cause ->
-      logger.error("ApiException : {}", cause.message, cause)
-      call.respond(
-        HttpStatusCode.BadRequest,
-        Response(
-          ErrorResponse(
-            code = cause.code,
-            message = cause.message
           )
         )
       )

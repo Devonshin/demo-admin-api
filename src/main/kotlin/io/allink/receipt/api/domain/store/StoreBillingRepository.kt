@@ -3,11 +3,13 @@ package io.allink.receipt.api.domain.store
 import io.allink.receipt.api.repository.ExposedRepository
 import org.jetbrains.exposed.v1.core.Expression
 import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
 import org.jetbrains.exposed.v1.core.statements.UpdateStatement
 import org.jetbrains.exposed.v1.r2dbc.insert
+import org.jetbrains.exposed.v1.r2dbc.update
 
-interface StoreBillingRepository : ExposedRepository<StoreBillingTable, ULong, StoreBillingModel> {
+interface StoreBillingRepository : ExposedRepository<StoreBillingTable, Long, StoreBillingModel> {
 
   override fun toModel(row: ResultRow): StoreBillingModel {
     return StoreBillingModel(
@@ -29,7 +31,7 @@ interface StoreBillingRepository : ExposedRepository<StoreBillingTable, ULong, S
     it[table.storeUid] = model.storeUid
     it[table.tokenUuid] = model.tokenUuid
     it[table.storeServiceSeq] = model.storeServiceSeq
-    it[table.status] = model.status
+    it[table.status] = model.status!!
     it[table.billingAmount] = model.billingAmount
     it[table.bankCode] = model.bankCode
     it[table.bankAccountNo] = model.bankAccountNo
@@ -38,8 +40,8 @@ interface StoreBillingRepository : ExposedRepository<StoreBillingTable, ULong, S
     it[table.regBy] = model.regBy
   }
 
-  override fun toUpdateRow(model: StoreBillingModel): StoreBillingTable.(UpdateStatement) -> Unit {
-    TODO("Not yet implemented")
+  override fun toUpdateRow(model: StoreBillingModel): StoreBillingTable.(UpdateStatement) -> Unit = {
+    it[table.status] = model.status!!
   }
 
   override suspend fun create(model: StoreBillingModel): StoreBillingModel {
@@ -50,14 +52,17 @@ interface StoreBillingRepository : ExposedRepository<StoreBillingTable, ULong, S
   }
 
   override suspend fun update(model: StoreBillingModel): Int {
+    return table.update(
+      where = { table.id eq model.id!! },
+      body = { toUpdateRow(model)(it) }
+    )
+  }
+
+  override suspend fun find(id: Long): StoreBillingModel? {
     TODO("Not yet implemented")
   }
 
-  override suspend fun find(id: ULong): StoreBillingModel? {
-    TODO("Not yet implemented")
-  }
-
-  override suspend fun delete(id: ULong): Int {
+  override suspend fun delete(id: Long): Int {
     TODO("Not yet implemented")
   }
 

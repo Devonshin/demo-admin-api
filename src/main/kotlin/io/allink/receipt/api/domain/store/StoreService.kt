@@ -17,4 +17,5 @@ interface StoreService {
   suspend fun modifyStore(storeModifyModel: StoreModifyModel, userUuid: UUID)
   suspend fun findAllAgencyStore(filter: StoreFilter, agencyId: UUID): PagedResult<StoreSearchModel>
   suspend fun findStore(id: String, agencyId: UUID): StoreModel?
+  suspend fun findAllBillingToken(businessNo: String): List<StoreBillingTokenModel>?
 }

@@ -65,4 +65,5 @@ interface StoreBillingTokenRepository : ExposedRepository<StoreBillingTokenTable
     get() = TODO("Not yet implemented")
 
   suspend fun cancelBilling(storeUid: String): Int
+  suspend fun findAllActiveByBusinessNo(businessNo: String): List<StoreBillingTokenModel>?
 }

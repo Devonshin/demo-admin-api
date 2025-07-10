@@ -27,6 +27,21 @@ class StoreRepositoryImpl(
   override val table: StoreTable
 ) : StoreRepository {
 
+  override suspend fun find(id: String): StoreModel? {
+    return table
+      .join(StoreBillingTable, JoinType.LEFT, table.id, StoreBillingTable.storeUid)
+      .join(NPointStoreTable, JoinType.LEFT, table.id, NPointStoreTable.id)
+      .join(BzAgencyTable, JoinType.LEFT, table.bzAgencyId, BzAgencyTable.id)
+      .selectAll()
+      .where { table.id eq id }
+      .orderBy(
+        StoreBillingTable.id, SortOrder.DESC
+      )
+      .limit(1)
+      .map { toModel(it) }
+      .singleOrNull()
+  }
+
   override suspend fun findAll(filter: StoreFilter, bzAgencyUuid: UUID): PagedResult<StoreSearchModel> {
     val select = table.selectAll()
     select.andWhere { table.bzAgencyId eq bzAgencyUuid }
@@ -100,6 +115,26 @@ class StoreRepositoryImpl(
       )
       .limit(1)
       .map { toModel(it) }
+      .singleOrNull()
+  }
+
+  override suspend fun findByNameAndBzNo(name: String, businessNo: String): StoreModel? {
+    return table
+      .select(
+        table.id,
+        table.storeName,
+        table.businessNo
+      )
+      .where { table.businessNo eq businessNo }
+      .andWhere { table.storeName eq name }
+      .limit(1)
+      .map {
+        StoreModel(
+          id = it[table.id],
+          storeName = it[table.storeName],
+          businessNo = it[table.businessNo],
+        )
+      }
       .singleOrNull()
   }
 

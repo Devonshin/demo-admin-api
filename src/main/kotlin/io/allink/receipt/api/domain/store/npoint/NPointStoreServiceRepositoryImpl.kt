@@ -7,18 +7,19 @@ import io.allink.receipt.api.util.DateUtil
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import org.jetbrains.exposed.v1.core.JoinType
+import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.r2dbc.selectAll
 import org.jetbrains.exposed.v1.r2dbc.update
 
 class NPointStoreServiceRepositoryImpl(
   override val table: NPointStoreServiceTable
 ) : NPointStoreServiceRepository {
-  override suspend fun findAllStoreService(storeUid: String): Map<String, List<NPointStoreServiceModel>> {
+  override suspend fun findAllStoreService(storeUid: String): Map<Int, List<NPointStoreServiceModel>> {
     return table
       .join(ServiceCodeTable, JoinType.LEFT, table.serviceCode, ServiceCodeTable.serviceCode)
       .selectAll()
       .where {
-        table.storeUid eq storeUid
+        (table.storeUid eq storeUid) and (table.status eq StatusCode.ACTIVE)
       }
       .map {
         toModel(it)
@@ -29,12 +30,12 @@ class NPointStoreServiceRepositoryImpl(
       }
   }
 
-  override suspend fun findAllStoreService(yyMMddHHmm: String, storeUid: String): List<NPointStoreServiceModel> {
+  override suspend fun findAllStoreService(storeServiceSeq: Int, storeUid: String): List<NPointStoreServiceModel> {
     return table
       .join(ServiceCodeTable, JoinType.LEFT, table.serviceCode, ServiceCodeTable.serviceCode)
       .selectAll()
       .where {
-        table.id eq yyMMddHHmm
+        table.id eq storeServiceSeq
         table.storeUid eq storeUid
       }
       .map {
@@ -46,7 +47,9 @@ class NPointStoreServiceRepositoryImpl(
   override suspend fun cancelAllStoreService(storeUid: String): Int {
     return table.update(
       where = {
-        table.storeUid eq storeUid
+        (table.storeUid eq storeUid) and
+            (table.status neq StatusCode.ACTIVE) and
+            (table.status neq StatusCode.NORMAL)
       }
     ) {
       it[status] = StatusCode.INACTIVE

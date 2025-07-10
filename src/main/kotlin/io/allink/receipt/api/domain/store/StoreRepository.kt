@@ -212,21 +212,6 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
     }
   }
 
-  override suspend fun find(id: String): StoreModel? {
-    return table
-      .join(StoreBillingTable, JoinType.LEFT, table.id, StoreBillingTable.storeUid)
-      .join(NPointStoreTable, JoinType.LEFT, table.id, NPointStoreTable.id)
-      .join(BzAgencyTable, JoinType.LEFT, table.bzAgencyId, BzAgencyTable.id)
-      .selectAll()
-      .where { table.id eq id }
-      .orderBy(
-        StoreBillingTable.id, SortOrder.DESC
-      )
-      .limit(1)
-      .map { toModel(it) }
-      .singleOrNull()
-  }
-
   override suspend fun delete(id: String): Int {
     TODO()
   }
@@ -250,4 +235,5 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
 
   suspend fun searchStores(filter: StoreSearchFilter): PagedResult<StoreSearchModel>
   suspend fun find(id: String, agencyId: UUID): StoreModel?
+  suspend fun findByNameAndBzNo(name: String, businessNo: String): StoreModel?
 }

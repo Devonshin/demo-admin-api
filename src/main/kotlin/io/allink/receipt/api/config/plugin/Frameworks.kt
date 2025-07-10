@@ -9,6 +9,9 @@ import io.allink.receipt.api.domain.code.ServiceCodeRepositoryImpl
 import io.allink.receipt.api.domain.code.ServiceCodeTable
 import io.allink.receipt.api.domain.file.FileService
 import io.allink.receipt.api.domain.file.FileServiceImpl
+import io.allink.receipt.api.domain.koces.KocesGatewayConfig
+import io.allink.receipt.api.domain.koces.KocesService
+import io.allink.receipt.api.domain.koces.KocesServiceImpl
 import io.allink.receipt.api.domain.login.*
 import io.allink.receipt.api.domain.merchant.*
 import io.allink.receipt.api.domain.npoint.*
@@ -30,7 +33,7 @@ fun Application.configureFrameworks() {
   install(Koin) {
     modules(module {
       /**
-       * Repository
+       * Configuration
        * */
       single<ApplicationConfig> {
         val env = System.getenv("KTOR_ENV") ?: "test"
@@ -40,6 +43,13 @@ fun Application.configureFrameworks() {
         HoconApplicationConfig(envConfig.withFallback(baseConfig))
       }
 
+      single<KocesGatewayConfig> {
+        KocesGatewayConfig(get())
+      }
+
+      /**
+       * Repository
+       * */
       single<DynamoDbClient> {
         configureAwsDynamoDb(get())
       }
@@ -76,21 +86,24 @@ fun Application.configureFrameworks() {
       single<BzAgencyRepository> {
         BzAgencyRepositoryImpl(BzAgencyTable)
       }
-      single<NPointStoreRepository>{
+      single<NPointStoreRepository> {
         NPointStoreRepositoryImpl(NPointStoreTable)
       }
-      single<NPointStoreServiceRepository>{
+      single<NPointStoreServiceRepository> {
         NPointStoreServiceRepositoryImpl(NPointStoreServiceTable)
       }
-      single<StoreBillingRepository>{
+      single<StoreBillingRepository> {
         StoreBillingRepositoryImpl(StoreBillingTable)
       }
-      single<StoreBillingTokenRepository>{
+      single<StoreBillingTokenRepository> {
         StoreBillingTokenRepositoryImpl(StoreBillingTokenTable)
       }
       /**
        * Services
        * */
+      single<KocesService> {
+        KocesServiceImpl(get<KocesGatewayConfig>().createHttpClient(), get())
+      }
       single<AdminService> {
         AdminServiceImpl(get())
       }
@@ -119,12 +132,12 @@ fun Application.configureFrameworks() {
         NPointStoreServiceServiceImpl(get(), get())
       }
       single<StoreBillingService> {
-        StoreBillingServiceImpl(get())
+        StoreBillingServiceImpl(get(), get(), get())
       }
       single<BzAgencyService> {
         BzAgencyServiceImpl(get(), get())
       }
-      single<FileService>{
+      single<FileService> {
         FileServiceImpl(get(), get(), get())
       }
     })
