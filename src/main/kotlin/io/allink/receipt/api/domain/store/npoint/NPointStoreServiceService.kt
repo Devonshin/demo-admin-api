@@ -13,7 +13,7 @@ import java.util.*
 interface NPointStoreServiceService {
 
   suspend fun registNPointStoreService(
-    merchantSelectedServices: List<NPointStoreServiceRegistModel>,
+    services: List<NPointStoreServiceRegistModel>,
     storeUid: String,
     userUuid: UUID,
     storeServiceSeq: Int,

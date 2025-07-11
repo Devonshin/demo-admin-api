@@ -7,12 +7,12 @@ import io.allink.receipt.api.domain.ErrorResponse
 import io.allink.receipt.api.domain.Response
 import io.allink.receipt.api.exception.ApiException
 import io.ktor.http.*
-import io.ktor.serialization.JsonConvertException
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.ContentTransformationException
+import io.ktor.server.request.uri
 import io.ktor.server.response.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
@@ -51,6 +51,7 @@ fun Application.configureStatusPage() {
     }
 
     status(HttpStatusCode.MethodNotAllowed) { call, status ->
+      logger.error("HttpStatusCode.MethodNotAllowed : {}", status)
       call.respond(
         status,
         Response(
@@ -63,6 +64,7 @@ fun Application.configureStatusPage() {
     }
 
     status(HttpStatusCode.UnsupportedMediaType) { call, status ->
+      logger.error("HttpStatusCode.UnsupportedMediaType : {}", status)
       call.respond(
         status,
         Response(
@@ -87,7 +89,8 @@ fun Application.configureStatusPage() {
       )
     }
 
-    exception<JWTDecodeException> { call, _ ->
+    exception<JWTDecodeException> { call, cause ->
+      logger.error("TokenExpiredException : {}", cause.message, cause)
       call.respond(
         HttpStatusCode.BadRequest,
         Response(
@@ -100,7 +103,8 @@ fun Application.configureStatusPage() {
     }
 
 
-    exception<SignatureVerificationException> { call, _ ->
+    exception<SignatureVerificationException> { call, cause ->
+      logger.error("SignatureVerificationException : {}", cause.message, cause)
       call.respond(
         HttpStatusCode.BadRequest,
         Response(
@@ -114,6 +118,7 @@ fun Application.configureStatusPage() {
 
 
     exception<RequestValidationException> { call, cause ->
+      logger.error("RequestValidationException :[{}] {}", call.request.uri, cause.message, cause)
       call.respond(
         HttpStatusCode.BadRequest,
         Response(
@@ -126,6 +131,7 @@ fun Application.configureStatusPage() {
     }
 
     exception<TokenExpiredException> { call, cause ->
+      logger.error("TokenExpiredException : {}", cause.message, cause)
       call.respond(
         HttpStatusCode.Unauthorized,
         Response(

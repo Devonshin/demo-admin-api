@@ -69,3 +69,4 @@ node_modules/
 *.sln
 *.sw?
 # OS specific
+src/main/resources/rebel.xml

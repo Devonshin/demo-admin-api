@@ -33,12 +33,18 @@ data class KocesCancelRequest(
 data class KocesGateResponse(
     @Schema(title = "성공 여부", description = "결제 처리 성공 여부", example = "OK|NOTOK")
     val resultCode: String,
-    @Schema(title = "응답 시퀀스", description = "koces_response 테이블의 시퀀스값", required = false)
-    val resultData: Long? = null,
+    @Schema(title = "응답 데이터", description = "responseSeq, message", required = false)
+    val resultData: Map<String, KocesResultData>? = null,
     @Schema(title = "결과코드", description = "코세스 응답 코드", required = false, example = "0000|1234")
     val resultMessage: String? = null,
     @Schema(title = "에러 메시지", description = "에러 메시지", required = false)
     val errorMessage: String? = null,
     @Schema(title = "응답 코드", description = "", required = false)
     val errorCode: String? = null
+)
+
+@Serializable
+data class KocesResultData(
+    val responseSeq: Long,
+    val message: String
 )

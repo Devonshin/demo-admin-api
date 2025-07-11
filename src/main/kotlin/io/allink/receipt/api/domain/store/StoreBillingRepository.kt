@@ -54,7 +54,7 @@ interface StoreBillingRepository : ExposedRepository<StoreBillingTable, Long, St
   override suspend fun update(model: StoreBillingModel): Int {
     return table.update(
       where = { table.id eq model.id!! },
-      body = { toUpdateRow(model)(it) }
+      body = { it[table.status] = model.status!! }
     )
   }
 

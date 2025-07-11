@@ -70,7 +70,9 @@ class StoreServiceImpl(
       storeRepository.searchStores(filter)
     }
 
-  //가맹점 등록 시 이용하는 포인트 서비스가 있을 경우, 실제 결제는 즉시 결제 api 를 호출하거나 별도로 호출을 해야한다.
+  /*
+  * 가맹점 등록
+  * */
     override suspend fun registStore(
     storeRegistModel: StoreRegistModel,
     userUuid: UUID
@@ -95,29 +97,21 @@ class StoreServiceImpl(
         nPointStoreServiceService.registNPointStoreService(selectedServices, storeUid, userUuid, storeServiceSeq, now)
       val storeBilling = storeRegistModel.storeBilling ?: throw BadRequestException("결제 정보 데이터가 필요합니다")
 
-      val amountPair = calculAmount(npointServices, now)
-      val rewardPointAmount = amountPair.first
+      val amountPair = storeBillingService.calculAmount(npointServices, now)
       val todayTotalPaymentAmount = amountPair.second
-      val totalPaymentAmount = amountPair.third
 
       if (storeBilling.billingAmount != todayTotalPaymentAmount) {
         throw BadRequestException("결제 금액이 올바르지 않습니다. billingAmount: ${storeBilling.billingAmount} shouldBe: $todayTotalPaymentAmount")
       }
+
       val initBillingModel =
-        initBillingModel(storeUid, storeServiceSeq, storeBilling, todayTotalPaymentAmount, now, userUuid)
+        storeBillingService.initBillingModel(storeUid, storeServiceSeq, storeBilling, todayTotalPaymentAmount, now, userUuid)
       val registeredBilling = storeBillingService.registBilling(initBillingModel)
       logger.info("registeredBilling: $registeredBilling")
 
       val nPointStore = nPointStoreRepository.find(storeUid) ?: nPointStoreRepository.create(
         initNPointStoreModel(storeUid, now, userUuid)
       )
-
-      nPointStore.reviewPoints = rewardPointAmount
-      nPointStore.regularPaymentAmounts = totalPaymentAmount
-      nPointStore.modDate = now
-      nPointStore.modBy = userUuid
-      nPointStoreRepository.update(nPointStore)
-
       logger.info("nPointStore: $nPointStore")
       logger.info("storeBilling: $storeBilling")
       logger.info("npointServices: $npointServices")
@@ -125,10 +119,12 @@ class StoreServiceImpl(
     storeUid
   }
 
-  //가맹점 수정 시 이용하는 포인트 서비스가 수정 됐을 경우, 실제 결제는 다음달 1일에 자동으로 요청하거나 별도로 결제 api를 호출해야 한다.
-  //익월 1일에 생성할 빌링 데이터는 가맹점 이용 서비스를 바탕으로 생성한다
-  //가맹점 이용서비스를 중지 시키면 익월 빌링 정보도 더이상 생성되지 않는다.
-  //
+  /*
+  * 가맹점 수정 시 포인트 서비스 신청 내용이 수정 됐을 경우, STANDBY: 즉시 결제(가맹점 등록 시점에 결제 실패의 경우), PENDING : 다음 달 1일 결제 예약
+  * todo : 혹은 별도로 결제 api를 호출해야 한다.
+  * todo : 익월 1일에 생성할 빌링 데이터는 가맹점 이용 서비스를 바탕으로 생성한다
+  * todo : 가맹점 이용서비스를 중지 시키면 익월에 결제 할 내역도 더 이상 생성되지 않는다.
+  * */
   override suspend fun modifyStore(
     storeModifyModel: StoreModifyModel,
     userUuid: UUID
@@ -144,29 +140,36 @@ class StoreServiceImpl(
 
       val now = DateUtil.nowLocalDateTime()
       val storeServiceSeq = DateUtil.nowInstant(now).epochSecond.toInt()
-      //새로운 포인트 서비스 생성 - 익월 1일에 결제 예정이 된다, 지금까지 추가된 서비스들은 취소처리되고 마지막에 등록된 서비스들이 익월에 시작
+      //새로운 포인트 서비스 생성 - 익월 1일에 결제 예정이 된다, 지금까지 추가된 서비스들은 대기 상태들은 취소처리되고 마지막에 등록된 서비스들로 익월에 시작
+      nPointStoreServiceService.cancelNPointStoreServices(storeUid) //기존 등록 데이터 무효처리 - 활성화가 아닌 상태만 무효처리한다, 이후에 결제 시 기존 활성 서비스들은 만료처리
       val npointServices =
         nPointStoreServiceService.registNPointStoreService(services, storeUid, userUuid, storeServiceSeq, now)
 
       val storeBilling = storeModifyModel.storeBilling ?: throw BadRequestException("Store billing is required")
-      val nextMonth = now.plusMonths(1).withDayOfMonth(1)
-      val amountPair = calculAmount(npointServices, nextMonth)
-      //      val rewardPointAmount = amountPair.first
-      val totalPaymentAmount = amountPair.second
-      if (storeBilling.billingAmount != totalPaymentAmount) {
-        throw BadRequestException("결제 금액이 올바르지 않습니다. billingAmount: ${storeBilling.billingAmount} shouldBe: $totalPaymentAmount")
+      val billingDay = if (storeBilling.status == BillingStatusCode.STANDBY) { //즉시 결제
+        now
+      } else {
+        now.plusMonths(1).withDayOfMonth(1)
       }
-      //      nPointStore.reviewPoints = rewardPointAmount //결제가 완료된 시점에 업데이트 해야 한다.
-      //      nPointStore.modDate = now //결제가 완료된 시점에 업데이트 해야 한다.
-      //      nPointStore.modBy = userUuid //결제가 완료된 시점에 업데이트 해야 한다.
-      //      nPointStoreRepository.update(nPointStore) //결제가 완료된 시점에 업데이트 해야 한다.
-//      logger.info("nPointStore: $nPointStore") //결제가 완료된 시점에 업데이트 해야 한다.
+      val amountPair = storeBillingService.calculAmount(npointServices, billingDay)
+      val totalAmount = amountPair.second
+      if (storeBilling.billingAmount != totalAmount) {
+        throw BadRequestException("결제 금액이 올바르지 않습니다. billingAmount: ${storeBilling.billingAmount} shouldBe: $totalAmount")
+      }
+
       logger.info("storeBilling: $storeBilling")
       logger.info("npointServices: $npointServices")
       //마지막에 등록된 빌링 데이터만 결제 요청에 사용된다.
       val initBillingModel =
-        initBillingModel(storeUid, storeServiceSeq, storeBilling, totalPaymentAmount, now, userUuid)
+        storeBillingService.initBillingModel(storeUid, storeServiceSeq, storeBilling, totalAmount, now, userUuid)
+      //이전에 등록된, 결제 완료가 되지 않은 건들은 모두 취소처리
+      storeBillingService.cancelBilling(storeUid)
+      //결제 정보 추가
       val registeredBilling = storeBillingService.updateBilling(initBillingModel)
+      val nPointStore = nPointStoreRepository.find(storeUid) ?: nPointStoreRepository.create(
+        initNPointStoreModel(storeUid, now, userUuid)
+      )
+      logger.info("nPointStore: $nPointStore")
       logger.info("registeredBilling: $registeredBilling")
     }
   }
@@ -183,29 +186,6 @@ class StoreServiceImpl(
       )
     }
   }
-
-  //now 를 기준으로 말일까지 남은 일수로 계산
-  private fun calculAmount(
-    registeredServices: List<NPointStoreServiceRegistModel>,
-    now: LocalDateTime
-  ): Triple<Int, Int, Int> {
-    val lengthOfMonth = YearMonth.now().lengthOfMonth()
-    var totalAmount = 0
-    var rewardPoint = 0
-    for (registeredService in registeredServices) {
-      logger.info("registered service[${registeredService.serviceCode}] - serviceCharge: ${registeredService.serviceCharge}, rewardDeposit: ${registeredService.rewardDeposit}, rewardPoint: ${registeredService.rewardPoint}")
-      totalAmount += registeredService.serviceCharge!! + registeredService.rewardDeposit!!
-      rewardPoint += registeredService.rewardPoint!!
-    }
-    val toDayTotalAmount = calculate(totalAmount, lengthOfMonth, lengthOfMonth - now.dayOfMonth + 1)
-    logger.info("totalAmount: $totalAmount, toDayTotalAmount: $toDayTotalAmount, rewardPoint: $rewardPoint")
-    return Triple(rewardPoint, toDayTotalAmount, totalAmount)
-  }
-
-  private fun calculate(totalAmount: Int, lengthOfMonth: Int, remainingDays: Int): Int {
-    return (totalAmount.toLong() * remainingDays / lengthOfMonth).toInt()
-  }
-
 
   private fun initNPointStoreModel(
     storeUid: String,
@@ -286,34 +266,5 @@ class StoreServiceImpl(
     modDate = DateUtil.nowLocalDateTime(),
     modBy = userUuid
   )
-
-  private fun initBillingModel(
-    storeUid: String,
-    storeServiceSeq: Int,
-    storeBilling: StoreBillingRegistModel,
-    totalAmount: Int,
-    now: LocalDateTime,
-    userUuid: UUID
-  ): StoreBillingModel {
-
-    storeBilling.status.let {
-      if (it != BillingStatusCode.PENDING && it != BillingStatusCode.TEMP_READY) {
-        throw InvalidBillingStatusException("결제 정보 등록 시 상태 값은 PENDING, TEMP_READY 만 가능합니다. 전송된 값 : $it")
-      }
-    }
-
-    return StoreBillingModel(
-      storeUid = storeUid,
-      storeServiceSeq = storeServiceSeq,
-      tokenUuid = storeBilling.tokenUuid,
-      status = storeBilling.status,
-      billingAmount = totalAmount,
-      bankCode = storeBilling.bankCode,
-      bankAccountNo = storeBilling.bankAccountNo,
-      bankAccountName = storeBilling.bankAccountName,
-      regDate = now,
-      regBy = userUuid
-    )
-  }
 
 }

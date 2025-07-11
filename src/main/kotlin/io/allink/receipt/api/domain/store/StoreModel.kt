@@ -331,7 +331,7 @@ data class StoreModifyModel(
     allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"]
   )
   val status: StatusCode? = null,
-  @Schema(title = "가맹점에서 사용할 서비스", description = "중요 사항 : 결제 정보(storeBilling) 필수, npointStoreServices 데이터가 전달될 시 결제 정보도 같이 전달되야 합니다. 서비스나 결제 정보의 변경이 필요한 경우만 값을 세팅하고, 유지 시에는 null로 설정하세요. 가맹점 수정 시 같이 전달된 서비스 목록과 결제 정보는 익월 1일부터 반영됩니다. ")
+  @Schema(title = "가맹점에서 사용할 서비스", description = "중요 사항 : 결제 정보(storeBilling) 필수, npointStoreServices 데이터가 전달될 시 결제 정보도 같이 전달되야 합니다. 서비스나 결제 정보의 변경이 필요한 경우만 값을 세팅하고, 기존 상태를 유지할 시에는 null로 설정하세요. 가맹점 수정 시 같이 전달된 서비스 목록과 결제 정보는 익월 1일부터 반영됩니다.")
   val npointStoreServices: List<NPointStoreServiceRegistModel>? = listOf(),
   @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보, 개발환경에서는 무조건 성공 처리 됩니다. 실제 테스트는 운영환경에서만 가능합니다.")
   val storeBilling: StoreBillingRegistModel? = null,

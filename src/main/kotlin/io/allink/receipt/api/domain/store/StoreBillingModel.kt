@@ -56,8 +56,8 @@ data class StoreBillingRegistModel(
   var billingAmount: Int = 0,
   @Schema(
     title = "결제 상태코드",
-    description = "가맹점 등록 시 PENDING 자동 설정됌, 즉시 결제 시도. 가맹점 수정 시 강제로 TEMP_READY 상태로 입력되고 익월 1일 결제 예약이 됩니다. 결제가 성공하면 COMPLETE, 실패 시 FAIL",
-    example = "TEMP_READY: 임시 대기(익월 1일 결제 대상), PENDING: 즉시 결제용 대기"
+    description = "가맹점 등록 시 STANDBY 자동 설정됌, 즉시 결제 시도. 가맹점 수정 시 STANDBY(즉시결제)나 PENDING(익월 1일 결제). 결제가 성공하면 COMPLETE, 실패 시 FAIL",
+    example = "PENDING: 대기(익월 1일 결제 대상), STANDBY: 즉시 결제"
   )
   val status: BillingStatusCode? = BillingStatusCode.PENDING,
   @Schema(title = "환불 계좌 은행 코드", description = "환불 계좌 은행 코드, 은행 코드 목록 조회에서 확인 가능")

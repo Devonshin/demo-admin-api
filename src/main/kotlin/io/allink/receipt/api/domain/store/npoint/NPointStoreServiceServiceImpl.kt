@@ -45,14 +45,13 @@ class NPointStoreServiceServiceImpl(
 
   //이용 서비스 등록
   override suspend fun registNPointStoreService(
-    merchantSelectedServices: List<NPointStoreServiceRegistModel>,
+    services: List<NPointStoreServiceRegistModel>,
     storeUid: String,
     userUuid: UUID,
     storeServiceSeq: Int,
     now: LocalDateTime
   ): List<NPointStoreServiceRegistModel> = TransactionUtil.withTransaction {
-    cancelNPointStoreServices(storeUid) //기존 등록 데이터 무효처리 - 활성화가 아닌 상태만 무효처리한다, 이후에 결제 시 기존 활성 서비스들은 만료처리
-    val selectedServices = merchantSelectedServices.associateBy {
+    val selectedServices = services.associateBy {
       it.serviceCode
     }
     val services = getServiceCodes()
@@ -108,45 +107,45 @@ class NPointStoreServiceServiceImpl(
   }
 
   fun validateSelectedService(
-    merchantSelectedServices: Map<String, NPointStoreServiceRegistModel>,
+    selectedServices: Map<String, NPointStoreServiceRegistModel>,
     services: Map<String, ServiceCodeModel>
   ): MutableList<NPointStoreServiceRegistModel> {
     val eReceiptServiceCode = services[ERECEIPT]!!
-    merchantSelectedServices[REVIEWPRJ]?.let { merchantService ->
-      val reviewProjectServiceCode = services[REVIEWPRJ]!!
-      validateDepositAndCommissionAmount(merchantService, reviewProjectServiceCode)
+    selectedServices[REVIEWPRJ]?.let { selectedService ->
+      val serviceCodeModel = services[REVIEWPRJ]!!
+      validateDepositAndCommissionAmount(selectedService, serviceCodeModel)
       return mutableListOf(
-        merchantService.copy(
+        selectedService.copy(
           serviceCode = ERECEIPT,
           serviceCharge = 0/*eReceiptServiceCode.price*/,
           rewardDeposit = 0,
           rewardPoint = 0,
           serviceCommission = 0,
         ),
-        merchantService.copy(
+        selectedService.copy(
           serviceCode = REVIEWPRJ,
-          serviceCharge = reviewProjectServiceCode.price,
+          serviceCharge = serviceCodeModel.price,
         )
       )
     }
-    merchantSelectedServices[REVIEWPT]?.let { merchantService ->
-      val reviewServiceCode = services[REVIEWPT]!!
-      validateDepositAndCommissionAmount(merchantService, reviewServiceCode)
+    selectedServices[REVIEWPT]?.let { selectedService ->
+      val serviceCodeModel = services[REVIEWPT]!!
+      validateDepositAndCommissionAmount(selectedService, serviceCodeModel)
       return mutableListOf(
-        merchantService.copy(
+        selectedService.copy(
           serviceCode = ERECEIPT,
           serviceCharge = eReceiptServiceCode.price,
           rewardDeposit = 0,
           rewardPoint = 0,
           serviceCommission = 0,
         ),
-        merchantService.copy(
+        selectedService.copy(
           serviceCode = REVIEWPT,
-          serviceCharge = reviewServiceCode.price,
+          serviceCharge = serviceCodeModel.price,
         )
       )
     }
-    merchantSelectedServices[ERECEIPT]?.let { merchantService ->
+    selectedServices[ERECEIPT]?.let { merchantService ->
       return mutableListOf(
         merchantService
       )

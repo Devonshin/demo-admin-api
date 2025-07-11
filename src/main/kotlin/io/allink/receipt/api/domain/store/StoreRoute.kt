@@ -1,13 +1,10 @@
 package io.allink.receipt.api.domain.store
 
-import io.allink.receipt.api.common.BillingStatusCode
 import io.allink.receipt.api.common.errorResponse
-import io.allink.receipt.api.domain.Request
 import io.allink.receipt.api.domain.Response
 import io.allink.receipt.api.domain.admin.BzAgencyMasterRole
 import io.allink.receipt.api.domain.admin.BzAgencyStaffRole
 import io.allink.receipt.api.domain.admin.toRole
-import io.allink.receipt.api.domain.koces.KocesService
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.post
 import io.ktor.http.*
@@ -125,7 +122,7 @@ fun Route.storeRoutes(
       operationId = "store-regist"
       tags = listOf("가맹점 관리")
       summary = "가맹점 등록"
-      description = "새로운 가맹점을 등록합니다. 이용 서비스가 있을 경우 결제 승인이 정상 처리가 되야 등록이 완료됩니다."
+      description = "새로운 가맹점을 등록합니다. 이용 서비스가 있을 경우 결제 정보는 필수입니다. 등록과 즉시 결제가 이루어지며 결제 실패 시 modify 인터페이스로 재결제 요청을 보내야 합니다."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<StoreRegistModel>(storeRegisterRequest())
@@ -136,6 +133,7 @@ fun Route.storeRoutes(
       }
     }) {
       val storeRegistModel = call.receive<StoreRegistModel>()
+      logger.info("Received storeRegistModel request: $storeRegistModel")
       val principal: JWTPrincipal = call.principal()!!
       val userUuid = principal.payload.getClaim("uUuid").asString()
       val payload = principal.payload
@@ -161,7 +159,7 @@ fun Route.storeRoutes(
       operationId = "store-modify"
       tags = listOf("가맹점 관리")
       summary = "가맹점 수정"
-      description = "가맹점 정보를 수정합니다. 이용 서비스가 변경된 경우 변경된 서비스는 익월 1일 부터 결제 처리와 동시에 반영이 됩니다. "
+      description = "가맹점 정보를 수정합니다. 이용 서비스가 변경된 경우 변경된 서비스는 결제정보의 상태가 STANDBY: 즉시 결제, PENDING:  익월 1일 결제. 서비스는 결제 성공 후에 반영이 됩니다."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<StoreModifyModel>(storeModifyRequest())
@@ -172,6 +170,7 @@ fun Route.storeRoutes(
       }
     }) {
       val storeModifyModel = call.receive<StoreModifyModel>()
+      logger.info("Received storeModifyModel request: $storeModifyModel")
       val principal: JWTPrincipal = call.principal()!!
       val userUuid = principal.payload.getClaim("uUuid").asString()
       val payload = principal.payload
@@ -183,7 +182,12 @@ fun Route.storeRoutes(
       } else {
         storeService.modifyStore(storeModifyModel, UUID.fromString(userUuid))
       }
-      call.respond(HttpStatusCode.OK, Response(data = storeService.findStore(storeModifyModel.id)))
+      val modifiedStore = storeService.findStore(storeModifyModel.id)
+      modifiedStore?.storeBilling?.let {
+        modifiedStore.storeBilling = storeBillingService.paymentStoreBilling(it)
+      }
+
+      call.respond(HttpStatusCode.OK, Response(data = modifiedStore))
     }
 
 

@@ -47,9 +47,7 @@ class NPointStoreServiceRepositoryImpl(
   override suspend fun cancelAllStoreService(storeUid: String): Int {
     return table.update(
       where = {
-        (table.storeUid eq storeUid) and
-            (table.status neq StatusCode.ACTIVE) and
-            (table.status neq StatusCode.NORMAL)
+        (table.storeUid eq storeUid) and (table.status neq StatusCode.ACTIVE) and (table.status neq StatusCode.EXPIRED)
       }
     ) {
       it[status] = StatusCode.INACTIVE

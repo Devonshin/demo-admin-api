@@ -38,12 +38,6 @@ fun Application.configureValidation() {
       }
     }
 
-    validate<String> { bodyText ->
-      if (!bodyText.startsWith("Hello"))
-        ValidationResult.Invalid("Body text should start with 'Hello'")
-      else ValidationResult.Valid
-    }
-
     validate<Request<String>> { request ->
       if (request.data.isEmpty())
         ValidationResult.Invalid("Request.data should not be empty")

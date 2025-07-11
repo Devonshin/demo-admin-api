@@ -132,7 +132,7 @@ fun Application.configureFrameworks() {
         NPointStoreServiceServiceImpl(get(), get())
       }
       single<StoreBillingService> {
-        StoreBillingServiceImpl(get(), get(), get())
+        StoreBillingServiceImpl(get(), get(), get(), get())
       }
       single<BzAgencyService> {
         BzAgencyServiceImpl(get(), get())
