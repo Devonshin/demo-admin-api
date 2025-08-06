@@ -8,5 +8,5 @@ import io.allink.receipt.api.repository.ExposedRepository
  * Date: 21/04/2025
  */
 
-interface UserPointReviewRepository: ExposedRepository<UserPointReviewTable, String, UserPointReviewModel> {
+interface UserPointReviewRepository : ExposedRepository<UserPointReviewTable, String, UserPointReviewModel> {
 }

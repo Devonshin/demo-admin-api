@@ -1,7 +1,6 @@
 package io.allink.receipt.api.domain.merchant.batch
 
 import io.allink.receipt.api.util.DateUtil
-import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTimeStrMs
 import io.retable.Retable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -39,7 +38,7 @@ fun createTagModels(tagBatches: List<TagBatch>): List<TagModel> {
   val currentDate = DateUtil.nowLocalDateTime()
   return tagBatches.map { tagBatch ->
     TagModel(
-      name = tagBatch.tagName?:tagBatch.tagId,
+      name = tagBatch.tagName ?: tagBatch.tagId,
       tagId = tagBatch.tagId,
       status = TagStatus.NORMAL,
       storeUid = tagBatch.storeUid,
@@ -52,7 +51,7 @@ fun createTagModels(tagBatches: List<TagBatch>): List<TagModel> {
 fun batchInsertTags(dynamoDbClient: DynamoDbClient, tags: List<TagModel>) {
   dynamoDbClient.use {
     val batchSize = 25
-    val regDate = nowLocalDateTimeStrMs()
+    val regDate = DateUtil.nowLocalDateTimeStrMs()
     tags.chunked(batchSize).forEach { chunk ->
       println("Inserted ${chunk.size} tags")
       val putRequests = chunk.map { tag ->

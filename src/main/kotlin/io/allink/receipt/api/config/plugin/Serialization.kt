@@ -32,7 +32,8 @@ fun Application.configureSerialization() {
           subclass(MerchantMasterRole::class, MerchantMasterRole.serializer())
         }
       }
-      prettyPrint = this@configureSerialization.environment.config.propertyOrNull("ktor.environment")?.getString() != "production"
+      prettyPrint =
+        this@configureSerialization.environment.config.propertyOrNull("ktor.environment")?.getString() != "production"
       isLenient = true
       encodeDefaults = true
       ignoreUnknownKeys = true // Ignore unknown keys during deserialization

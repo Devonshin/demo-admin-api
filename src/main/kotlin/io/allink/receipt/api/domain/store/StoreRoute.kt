@@ -122,7 +122,8 @@ fun Route.storeRoutes(
       operationId = "store-regist"
       tags = listOf("가맹점 관리")
       summary = "가맹점 등록"
-      description = "새로운 가맹점을 등록합니다. 이용 서비스가 있을 경우 결제 정보는 필수입니다. 등록과 즉시 결제가 이루어지며 결제 실패 시 modify 인터페이스로 재결제 요청을 보내야 합니다."
+      description =
+        "새로운 가맹점을 등록합니다. 이용 서비스가 있을 경우 결제 정보는 필수입니다. 등록과 즉시 결제가 이루어지며 결제 실패 시 modify 인터페이스로 재결제 요청을 보내야 합니다."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<StoreRegistModel>(storeRegisterRequest())
@@ -141,7 +142,8 @@ fun Route.storeRoutes(
       val toRole = role.toRole()
       val registStoreUid = if (toRole is BzAgencyMasterRole) {
         storeService.registStore(
-          storeRegistModel.copy(bzAgencyId = payload.getClaim("agencyId").asString()),UUID.fromString(userUuid))
+          storeRegistModel.copy(bzAgencyId = payload.getClaim("agencyId").asString()), UUID.fromString(userUuid)
+        )
       } else {
         storeService.registStore(storeRegistModel, UUID.fromString(userUuid))
       }
@@ -159,7 +161,8 @@ fun Route.storeRoutes(
       operationId = "store-modify"
       tags = listOf("가맹점 관리")
       summary = "가맹점 수정"
-      description = "가맹점 정보를 수정합니다. 이용 서비스가 변경된 경우 변경된 서비스는 결제정보의 상태가 STANDBY: 즉시 결제, PENDING:  익월 1일 결제. 서비스는 결제 성공 후에 반영이 됩니다."
+      description =
+        "가맹점 정보를 수정합니다. 이용 서비스가 변경된 경우 변경된 서비스는 결제정보의 상태가 STANDBY: 즉시 결제, PENDING:  익월 1일 결제. 서비스는 결제 성공 후에 반영이 됩니다."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<StoreModifyModel>(storeModifyRequest())
@@ -178,7 +181,8 @@ fun Route.storeRoutes(
       val toRole = role.toRole()
       if (toRole is BzAgencyMasterRole) {
         storeService.modifyStore(
-          storeModifyModel.copy(bzAgencyId = payload.getClaim("agencyId").asString()),UUID.fromString(userUuid))
+          storeModifyModel.copy(bzAgencyId = payload.getClaim("agencyId").asString()), UUID.fromString(userUuid)
+        )
       } else {
         storeService.modifyStore(storeModifyModel, UUID.fromString(userUuid))
       }

@@ -11,17 +11,17 @@ import java.io.File
  */
 
 object TestConfigLoader {
-    fun loadTestConfig(): ApplicationConfig? {
-      return try {
-        val resource = this::class.java.classLoader.getResource("application-test.conf")
-          ?: throw IllegalStateException("application-test.conf not found")
+  fun loadTestConfig(): ApplicationConfig? {
+    return try {
+      val resource = this::class.java.classLoader.getResource("application-test.conf")
+        ?: throw IllegalStateException("application-test.conf not found")
 
-        HoconApplicationConfig(ConfigFactory.parseFile(File(resource.file)))
+      HoconApplicationConfig(ConfigFactory.parseFile(File(resource.file)))
 
-      } catch (e: Exception) {
-        println("Error loading test configuration: ${e.message}")
-        null
-      }
+    } catch (e: Exception) {
+      println("Error loading test configuration: ${e.message}")
+      null
     }
+  }
 
 }

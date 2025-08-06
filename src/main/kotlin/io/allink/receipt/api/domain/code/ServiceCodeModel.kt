@@ -17,19 +17,24 @@ import org.jetbrains.exposed.v1.core.Table
 data class ServiceCodeModel(
   @Schema(title = "코드값", description = "코드값", requiredMode = RequiredMode.REQUIRED, example = "EDIYA")
   override var id: String?,
-  @Schema(title = "코드 그룹", description = "코드 그룹", requiredMode = RequiredMode.REQUIRED, example = "FRANCHISE | MERT_SVC")
+  @Schema(
+    title = "코드 그룹",
+    description = "코드 그룹",
+    requiredMode = RequiredMode.REQUIRED,
+    example = "FRANCHISE | MERT_SVC"
+  )
   val serviceGroup: String,
   @Schema(title = "코드명", description = "코드명", requiredMode = RequiredMode.REQUIRED, example = "EDIYA")
   val serviceName: String,
   @Schema(title = "금액", description = "금액")
   val price: Int?,
-  @Schema(title = "상태", description = "상태", allowableValues = ["ACTIVE", "INACTIVE"],)
+  @Schema(title = "상태", description = "상태", allowableValues = ["ACTIVE", "INACTIVE"])
   val status: ServiceCodeStatus?,
   @Schema(title = "서비스 타입", description = "서비스 타입")
   val serviceType: String?,
-): BaseModel<String>
+) : BaseModel<String>
 
-object ServiceCodeTable: Table("service_code") {
+object ServiceCodeTable : Table("service_code") {
   val serviceCode = varchar("service_code", 30)
   val serviceGroup = varchar("service_group", 10)
   val serviceName = varchar("service_name", 255)

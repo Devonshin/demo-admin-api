@@ -18,7 +18,12 @@ import java.time.LocalDateTime
 @Serializable
 @Schema(name = "userPointReviewModel", title = "사용자 포인트 리뷰", description = "사용자의 포인트 리뷰 객체")
 data class UserPointReviewModel(
-  @Schema(title = "사용자 포인트 리뷰 고유아이디", description = "사용자의 포인트 리뷰 고유아이디", requiredMode = RequiredMode.REQUIRED, example = "3a931370-cd0b-4427-bf38-418111969c22")
+  @Schema(
+    title = "사용자 포인트 리뷰 고유아이디",
+    description = "사용자의 포인트 리뷰 고유아이디",
+    requiredMode = RequiredMode.REQUIRED,
+    example = "3a931370-cd0b-4427-bf38-418111969c22"
+  )
   override var id: String?,
   @Schema(title = "사용자 고유 아이디", description = "사용자 고유아이디", requiredMode = RequiredMode.REQUIRED)
   val userUuid: String,
@@ -38,9 +43,9 @@ data class UserPointReviewModel(
   val regDate: @Contextual LocalDateTime,
   @Schema(title = "수정일시", description = "리뷰 등록 수정 일시", example = "2025-03-05T13:08:12.152764")
   val modDate: @Contextual LocalDateTime?,
-): BaseModel<String>
+) : BaseModel<String>
 
-@Schema(name =  "UserReviewStatus", title = "사용자 리뷰", description = "사용자 리뷰 진행 상태", enumAsRef = true)
+@Schema(name = "UserReviewStatus", title = "사용자 리뷰", description = "사용자 리뷰 진행 상태", enumAsRef = true)
 enum class UserReviewStatus(val desc: String) {
   WRITING("작성 중"),
   APPLIED("URL 입력완료"),
@@ -49,7 +54,7 @@ enum class UserReviewStatus(val desc: String) {
   REJECTED("반려");
 }
 
-object UserPointReviewTable: Table("n_point_user_review") {
+object UserPointReviewTable : Table("n_point_user_review") {
   val id = varchar("receipt_uuid", length = 36)
   val userUuid = varchar("user_uuid", length = 36)
   val storeUid = varchar("store_uid", length = 36)
@@ -57,7 +62,7 @@ object UserPointReviewTable: Table("n_point_user_review") {
   val reviewUrl = varchar("review_url", length = 255).nullable()
   val regDate = datetime("reg_date")
   val modDate = datetime("mod_date").nullable()
-  val points = integer("points" ).nullable()
+  val points = integer("points").nullable()
   val expireDate = datetime("expire_date").nullable()
   override val primaryKey = PrimaryKey(id)
 }

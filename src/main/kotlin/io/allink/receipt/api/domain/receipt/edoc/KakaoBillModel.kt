@@ -17,9 +17,20 @@ import org.jetbrains.exposed.v1.javatime.datetime
 @Serializable
 @Schema(name = "kakaoEdocModel", title = "카카오 전자문서", description = "카카오 전자문서로 발송된 영수증")
 data class KakaoEdocModel(
-  @Schema(title = "사용자 영수증 고유아이디", description = "사용자의 영수증 고유아이디", requiredMode = RequiredMode.REQUIRED, example = "3a931370-cd0b-4427-bf38-418111969c22")
-  override var id: String?, /*partnerReqUuid*/
-  @Schema(title = "영수증 고유아이디", description = "영수증 고유아이디", requiredMode = RequiredMode.REQUIRED, example = "1234faa-cd0b-4427-bf38-418111969c22")
+  @Schema(
+    title = "사용자 영수증 고유아이디",
+    description = "사용자의 영수증 고유아이디",
+    requiredMode = RequiredMode.REQUIRED,
+    example = "3a931370-cd0b-4427-bf38-418111969c22"
+  )
+  override var id: String?,
+  /*partnerReqUuid*/
+  @Schema(
+    title = "영수증 고유아이디",
+    description = "영수증 고유아이디",
+    requiredMode = RequiredMode.REQUIRED,
+    example = "1234faa-cd0b-4427-bf38-418111969c22"
+  )
   val receiptUuid: String,
   @Schema(title = "전자문서 아이디", description = "카카오에서 발행한 전자문서 고유아이디", requiredMode = RequiredMode.REQUIRED)
   val envelopId: String,
@@ -29,7 +40,7 @@ data class KakaoEdocModel(
   val regDate: String,
   @Schema(title = "사용자 고유이이디", description = "영수증 사용자 고유아이디", requiredMode = RequiredMode.REQUIRED)
   val userId: String,
-): BaseModel<String>
+) : BaseModel<String>
 
 object KakaoBillTable : Table("kakao_bill") {
   val receiptUuid = varchar("receipt_uuid", length = 36)

@@ -10,7 +10,6 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import java.net.URI
-import kotlin.math.log
 
 /**
  * Package: io.allink.receipt.api.config.plugin
@@ -64,7 +63,7 @@ fun s3Client(config: ApplicationConfig): S3Client {
     .region(Region.AP_NORTHEAST_2)
     .credentialsProvider(
       StaticCredentialsProvider.create(
-        AwsBasicCredentials.create(accessKeyId,secretKey)
+        AwsBasicCredentials.create(accessKeyId, secretKey)
       )
     )
     .build()

@@ -4,12 +4,11 @@ import io.allink.receipt.api.domain.BaseFilter
 import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.domain.Sorter
 import io.allink.receipt.api.domain.admin.AdminStatus
-import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTime
+import io.allink.receipt.api.util.DateUtil
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.core.dao.id.UUIDTable
 import org.jetbrains.exposed.v1.javatime.datetime
 import java.time.LocalDateTime
@@ -117,8 +116,8 @@ data class BzAgencyModel(
 ) : BaseModel<UUID>
 
 @Serializable
-@Schema(name = "listAgencyModel", title = "대리점 정보 목록 용", description = "대리점 정보를 나타내는 목록 용 객체")
-data class BzListAgencyModel(
+@Schema(name = "bzAgency", title = "대리점 정보", description = "대리점 정보를 나타내는 객체")
+data class SimpleBzAgencyModel(
   @Schema(title = "고유 아이디", description = "대리점 고유 식별자", requiredMode = RequiredMode.REQUIRED)
   override var id: @Contextual UUID? = null,
   @Schema(title = "대리점명", description = "대리점 이름", requiredMode = RequiredMode.REQUIRED)
@@ -180,7 +179,7 @@ object BzAgencyTable : UUIDTable(name = "bz_agency", columnName = "uuid") {
   val bankAccountName = varchar(name = "bank_account_name", length = 50).nullable()
   val bankAccountNo = varchar(name = "bank_account_no", length = 50).nullable()
   val status = enumerationByName("status", 20, AgencyStatus::class)
-  val regDate = datetime(name = "reg_date").default(nowLocalDateTime())
+  val regDate = datetime(name = "reg_date").default(DateUtil.nowLocalDateTime())
   val regBy = uuid(name = "reg_by")
   val modDate = datetime(name = "mod_date").nullable()
   val modBy = uuid(name = "mod_by").nullable()
@@ -195,8 +194,8 @@ data class BzAgencyFilter(
     title = "사업자 번호",
     description = "사업자 번호, EQ 검색",
     example = "123-45-67890",
-    
-  )
+
+    )
   val businessNo: String? = null,
   @Schema(title = "대리점명", description = "Start with 검색")
   val agencyName: String? = null,
@@ -216,7 +215,7 @@ data class BzAgencyFilter(
   description = "상태값",
   example = "INITIAL: 초기 등록, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제"
 )
-enum class AgencyStatus(val desc : String) {
+enum class AgencyStatus(val desc: String) {
   INITIAL("초기 등록"),
   PENDING("생성 중"),
   ACTIVE("활성화"),

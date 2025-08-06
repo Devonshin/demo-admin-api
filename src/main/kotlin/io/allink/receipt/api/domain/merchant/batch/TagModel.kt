@@ -3,10 +3,10 @@ package io.allink.receipt.api.domain.merchant.batch
 import java.time.LocalDateTime
 
 /**
-* Package: io.allink.receipt.api.domain.tag
-* Created: Devonshin
-* Date: 18/04/2025
-*/
+ * Package: io.allink.receipt.api.domain.tag
+ * Created: Devonshin
+ * Date: 18/04/2025
+ */
 
 data class TagModel(
   val name: String,

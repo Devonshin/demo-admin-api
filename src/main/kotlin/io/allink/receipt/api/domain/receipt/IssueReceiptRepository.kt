@@ -45,7 +45,7 @@ interface IssueReceiptRepository : ExposedRepository<IssueReceiptTable, String, 
     TODO("Not yet implemented")
   }
 
-  suspend fun findAll(filter: ReceiptFilter): PagedResult<SimpleIssueReceiptModel>  {
+  suspend fun findAll(filter: ReceiptFilter): PagedResult<SimpleIssueReceiptModel> {
 
     val offset = filter.page.page.minus(1).times(filter.page.pageSize)
     val select = table

@@ -82,7 +82,7 @@ interface NPointStoreRepository : ExposedRepository<NPointStoreTable, String, NP
 
   override suspend fun find(id: String): NPointStoreModel? {
     return table.selectAll()
-      .where{
+      .where {
         table.id eq id
       }
       .map {

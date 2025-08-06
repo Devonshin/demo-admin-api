@@ -2,7 +2,6 @@ package io.allink.receipt.api.domain.store
 
 import io.allink.receipt.api.common.StatusCode
 import io.allink.receipt.api.domain.BaseModel
-import io.allink.receipt.api.domain.store.StoreTable
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable

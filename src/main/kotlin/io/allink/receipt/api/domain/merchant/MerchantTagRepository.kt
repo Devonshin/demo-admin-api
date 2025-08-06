@@ -11,7 +11,6 @@ import io.allink.receipt.api.domain.merchant.MerchantTagTable.storeUid
 import io.allink.receipt.api.domain.merchant.MerchantTagTable.tagName
 import io.allink.receipt.api.domain.store.StoreTable
 import io.allink.receipt.api.repository.ExposedRepository
-import io.allink.receipt.api.repository.TransactionUtil
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.singleOrNull
 import org.jetbrains.exposed.v1.core.Column
@@ -42,7 +41,6 @@ interface MerchantTagRepository : ExposedRepository<MerchantTagTable, String, Me
         "regDate" -> StoreTable.regDate
         "modDate" -> StoreTable.modDate
         "storeName" -> StoreTable.storeName
-        "storeStatus" -> StoreTable.status
         "businessNo" -> StoreTable.businessNo
         else -> null
       }

@@ -11,7 +11,7 @@ import java.util.*
 
 interface BzAgencyService {
 
-  suspend fun getAgencies(filter: BzAgencyFilter): PagedResult<BzListAgencyModel>
+  suspend fun getAgencies(filter: BzAgencyFilter): PagedResult<SimpleBzAgencyModel>
 
   suspend fun getAgency(agencyId: String): BzAgencyModel
 

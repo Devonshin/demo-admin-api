@@ -23,7 +23,7 @@ import java.util.*
 
 interface BzAgencyRepository : ExposedRepository<BzAgencyTable, UUID, BzAgencyModel> {
 
-  suspend fun findAllByFilter(filter: BzAgencyFilter): PagedResult<BzListAgencyModel>
+  suspend fun findAllByFilter(filter: BzAgencyFilter): PagedResult<SimpleBzAgencyModel>
 
   override suspend fun create(model: BzAgencyModel): BzAgencyModel {
     val createdId = table.insertAndGetId {
@@ -74,7 +74,8 @@ interface BzAgencyRepository : ExposedRepository<BzAgencyTable, UUID, BzAgencyMo
   override suspend fun delete(id: UUID): Int {
     TODO()
   }
-  fun toModel(row: ResultRow, staffs: List<BzAgencyAdminModel>): BzAgencyModel{
+
+  fun toModel(row: ResultRow, staffs: List<BzAgencyAdminModel>): BzAgencyModel {
     return BzAgencyModel(
       id = row[table.id].value,
       agencyName = row[table.agencyName],

@@ -44,12 +44,16 @@ data class NPointStoreServiceModel(
   val regBy: @Contextual UUID,
   @Schema(title = "수정자 고유아이디", description = "서비스 수정을 한 사람의 고유아이디")
   val modBy: @Contextual UUID? = null,
-): BaseModel<NPointStoreServiceId>
+) : BaseModel<NPointStoreServiceId>
 
 @Serializable
 @Schema(name = "nPointStoreServiceModifyModel", title = "NPoint 서비스 등록/수정 정보", description = "NPoint 가맹점 관련 서비스 정보")
 data class NPointStoreServiceRegistModel(
-  @Schema(title = "서비스 코드", description = "서비스 고유 코드", example = "광고:ADVERTIZE, 전자영수증:ERECEIPT, 네이버 999+리뷰:REVIEWPRJ, 네이버 리뷰 리워드: REVIEWPT, 배달리뷰 리워드: DLVRVIEWPT")
+  @Schema(
+    title = "서비스 코드",
+    description = "서비스 고유 코드",
+    example = "광고:ADVERTIZE, 전자영수증:ERECEIPT, 네이버 999+리뷰:REVIEWPRJ, 네이버 리뷰 리워드: REVIEWPT, 배달리뷰 리워드: DLVRVIEWPT"
+  )
   val serviceCode: String,
   @Schema(title = "기본료", description = "기본 요금")
   val serviceCharge: Int? = 0,
@@ -62,7 +66,7 @@ data class NPointStoreServiceRegistModel(
 )
 
 object NPointStoreServiceTable : Table("n_point_store_service") {
-  val id = integer( "store_service_seq")
+  val id = integer("store_service_seq")
   val storeUid = reference("store_uid", StoreTable.id) // 가맹점
   val serviceCode = reference("service_code", ServiceCodeTable.serviceCode) // 서비스 아이디
   val serviceCharge = integer("service_charge") // 서비스 기본료
@@ -79,11 +83,15 @@ object NPointStoreServiceTable : Table("n_point_store_service") {
 }
 
 @Serializable
-data class NPointStoreServiceId (
+data class NPointStoreServiceId(
   @Schema(title = "가맹점 서비스 등록 순번", description = "가맹점 서비스 등록 순번")
   val storeServiceSeq: Int,
   @Schema(title = "가맹점 고유아이디", description = "가맹점 고유아이디")
   val storeUid: String,
-  @Schema(title = "서비스 코드", description = "서비스 고유 코드", example = "광고:ADVERTIZE, 전자영수증:ERECEIPT, 네이버 999+리뷰:REVIEWPRJ, 네이버 리뷰 리워드: REVIEWPT, 배달리뷰 리워드: DLVRVIEWPT")
+  @Schema(
+    title = "서비스 코드",
+    description = "서비스 고유 코드",
+    example = "광고:ADVERTIZE, 전자영수증:ERECEIPT, 네이버 999+리뷰:REVIEWPRJ, 네이버 리뷰 리워드: REVIEWPT, 배달리뷰 리워드: DLVRVIEWPT"
+  )
   val serviceCode: String,
 )

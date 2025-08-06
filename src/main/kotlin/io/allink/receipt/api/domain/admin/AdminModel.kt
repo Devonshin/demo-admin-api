@@ -2,7 +2,7 @@ package io.allink.receipt.api.domain.admin
 
 import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.domain.agency.bz.BzAgencyTable
-import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTime
+import io.allink.receipt.api.util.DateUtil
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
@@ -44,7 +44,7 @@ object AdminTable : UUIDTable(name = "admin", columnName = "uuid") {
   val phone = varchar(name = "phone", length = 15)
   val email = varchar(name = "email", length = 100).nullable()
   val status = enumerationByName("status", 20, AdminStatus::class)
-  val regDate = datetime(name = "reg_date").default(nowLocalDateTime())
+  val regDate = datetime(name = "reg_date").default(DateUtil.nowLocalDateTime())
   val modDate = datetime(name = "mod_date").nullable()
   val regBy = uuid(name = "reg_by").nullable()
   val modBy = uuid(name = "mod_by").nullable()
@@ -81,16 +81,16 @@ fun Role.toRoleString(): String = when (this) {
 
 @Serializable
 data class MasterRole(
-    override val description: String = "전체 마스터",
-    override val menus: List<Menu> = Menu.entries.toList(),
-    override val permission: List<Permission> = Permission.entries.toList()
+  override val description: String = "전체 마스터",
+  override val menus: List<Menu> = Menu.entries.toList(),
+  override val permission: List<Permission> = Permission.entries.toList()
 ) : Role
 
 @Serializable
 data class BzAgencyStaffRole(
-    override val description: String = "영업 대리점 스태프",
-    override val menus: List<Menu> = listOf(Menu.BZ_AGENCIES_STORE),
-    override val permission: List<Permission> = listOf(Permission.VIEW)
+  override val description: String = "영업 대리점 스태프",
+  override val menus: List<Menu> = listOf(Menu.BZ_AGENCIES_STORE),
+  override val permission: List<Permission> = listOf(Permission.VIEW)
 ) : Role
 
 @Serializable
@@ -109,16 +109,16 @@ data class AdvAgencyStaffRole(
 
 @Serializable
 data class AdvAgencyMasterRole(
-    override val description: String = "광고 대리점 마스터",
-    override val menus: List<Menu> = listOf(Menu.ADV_AGENCIES),
-    override val permission: List<Permission> = listOf(Permission.VIEW)
+  override val description: String = "광고 대리점 마스터",
+  override val menus: List<Menu> = listOf(Menu.ADV_AGENCIES),
+  override val permission: List<Permission> = listOf(Permission.VIEW)
 ) : Role
 
 @Serializable
 data class MerchantStaffRole(
-    override val description: String = "가맹점 스태프",
-    override val menus: List<Menu> = listOf(Menu.BZ_AGENCIES, Menu.PROFILES),
-    override val permission: List<Permission> = listOf(Permission.VIEW)
+  override val description: String = "가맹점 스태프",
+  override val menus: List<Menu> = listOf(Menu.BZ_AGENCIES, Menu.PROFILES),
+  override val permission: List<Permission> = listOf(Permission.VIEW)
 ) : Role
 
 @Serializable

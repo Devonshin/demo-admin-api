@@ -10,8 +10,6 @@ import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceRegistModel
 import io.github.smiley4.ktoropenapi.config.ResponseConfig
 import io.github.smiley4.ktoropenapi.config.SimpleBodyConfig
-import io.swagger.v3.oas.annotations.media.Schema
-import kotlinx.serialization.Contextual
 import java.time.LocalDateTime
 import java.util.*
 

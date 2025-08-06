@@ -18,6 +18,7 @@ interface BaseModel<T> {
 
 interface BaseFilter {
   val sort: List<Sorter>?
+
   @get:Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
   val page: Page
     get() = Page(1, 10)
@@ -56,11 +57,26 @@ data class Page(
 )
 
 @Serializable
-@Schema(title = "검색 기간", description = "검색할 기간의 시작과 끝의 범위", example = """{"from: "2025-04-17T12:00:00", "to: "2025-05-17T12:00:00"}""", requiredMode = RequiredMode.REQUIRED)
+@Schema(
+  title = "검색 기간",
+  description = "검색할 기간의 시작과 끝의 범위",
+  example = """{"from: "2025-04-17T12:00:00", "to: "2025-05-17T12:00:00"}""",
+  requiredMode = RequiredMode.REQUIRED
+)
 data class PeriodFilter(
-  @Schema(title = "시작일시", description = "검색을 시작할 년월일시", example = "2025-04-17T12:00:00", requiredMode = RequiredMode.REQUIRED)
+  @Schema(
+    title = "시작일시",
+    description = "검색을 시작할 년월일시",
+    example = "2025-04-17T12:00:00",
+    requiredMode = RequiredMode.REQUIRED
+  )
   val from: @Contextual LocalDateTime,
-  @Schema(title = "종료일시", description = "검색을 종료할 년월일시", example = "2025-04-17T12:00:00", requiredMode = RequiredMode.REQUIRED)
+  @Schema(
+    title = "종료일시",
+    description = "검색을 종료할 년월일시",
+    example = "2025-04-17T12:00:00",
+    requiredMode = RequiredMode.REQUIRED
+  )
   val to: @Contextual LocalDateTime
 )
 

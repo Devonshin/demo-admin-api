@@ -267,7 +267,6 @@ fun vendorCodeListResponse(): ResponseConfig.() -> Unit = {
 }
 
 
-
 fun issueReceiptListRequest(): SimpleBodyConfig.() -> Unit = {
   description = "전자영수증 목록 조회 요청"
   required = true

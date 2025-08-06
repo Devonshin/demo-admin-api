@@ -38,10 +38,9 @@ fun Application.configureMonitoring() {
 
   intercept(ApplicationCallPipeline.Monitoring) {
     call.response.pipeline.intercept(ApplicationSendPipeline.After) { subject ->
-      if(subject is TextContent
+      if (subject is TextContent
         && subject.contentType.withoutParameters().match(ContentType.Application.Json)
-        )
-      {
+      ) {
         val jsonResponse = Json.parseToJsonElement(subject.text)
         this@configureMonitoring.log.info("$jsonResponse")
       }

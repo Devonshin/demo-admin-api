@@ -55,7 +55,7 @@
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="logFile"/>
     </root>
-    <logger name="io.r2dbc.postgresql.client.ReactorNettyClient" level="INFO" />
+    <logger name="io.r2dbc.postgresql.client.ReactorNettyClient" level="INFO"/>
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
     <logger name="Exposed" level="INFO"/>

@@ -23,9 +23,11 @@ class AES256UtilTest {
     println(",$decrypted,")
 //    assertEquals(input, decrypted)
   }
+
   @Test
   fun `decrypt should return valid input`() {
-    val input = "pbUZu0Jq/VhD5UPtrA/Tq8Uz85bnnFxv+sb+h0ymlxYyxez8Ic8JHCaTsomdS/197GkgJssucmlBB8PS3ukK8RLabPQCJXTwZzek7RUlbQ6tZ6z5mZ4Q+W1b28c/hzEu"
+    val input =
+      "pbUZu0Jq/VhD5UPtrA/Tq8Uz85bnnFxv+sb+h0ymlxYyxez8Ic8JHCaTsomdS/197GkgJssucmlBB8PS3ukK8RLabPQCJXTwZzek7RUlbQ6tZ6z5mZ4Q+W1b28c/hzEu"
     val decrypted = AES256Util.decrypt(input, key)
     println(",$decrypted,")
 //    assertEquals(input, decrypted)

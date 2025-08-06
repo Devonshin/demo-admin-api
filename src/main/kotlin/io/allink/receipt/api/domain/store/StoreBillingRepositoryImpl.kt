@@ -17,8 +17,8 @@ class StoreBillingRepositoryImpl(
     return table.update(
       where = {
         (table.storeUid eq storeUid) and
-        (table.status neq BillingStatusCode.COMPLETE) and
-        (table.status neq BillingStatusCode.FAIL)
+            (table.status neq BillingStatusCode.COMPLETE) and
+            (table.status neq BillingStatusCode.FAIL)
       }
     ) {
       it[status] = BillingStatusCode.CANCELED

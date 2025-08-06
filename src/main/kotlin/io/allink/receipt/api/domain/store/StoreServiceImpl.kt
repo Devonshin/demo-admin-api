@@ -2,17 +2,18 @@ import io.allink.receipt.api.common.BillingStatusCode
 import io.allink.receipt.api.common.StatusCode
 import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.agency.bz.AgencyStatus
-import io.allink.receipt.api.domain.agency.bz.BzListAgencyModel
+import io.allink.receipt.api.domain.agency.bz.SimpleBzAgencyModel
 import io.allink.receipt.api.domain.store.*
-import io.allink.receipt.api.domain.store.npoint.*
-import io.allink.receipt.api.exception.InvalidBillingStatusException
+import io.allink.receipt.api.domain.store.npoint.NPointStoreModel
+import io.allink.receipt.api.domain.store.npoint.NPointStoreRepository
+import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceService
+import io.allink.receipt.api.domain.store.npoint.PointRenewalType
 import io.allink.receipt.api.repository.TransactionUtil
 import io.allink.receipt.api.util.DateUtil
 import io.ktor.server.plugins.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
-import java.time.YearMonth
 import java.util.*
 
 /**
@@ -73,7 +74,7 @@ class StoreServiceImpl(
   /*
   * 가맹점 등록
   * */
-    override suspend fun registStore(
+  override suspend fun registStore(
     storeRegistModel: StoreRegistModel,
     userUuid: UUID
   ): String = TransactionUtil.withTransaction {
@@ -105,7 +106,14 @@ class StoreServiceImpl(
       }
 
       val initBillingModel =
-        storeBillingService.initBillingModel(storeUid, storeServiceSeq, storeBilling, todayTotalPaymentAmount, now, userUuid)
+        storeBillingService.initBillingModel(
+          storeUid,
+          storeServiceSeq,
+          storeBilling,
+          todayTotalPaymentAmount,
+          now,
+          userUuid
+        )
       val registeredBilling = storeBillingService.registBilling(initBillingModel)
       logger.info("registeredBilling: $registeredBilling")
 
@@ -226,7 +234,7 @@ class StoreServiceImpl(
     email = storeRegistModel.email,
     status = storeRegistModel.status,
     couponAdYn = storeRegistModel.couponAdYn,
-    bzAgency = BzListAgencyModel(
+    bzAgency = SimpleBzAgencyModel(
       id = storeRegistModel.bzAgencyId?.let { UUID.fromString(it) },
       agencyName = null,
       businessNo = null,
@@ -257,7 +265,7 @@ class StoreServiceImpl(
     email = storeModifyModel.email,
     status = storeModifyModel.status,
     couponAdYn = storeModifyModel.couponAdYn,
-    bzAgency = BzListAgencyModel(
+    bzAgency = SimpleBzAgencyModel(
       id = storeModifyModel.bzAgencyId?.let { UUID.fromString(it) },
       agencyName = null,
       businessNo = null,

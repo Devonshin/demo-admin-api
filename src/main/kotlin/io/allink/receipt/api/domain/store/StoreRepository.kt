@@ -2,23 +2,17 @@ package io.allink.receipt.api.domain.store
 
 import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.agency.bz.BzAgencyTable
-import io.allink.receipt.api.domain.agency.bz.BzListAgencyModel
+import io.allink.receipt.api.domain.agency.bz.SimpleBzAgencyModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreTable
 import io.allink.receipt.api.repository.ExposedRepository
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.singleOrNull
 import org.jetbrains.exposed.v1.core.Column
-import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.ResultRow
-import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
 import org.jetbrains.exposed.v1.core.statements.UpdateStatement
-import org.jetbrains.exposed.v1.r2dbc.andWhere
 import org.jetbrains.exposed.v1.r2dbc.insert
-import org.jetbrains.exposed.v1.r2dbc.selectAll
 import org.jetbrains.exposed.v1.r2dbc.update
-import java.util.UUID
+import java.util.*
 
 /**
  * Package: io.allink.receipt.api.domain.store
@@ -68,7 +62,7 @@ interface StoreRepository : ExposedRepository<StoreTable, String, StoreModel> {
     } else null
 
     val bzAgency = if (row[BzAgencyTable.id] != null) {
-      BzListAgencyModel(
+      SimpleBzAgencyModel(
         id = row[BzAgencyTable.id].value,
         agencyName = row[BzAgencyTable.agencyName],
         businessNo = row[BzAgencyTable.businessNo],

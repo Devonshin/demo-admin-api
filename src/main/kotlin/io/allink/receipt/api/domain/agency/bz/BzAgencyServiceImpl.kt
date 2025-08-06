@@ -5,7 +5,7 @@ import io.allink.receipt.api.domain.admin.AdminModel
 import io.allink.receipt.api.domain.admin.AdminRepository
 import io.allink.receipt.api.domain.admin.BzAgencyMasterRole
 import io.allink.receipt.api.repository.TransactionUtil
-import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTime
+import io.allink.receipt.api.util.DateUtil
 import io.ktor.server.plugins.*
 import kotlinx.coroutines.flow.filterNot
 import org.slf4j.Logger
@@ -25,11 +25,12 @@ class BzAgencyServiceImpl(
 
   val logger: Logger = org.slf4j.LoggerFactory.getLogger(this.javaClass.name)
 
-  override suspend fun getAgencies(filter: BzAgencyFilter): PagedResult<BzListAgencyModel> = TransactionUtil.withTransaction {
-    bzAgencyRepository.findAllByFilter(filter)
-  }
+  override suspend fun getAgencies(filter: BzAgencyFilter): PagedResult<SimpleBzAgencyModel> =
+    TransactionUtil.withTransaction {
+      bzAgencyRepository.findAllByFilter(filter)
+    }
 
-  override suspend fun getAgency(agencyId: String): BzAgencyModel = TransactionUtil.withTransaction  {
+  override suspend fun getAgency(agencyId: String): BzAgencyModel = TransactionUtil.withTransaction {
     if (agencyId.isEmpty()) throw BadRequestException("No agency id provided")
     try {
       val uuid = UUID.fromString(agencyId)
@@ -67,7 +68,7 @@ class BzAgencyServiceImpl(
     usersToDelete.collect {
       adminRepository.delete(it.id!!)
     }
-    val now = nowLocalDateTime()
+    val now = DateUtil.nowLocalDateTime()
     val afterStaffs = mutableListOf<BzAgencyAdminModel>()
     staffs?.forEach {
       if (it.id == null) {

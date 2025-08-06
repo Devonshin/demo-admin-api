@@ -11,7 +11,7 @@ import io.allink.receipt.api.repository.TransactionUtil
 
 class UserServiceImpl(
   private val userRepository: UserRepository
-): UserService {
+) : UserService {
 
   override suspend fun findAllUser(filter: UserFilter): PagedResult<UserModel> = TransactionUtil.withTransaction {
     userRepository.findAll(filter)

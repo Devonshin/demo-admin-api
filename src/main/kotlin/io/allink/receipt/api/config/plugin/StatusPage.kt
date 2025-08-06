@@ -11,8 +11,8 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.request.*
 import io.ktor.server.request.ContentTransformationException
-import io.ktor.server.request.uri
 import io.ktor.server.response.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
@@ -165,7 +165,7 @@ fun Application.configureStatusPage() {
         Response(
           ErrorResponse(
             code = "BAD_REQUEST",
-            message = "Bad Request: ${rootCause?.message?:cause.message}"
+            message = "Bad Request: ${rootCause?.message ?: cause.message}"
           )
         )
       )
@@ -203,7 +203,7 @@ fun Application.configureStatusPage() {
         status = HttpStatusCode.InternalServerError, message = Response(
           ErrorResponse(
             code = "INTERNAL_SERVER_ERROR",
-            message = "${rootCause?.message?:cause.message}"
+            message = "${rootCause?.message ?: cause.message}"
           )
         )
       )

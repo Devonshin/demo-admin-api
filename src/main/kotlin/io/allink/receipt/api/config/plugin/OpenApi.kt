@@ -17,8 +17,9 @@ fun Application.configureOpenApi() {
   install(OpenApi) {
 
     tags {
-      tag("Receipt API") {
-        description = "Receipt API"
+      tag("Receipt Admin API") {
+        description = "Receipt Admin API"
+
       }
     }
 
@@ -53,7 +54,7 @@ fun Application.configureOpenApi() {
 
       title = "Allink Receipt API"
       version = "1.0.0"
-      description = "API for the allink receipt"
+      description = "API for the allink receipt administration."
       contact {
         name = "Allink"
         url = "https://allink.io"

@@ -6,7 +6,7 @@ import io.allink.receipt.api.repository.TransactionUtil
 
 class NPointServiceImpl(
   val nPointRepository: NPointRepository
-): NPointService {
+) : NPointService {
 
   override suspend fun getAllNPointPay(
     nPointFilter: NPointFilter

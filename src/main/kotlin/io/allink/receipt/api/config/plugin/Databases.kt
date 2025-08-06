@@ -22,36 +22,36 @@ fun Application.configureDatabases() {
   val database = postgresConfig.property("database").getString()
 
   val options =
-  if (environment == "production") {
-    builder()
-      .option(DRIVER, "postgresql")
-      .option(HOST, host)
-      .option(PORT, port)
-      .option(USER, user)
-      .option(PASSWORD, password)
-      .option(DATABASE, database)
-      .option(SSL, true)
-      .option(PROTOCOL, "postgresql")
-      .option(SSL_MODE, SSLMode.VERIFY_FULL)           // 인증서 검증 활성화
-      .option(
-        SSL_ROOT_CERT,
-        "cert/rds-ca-cert.pem"
-      )
-      .build()
-  } else {
-    builder()
-      .option(DRIVER, "postgresql")
-      .option(HOST, host)
-      .option(PORT, port)
-      .option(USER, user)
-      .option(PASSWORD, password)
-      .option(DATABASE, database)
-      .option(PROTOCOL, "postgresql")
-      .build()
-  }
+    if (environment == "production") {
+      builder()
+        .option(DRIVER, "postgresql")
+        .option(HOST, host)
+        .option(PORT, port)
+        .option(USER, user)
+        .option(PASSWORD, password)
+        .option(DATABASE, database)
+        .option(SSL, true)
+        .option(PROTOCOL, "postgresql")
+        .option(SSL_MODE, SSLMode.VERIFY_FULL)           // 인증서 검증 활성화
+        .option(
+          SSL_ROOT_CERT,
+          "cert/rds-ca-cert.pem"
+        )
+        .build()
+    } else {
+      builder()
+        .option(DRIVER, "postgresql")
+        .option(HOST, host)
+        .option(PORT, port)
+        .option(USER, user)
+        .option(PASSWORD, password)
+        .option(DATABASE, database)
+        .option(PROTOCOL, "postgresql")
+        .build()
+    }
 
   val connectionFactory = ConnectionFactories.get(options)
-  R2dbcDatabase.connect(connectionFactory, databaseConfig = R2dbcDatabaseConfig.invoke {
+  R2dbcDatabase.connect(connectionFactory, databaseConfig = R2dbcDatabaseConfig {
     useNestedTransactions = true
     connectionFactoryOptions = options
   })

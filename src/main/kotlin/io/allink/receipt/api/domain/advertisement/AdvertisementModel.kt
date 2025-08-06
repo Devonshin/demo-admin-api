@@ -27,9 +27,9 @@ data class AdvertisementModel(
   @Schema(title = "수정일시", description = "수정 일시", example = "2025-03-05T13:08:12.152764")
   val modDate: @Contextual LocalDateTime?,
   override var id: @Contextual UUID? = null
-): BaseModel<UUID>
+) : BaseModel<UUID>
 
-object AdvertisementTable: UUIDTable(name = "advertisement", columnName = "uuid") {
+object AdvertisementTable : UUIDTable(name = "advertisement", columnName = "uuid") {
   val merchantGroupId = varchar("merchant_group_id", 36)
   val title = varchar("title", 255)
   val regDate = datetime("reg_date")

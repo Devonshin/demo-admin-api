@@ -39,7 +39,7 @@ data class NPointPayModel(
   val pointPayNo: String?,
   @Schema(title = "적립 거래번호", description = "적립 거래번호", requiredMode = RequiredMode.REQUIRED)
   val regDate: @Contextual LocalDateTime?
-): BaseModel<Long>
+) : BaseModel<Long>
 
 @Serializable
 @Schema(name = "pointUserModel", title = "사용자 객체", description = "모바일 전자영수증 가입자")
@@ -69,7 +69,7 @@ data class NPointTxtHistoryModel(
   val regDate: LocalDateTime,
   val resultCode: String,
   override var id: Long?
-): BaseModel<Long>
+) : BaseModel<Long>
 
 object NPointWaitingTable : Table("n_point_pay_waiting") {
   val id = long("seq")
@@ -79,7 +79,7 @@ object NPointWaitingTable : Table("n_point_pay_waiting") {
   override val primaryKey = PrimaryKey(id)
 }
 
-object NPointUserReviewTable: Table("n_point_user_review") {
+object NPointUserReviewTable : Table("n_point_user_review") {
   val id = varchar("receipt_uuid", length = 36)
   val userUuid = reference("user_uuid", UserTable.id)
   val storeUid = reference("store_uid", StoreTable.id)
@@ -115,7 +115,12 @@ object NPointTxHistoryTable : Table("n_point_tx_history") {
 @Serializable
 @Schema(name = "nPointFilter", title = "검색 필터", description = "검색용 필터")
 data class NPointFilter(
-  @Schema(title = "검색 기간", description = "검색할 기간의 시작과 끝의 범위", example = """{"from: "2025-04-17 12:00:00", "to: "2025-05-17 12:00:00"}""", requiredMode = RequiredMode.REQUIRED)
+  @Schema(
+    title = "검색 기간",
+    description = "검색할 기간의 시작과 끝의 범위",
+    example = """{"from: "2025-04-17 12:00:00", "to: "2025-05-17 12:00:00"}""",
+    requiredMode = RequiredMode.REQUIRED
+  )
   val period: PeriodFilter,
   @Schema(title = "휴대폰 번호", description = "휴대폰 번호, EQ 검색", nullable = false, example = "01012349876")
   val phone: String? = null,
@@ -125,22 +130,23 @@ data class NPointFilter(
   val userName: String? = null,
   @Schema(title = "닉네임", description = "소셜 연동 닉네임, EQ 검색")
   val userNickName: String? = null,
-  @Schema(title = "가맹점 아이디", description = "가맹점 고유아이디, EQ 검색",)
+  @Schema(title = "가맹점 아이디", description = "가맹점 고유아이디, EQ 검색")
   val storeId: String? = null,
-  @Schema(title = "사업자 번호", description="사업자 번호, EQ 검색", example="123-45-67890")
+  @Schema(title = "사업자 번호", description = "사업자 번호, EQ 검색", example = "123-45-67890")
   val businessNo: String? = null,
   @Schema(title = "가맹점명", description = "Start with 검색")
   val storeName: String? = null,
   @Schema(title = "프랜차이즈 코드", description = "서비스코드 조회에서 가져온 프랜차이즈 코드, EQ 검색", example = "EDIYA")
   val franchiseCode: String? = null,
-  @Schema(title = "정렬", exampleClasses = [Sorter::class], ref = "", description = """
+  @Schema(
+    title = "정렬", exampleClasses = [Sorter::class], ref = "", description = """
     정렬 필드: phone, userId, userName, userNickName, storeId, storeBusinessNo, storeName, franchiseCode, regDate
-  """, example = "{\"field\": \"regDate\", \"direction\": \"DESC\"}")
+  """, example = "{\"field\": \"regDate\", \"direction\": \"DESC\"}"
+  )
   override val sort: List<Sorter>? = null,
   @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
   override val page: Page = Page(1, 10)
-): BaseFilter
-
+) : BaseFilter
 
 
 @Schema(title = "포인트 지급 경로", description = "포인트를 지급하는 사유")

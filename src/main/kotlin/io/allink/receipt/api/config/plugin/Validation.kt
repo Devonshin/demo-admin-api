@@ -8,6 +8,7 @@ import io.allink.receipt.api.domain.store.StoreFilter
 import io.allink.receipt.api.domain.store.StoreModifyModel
 import io.allink.receipt.api.domain.store.StoreRegistModel
 import io.allink.receipt.api.domain.store.StoreSearchFilter
+import io.allink.receipt.api.util.isValidBusinessNo
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -82,21 +83,3 @@ fun businessNoValidator(businessNo: String?): ValidationResult =
     ValidationResult.Invalid("사업자 등록 번호[$businessNo]가 유효하지 않습니다. 예)123-45-67890")
   } else ValidationResult.Valid
 
-fun isValidBusinessNo(businessNo: String): Boolean {
-  if (!Regex("\\d{3}-\\d{2}-\\d{5}").matches(businessNo)) return false
-  val businessNo = businessNo.replace("\\D", "")
-  val weights = listOf(1, 3, 7, 1, 3, 7, 1, 3, 5)
-  var checkDigit = 0
-  weights.forEachIndexed { index, weight ->
-    val digit = businessNo[index].digitToInt()
-    checkDigit += if (index == 8) {
-      ((digit * weight) / 10) + ((digit * weight) % 10)
-    } else {
-      digit * weight
-    }
-  }
-
-  checkDigit = (10 - (checkDigit % 10)) % 10
-
-  return checkDigit == businessNo.last().digitToInt()
-}

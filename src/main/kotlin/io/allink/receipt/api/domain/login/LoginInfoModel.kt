@@ -27,9 +27,9 @@ data class LoginInfoModel(
   val expireDate: @Contextual LocalDateTime,
   val status: LoginStatus,
   val loginDate: @Contextual LocalDateTime? = null,
-): BaseModel<UUID>
+) : BaseModel<UUID>
 
-object LoginInfoTable: UUIDTable(name = "login_info", columnName = "login_uuid") {
+object LoginInfoTable : UUIDTable(name = "login_info", columnName = "login_uuid") {
   val userUuid = reference("user_uuid", AdminTable.id)
   val verificationCode = text("verification_code")
   val expireDate = datetime("expire_date")

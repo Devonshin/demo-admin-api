@@ -50,9 +50,11 @@ data class StoreBillingRegistModel(
   @Contextual
   @Schema(title = "결제 토큰 고유아이디", description = "결제 토큰 고유아이디")
   val tokenUuid: UUID,
-  @Schema(title = "오늘 결제 금액",
+  @Schema(
+    title = "오늘 결제 금액",
     description = "오늘 결제 총액: (월 기본 결제 금액) * (이달에 남은 날 수 + 1) / (이달 일 수)",
-    example = "10000")
+    example = "10000"
+  )
   var billingAmount: Int = 0,
   @Schema(
     title = "결제 상태코드",

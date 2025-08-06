@@ -32,6 +32,7 @@ class Constant {
     fun checkAcceptFileType(fileName: String): Boolean {
       return ACCEPT_FILE_TYPE.any { fileName.endsWith(it.toString(), true) }
     }
+
     const val MERCHANT_SERVICE_GROUP_CODE = "MERT_SVC"
     const val ERECEIPT = "ERECEIPT" //전자영수증
     const val REVIEWPRJ = "REVIEWPRJ" //999 리뷰 프로젝트

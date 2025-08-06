@@ -8,7 +8,6 @@ import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
 import org.jetbrains.exposed.v1.core.statements.UpdateStatement
 import org.jetbrains.exposed.v1.r2dbc.Query
-import org.jetbrains.exposed.v1.r2dbc.addLogger
 import org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 
 /**
@@ -19,13 +18,13 @@ import org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 
 object TransactionUtil {
   suspend fun <T> withTransaction(block: suspend () -> T): T =
-    suspendTransaction (Dispatchers.IO) {
+    suspendTransaction(Dispatchers.IO) {
       addLogger(StdOutSqlLogger)
       block()
     }
 
   suspend fun <T> withTransactionReturn(block: suspend () -> T): T {
-    return suspendTransaction (Dispatchers.IO) {
+    return suspendTransaction(Dispatchers.IO) {
       addLogger(StdOutSqlLogger)
       block()
     }

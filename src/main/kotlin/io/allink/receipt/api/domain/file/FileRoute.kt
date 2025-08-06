@@ -128,6 +128,7 @@ fun Route.fileRoutes(
               fileBytes = part.readToByteArray()
             }
           }
+
           else -> Unit
         }
         part.dispose()
@@ -140,7 +141,7 @@ fun Route.fileRoutes(
     }
 
     /*태그 등록 파일 다운로드 url 생성*/
-    get("/download/batch-file/tag",  {
+    get("/download/batch-file/tag", {
       operationId = "file-download-tag"
       tags = listOf("태그 관리")
       summary = "태그 일괄 등록 파일 다운로드 URL"
@@ -206,6 +207,7 @@ fun Route.fileRoutes(
               fileBytes = part.readToByteArray()
             }
           }
+
           else -> Unit
         }
         part.dispose()
@@ -253,6 +255,7 @@ fun Route.fileRoutes(
               fileBytes = part.readToByteArray()
             }
           }
+
           else -> Unit
         }
         part.dispose()
@@ -265,7 +268,7 @@ fun Route.fileRoutes(
 
 
     /*태그 등록 파일 다운로드 url 생성*/
-    get("/download/batch-file/stores",  {
+    get("/download/batch-file/stores", {
       operationId = "file-download-store"
       tags = listOf("가맹점 관리")
       summary = "가맹점 다운로드 URL"

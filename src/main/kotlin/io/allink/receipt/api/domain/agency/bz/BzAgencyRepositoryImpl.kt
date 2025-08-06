@@ -23,7 +23,7 @@ class BzAgencyRepositoryImpl(
   override val table: BzAgencyTable
 ) : BzAgencyRepository {
 
-  override suspend fun findAllByFilter(filter: BzAgencyFilter): PagedResult<BzListAgencyModel> {
+  override suspend fun findAllByFilter(filter: BzAgencyFilter): PagedResult<SimpleBzAgencyModel> {
     val offset = filter.page.page.minus(1) * filter.page.pageSize
     val latestLoginAlias = LoginInfoTable.loginDate.max().alias("latestLogin")
 
@@ -62,7 +62,7 @@ class BzAgencyRepositoryImpl(
       .offset(offset.toLong())
       .toList()
       .map {
-        BzListAgencyModel(
+        SimpleBzAgencyModel(
           id = it[table.id].value,
           agencyName = it[table.agencyName],
           businessNo = it[table.businessNo],

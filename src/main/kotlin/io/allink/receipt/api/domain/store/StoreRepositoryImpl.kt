@@ -15,7 +15,7 @@ import org.jetbrains.exposed.v1.r2dbc.Query
 import org.jetbrains.exposed.v1.r2dbc.andWhere
 import org.jetbrains.exposed.v1.r2dbc.select
 import org.jetbrains.exposed.v1.r2dbc.selectAll
-import java.util.UUID
+import java.util.*
 
 /**
  * Package: io.allink.receipt.api.domain.store
@@ -213,7 +213,7 @@ class StoreRepositoryImpl(
       tel = row[table.tel],
       businessType = row[table.businessType],
       eventType = row[table.eventType],
-      status = row[table.status]?: StatusCode.NORMAL,
+      status = row[table.status] ?: StatusCode.NORMAL,
       regDate = row[table.regDate]
     )
   }

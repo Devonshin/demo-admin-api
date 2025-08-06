@@ -2,7 +2,7 @@ package io.allink.receipt.api.domain.store
 
 import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceRegistModel
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 /**
  * Package: io.allink.receipt.api.domain.store

@@ -5,7 +5,6 @@ import io.allink.receipt.api.domain.merchant.batch.TagStatus
 import io.allink.receipt.api.domain.store.StoreService
 import io.allink.receipt.api.repository.TransactionUtil
 import io.allink.receipt.api.util.DateUtil
-import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTimeStrMs
 import io.ktor.server.plugins.*
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
@@ -95,7 +94,7 @@ class MerchantTagServiceImpl(
                 "storeUid" to AttributeValue.builder().s(store?.id).build(),
                 "tagName" to AttributeValue.builder().s(modify.name).build(),
                 "status" to AttributeValue.builder().s(TagStatus.NORMAL.name).build(),
-                "regDate" to AttributeValue.builder().s(nowLocalDateTimeStrMs()).build(),
+                "regDate" to AttributeValue.builder().s(DateUtil.nowLocalDateTimeStrMs()).build(),
                 "regUserId" to AttributeValue.builder().s(userUuid.toString()).build(),
               )
             )

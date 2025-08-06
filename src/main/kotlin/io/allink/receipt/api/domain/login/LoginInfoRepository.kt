@@ -13,7 +13,7 @@ import java.util.*
  * Date: 14/04/2025
  */
 
-interface LoginInfoRepository: ExposedRepository<LoginInfoTable, UUID, LoginInfoModel> {
+interface LoginInfoRepository : ExposedRepository<LoginInfoTable, UUID, LoginInfoModel> {
   override fun toModel(row: ResultRow): LoginInfoModel {
     return LoginInfoModel(
       id = row[table.id].value,
@@ -21,7 +21,8 @@ interface LoginInfoRepository: ExposedRepository<LoginInfoTable, UUID, LoginInfo
       verificationCode = row[table.verificationCode],
       expireDate = row[table.expireDate],
       loginDate = row[table.loginDate],
-      status = row[table.status])
+      status = row[table.status]
+    )
   }
 
   override fun toRow(model: LoginInfoModel): LoginInfoTable.(UpdateBuilder<*>) -> Unit = {

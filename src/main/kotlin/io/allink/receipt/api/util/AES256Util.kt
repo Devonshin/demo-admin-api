@@ -61,6 +61,7 @@ class AES256Util {
       val keyData = encKey.toByteArray()
       val secureKey = SecretKeySpec(keyData, ENCRYPTION_ALGORITHM)
       val ivBytes = ByteArray(16)
+      System.arraycopy(keyData, 0, ivBytes, 0, 16)
       val iv = IvParameterSpec(ivBytes)
       cipher.init(Cipher.DECRYPT_MODE, secureKey, iv)
       val decodedBytes = Base64.getDecoder().decode(encryptedText.replace("\n", "").replace("\r", ""))

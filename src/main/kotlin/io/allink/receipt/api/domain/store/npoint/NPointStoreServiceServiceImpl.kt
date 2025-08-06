@@ -117,7 +117,7 @@ class NPointStoreServiceServiceImpl(
       return mutableListOf(
         selectedService.copy(
           serviceCode = ERECEIPT,
-          serviceCharge = 0/*eReceiptServiceCode.price*/,
+          serviceCharge = 0,/*eReceiptServiceCode.price*/
           rewardDeposit = 0,
           rewardPoint = 0,
           serviceCommission = 0,
@@ -153,7 +153,10 @@ class NPointStoreServiceServiceImpl(
     return mutableListOf()
   }
 
-  fun validateDepositAndCommissionAmount(selectedService: NPointStoreServiceRegistModel, serviceCodeModel: ServiceCodeModel) {
+  fun validateDepositAndCommissionAmount(
+    selectedService: NPointStoreServiceRegistModel,
+    serviceCodeModel: ServiceCodeModel
+  ) {
     val rewardDeposit = selectedService.rewardDeposit
     val rewardCommission = selectedService.serviceCommission
     val serviceCode = selectedService.serviceCode

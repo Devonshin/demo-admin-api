@@ -1,7 +1,7 @@
 package io.allink.receipt.api.domain.admin
 
 import io.allink.receipt.api.repository.ExposedRepository
-import io.allink.receipt.api.util.DateUtil.Companion.nowLocalDateTime
+import io.allink.receipt.api.util.DateUtil
 import kotlinx.coroutines.flow.Flow
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.ResultRow
@@ -26,7 +26,7 @@ interface AdminRepository : ExposedRepository<AdminTable, UUID, AdminModel> {
     it[email] = model.email
     it[status] = model.status
     it[agencyUuid] = model.agencyUuid
-    it[regDate] = nowLocalDateTime()
+    it[regDate] = DateUtil.nowLocalDateTime()
     it[regBy] = model.regBy
   }
 
@@ -39,7 +39,7 @@ interface AdminRepository : ExposedRepository<AdminTable, UUID, AdminModel> {
     it[email] = model.email
     it[status] = model.status
     it[agencyUuid] = model.agencyUuid
-    it[modDate] = nowLocalDateTime()
+    it[modDate] = DateUtil.nowLocalDateTime()
     it[modBy] = model.modBy
   }
 

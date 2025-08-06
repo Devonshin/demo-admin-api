@@ -6,5 +6,5 @@ package io.allink.receipt.api.domain.login
  * Date: 14/04/2025
  */
 
-class LoginException(message: String): RuntimeException(message) {
+class LoginException(message: String) : RuntimeException(message) {
 }

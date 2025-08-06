@@ -33,12 +33,12 @@ fun agencyListRequest(): SimpleBodyConfig.() -> Unit = {
 
 fun agencyListResponse(): ResponseConfig.() -> Unit = {
   description = "성공 응답"
-  body<Response<PagedResult<BzListAgencyModel>>> {
+  body<Response<PagedResult<SimpleBzAgencyModel>>> {
     example("대리점 목록 응답") {
       value = Response(
         data = PagedResult(
           items = listOf(
-            BzListAgencyModel(
+            SimpleBzAgencyModel(
               id = UUID.fromString("c7f0d23e-eceb-4434-b489-668c0b61a7f9"),
               agencyName = "대리점명",
               businessNo = "123-45-67890",

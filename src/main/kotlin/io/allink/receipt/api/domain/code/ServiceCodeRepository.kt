@@ -6,7 +6,7 @@ import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
 import org.jetbrains.exposed.v1.core.statements.UpdateStatement
 
-interface ServiceCodeRepository: ExposedRepository<ServiceCodeTable, String, ServiceCodeModel> {
+interface ServiceCodeRepository : ExposedRepository<ServiceCodeTable, String, ServiceCodeModel> {
 
   suspend fun findAll(groupCode: String): List<ServiceCodeModel>
 

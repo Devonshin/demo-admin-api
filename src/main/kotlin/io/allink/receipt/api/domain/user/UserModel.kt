@@ -134,7 +134,7 @@ data class UserFilter(
   override val sort: List<Sorter>? = null,
   @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
   override val page: Page = Page(1, 10)
-): BaseFilter
+) : BaseFilter
 
 @Serializable
 @Schema(title = "나이 대")
