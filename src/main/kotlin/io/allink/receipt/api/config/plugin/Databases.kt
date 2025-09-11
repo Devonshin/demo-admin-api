@@ -13,8 +13,8 @@ import org.jetbrains.exposed.v1.r2dbc.R2dbcDatabaseConfig
 fun Application.configureDatabases() {
   val ktorConfig = environment.config.config("ktor")
   val postgresConfig = environment.config.config("postgres")
-
-  val environment = ktorConfig.property("environment").getString()
+  val env = ktorConfig.property("environment").getString()
+  println("environment = $env")
   val host = postgresConfig.property("url").getString()
   val port = postgresConfig.property("port").getString().toInt()
   val user = postgresConfig.property("user").getString()
@@ -22,7 +22,7 @@ fun Application.configureDatabases() {
   val database = postgresConfig.property("database").getString()
 
   val options =
-    if (environment == "production") {
+    if (env == "production") {
       builder()
         .option(DRIVER, "postgresql")
         .option(HOST, host)

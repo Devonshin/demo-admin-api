@@ -4,11 +4,6 @@ import io.allink.receipt.api.config.plugin.createHttpClient
 import io.ktor.client.*
 import io.ktor.server.config.*
 
-/**
- * Payment Gateway Configuration
- * Created by: DevOps Team
- * Date: 2025-01-07
- */
 class KocesGatewayConfig(config: ApplicationConfig) {
 
   val baseUrl: String = config.property("receiptGateKocesPay.baseUrl").getString()

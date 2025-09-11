@@ -18,19 +18,29 @@ class AES256UtilTest {
 
   @Test
   fun `encrypt should return valid encrypted string for valid input`() {
-    val input = "DrVDOB/IAWg2LiwRHTOi+Q=="
-    val decrypted = AES256Util.decrypt(input, key)
-    println(",$decrypted,")
-//    assertEquals(input, decrypted)
+    // Given
+    val plainText = "Hello World"
+    
+    // When
+    val encrypted = AES256Util.encrypt(plainText, key)
+    
+    // Then
+    assert(encrypted != null)
+    assert(encrypted!!.isNotEmpty())
+    assert(encrypted != plainText)
   }
 
   @Test
-  fun `decrypt should return valid input`() {
-    val input =
-      "pbUZu0Jq/VhD5UPtrA/Tq8Uz85bnnFxv+sb+h0ymlxYyxez8Ic8JHCaTsomdS/197GkgJssucmlBB8PS3ukK8RLabPQCJXTwZzek7RUlbQ6tZ6z5mZ4Q+W1b28c/hzEu"
-    val decrypted = AES256Util.decrypt(input, key)
-    println(",$decrypted,")
-//    assertEquals(input, decrypted)
+  fun `decrypt should return original text`() {
+    // Given
+    val originalText = "Test Message"
+    val encrypted = AES256Util.encrypt(originalText, key)
+    
+    // When
+    val decrypted = AES256Util.decrypt(encrypted, key)
+    
+    // Then
+    assertEquals(originalText, decrypted)
   }
 
   @Test

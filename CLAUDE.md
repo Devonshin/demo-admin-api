@@ -1,10 +1,5 @@
 # CLAUDE.md
 
-## 기본 규칙
-- 모든 작성물(코드 설명, 문서, 답변, 리뷰)은 반드시 한국어로 작성할 것. 
-- 외부 라이브러리/코드 주석 등에도 한글 위주로 설명할 것.
-- 번역 요청이 없으면 다른 언어 사용 불가.
-
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview

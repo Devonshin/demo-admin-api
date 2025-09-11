@@ -36,11 +36,10 @@ fun Application.configureFrameworks() {
        * Configuration
        * */
       single<ApplicationConfig> {
-        val env = System.getenv("KTOR_ENV") ?: "test"
-        println("KTOR_ENV: $env")
+//        val env = System.getProperty("KTOR_ENV") ?: "test"
+//        println("KTOR_ENV: $env")
         val baseConfig = ConfigFactory.load("application.conf")
-        val envConfig = ConfigFactory.load("application-$env.conf")
-        HoconApplicationConfig(envConfig.withFallback(baseConfig))
+        HoconApplicationConfig(baseConfig)
       }
 
       single<KocesGatewayConfig> {

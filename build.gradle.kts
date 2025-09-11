@@ -11,6 +11,7 @@ plugins {
   kotlin("jvm") version "2.1.20"
   id("io.ktor.plugin") version "3.1.2"
   id("org.jetbrains.kotlin.plugin.serialization") version "2.1.20"
+  jacoco
 }
 
 group = "io.allink"
@@ -47,12 +48,9 @@ dependencies {
   implementation("io.ktor:ktor-serialization-kotlinx-json")
   implementation("dev.hayden:khealth:3.0.2")
   implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
-//  implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
   implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
   implementation("org.jetbrains.exposed:exposed-r2dbc:$exposed_version")
-//  implementation("com.zaxxer:HikariCP:$hikaricp_version")
 
-//  implementation("com.h2database:h2:$h2_version")
   implementation("org.postgresql:postgresql:42.7.2") // 최신 버전 확인 필요
   implementation("org.postgresql:r2dbc-postgresql:$postgres_version")
   implementation("io.insert-koin:koin-ktor:$koin_version")
@@ -66,6 +64,8 @@ dependencies {
   implementation("software.amazon.awssdk:s3:2.20.+")
 
   implementation("com.github.4sh:retable:-SNAPSHOT")
+
+  implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
 
   implementation("io.github.smiley4:ktor-openapi:5.0.2")
   implementation("io.github.smiley4:ktor-redoc:5.0.2")
@@ -86,6 +86,39 @@ dependencies {
 
 tasks.test {
   useJUnitPlatform()
+  finalizedBy(tasks.jacocoTestReport) // 테스트 후 자동으로 커버리지 리포트 생성
+}
+
+tasks.jacocoTestReport {
+  dependsOn(tasks.test) // 테스트가 먼저 실행되어야 함
+  reports {
+    xml.required.set(true)
+    html.required.set(true)
+    csv.required.set(false)
+  }
+}
+
+jacoco {
+  toolVersion = "0.8.12"
+}
+
+// 테스트 커버리지 검증 태스크
+tasks.jacocoTestCoverageVerification {
+  violationRules {
+    rule {
+      limit {
+        minimum = "0.50".toBigDecimal() // 최소 50% 커버리지 요구
+      }
+    }
+    rule {
+      element = "CLASS"
+      limit {
+        counter = "BRANCH"
+        value = "COVEREDRATIO"
+        minimum = "0.40".toBigDecimal() // 브랜치 커버리지 40% 이상
+      }
+    }
+  }
 }
 
 ktor {

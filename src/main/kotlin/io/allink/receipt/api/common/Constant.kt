@@ -12,6 +12,7 @@ import java.util.*
 
 class Constant {
   companion object {
+
     const val AES256_KEY = "rWsq73mYW5WC8KTtzDyj1OUnQ4ubGlMU"
     val ACCEPT_FILE_FIELDS = mapOf(
       "stores" to listOf("bz", "id", "bank", "application", "coupon"),

@@ -58,7 +58,7 @@ fun s3Client(config: ApplicationConfig): S3Client {
   val accessKeyId = ${?AWS_ACCESS_KEY_ID}.property("aws.accessKeyId").getString()
   val secretKey = ${?AWS_SECRET_KEY}.property("aws.secretKey").getString()
 
-  logger.info("Connecting to AWS S3 with accessKeyId $accessKeyId")
+  logger.info("Connecting to AWS S3 with accessKeyId ${accessKeyId.replaceRange(4, accessKeyId.length, "*".repeat(accessKeyId.length - 4))}")
   return S3Client.builder()
     .region(Region.AP_NORTHEAST_2)
     .credentialsProvider(

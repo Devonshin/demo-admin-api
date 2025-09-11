@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  e-receipt-admin-api:
+    image: ghcr.io/allink-devs/e-receipt-admin-api:latest-prod
+    container_name: e-receipt-admin-api
+    user: "1000:1000"
+    ports:
+      - "8080:8080"
+    volumes:
+      - /home/ec2-user/app/logs:/app/logs
+    network_mode: bridge

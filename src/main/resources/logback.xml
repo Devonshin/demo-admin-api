@@ -1,63 +1,162 @@
 <configuration>
-    <property name="FILE_PATH" value="/home/ec2-user/e-receipt-api/logs"/>
-    <property name="PATTERN" value="%d{YYYY-MM-dd HH:mm:ss.SSS}:[%X{call-id:-startup}][%.30thread] %-4level [%logger{5}.%method:%line]- %msg%n"/>
-    <property name="LOG_LEVEL" value="INFO"/>
+    <!-- 환경별 설정 -->
+    <property name="FILE_PATH" value="${LOG_PATH:-./logs}"/>
+    <property name="LOG_LEVEL" value="${LOG_LEVEL:-INFO}"/>
+    <property name="MAX_FILE_SIZE" value="${MAX_FILE_SIZE:-10MB}"/>
+    <property name="MAX_HISTORY" value="${MAX_HISTORY:-30}"/>
+    <property name="TOTAL_SIZE_CAP" value="${TOTAL_SIZE_CAP:-1GB}"/>
 
-    <if condition='"${KTOR_ENV}" == "local"'>
+    <!-- 로그 패턴 최적화 -->
+    <property name="CONSOLE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+    <property name="FILE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{requestId:-}] [%thread] %-5level %logger{36} [%method:%line] - %msg%n"/>
+
+    <!-- Ktor 환경별 세부 설정 -->
+    <if condition='"${KTOR_ENV:-local}" == "local" || "${KTOR_ENV:-local}" == "test"'>
         <then>
-            <property name="FILE_PATH" value="/Volumes/Workspaces/workspace/projects/Allink/app/e-receipt-api/logs"/>
             <property name="LOG_LEVEL" value="DEBUG"/>
         </then>
     </if>
-    <if condition='"${KTOR_ENV}" == "test"'>
-        <then>
-            <property name="FILE_PATH" value="/var/logs/app"/>
-            <property name="LOG_LEVEL" value="DEBUG"/>
-        </then>
-    </if>
-    <if condition='"${KTOR_ENV}" == "production"'>
+
+    <if condition='"${KTOR_ENV}" == "dev" || "${KTOR_ENV}" == "staging"'>
         <then>
             <property name="FILE_PATH" value="/app/logs"/>
+            <property name="LOG_LEVEL" value="INFO"/>
         </then>
     </if>
-    <if condition='"${KTOR_ENV}" == "prod"'>
+
+    <if condition='"${KTOR_ENV}" == "production" || "${KTOR_ENV}" == "prod"'>
         <then>
-            <property name="FILE_PATH" value="/home/ec2-user/e-receipt-api/logs"/>
-        </then>
-    </if>
-    <if condition='"${KTOR_ENV}" == "dev"'>
-        <then>
-            <property name="FILE_PATH" value="/var/logs/app"/>
+            <property name="FILE_PATH" value="/app/logs"/>
+            <property name="LOG_LEVEL" value="WARN"/>
+            <property name="MAX_FILE_SIZE" value="50MB"/>
+            <property name="TOTAL_SIZE_CAP" value="2GB"/>
         </then>
     </if>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
         <encoder>
-            <pattern>${PATTERN}</pattern>
-        </encoder>
-    </appender>
-    <appender name="logFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${FILE_PATH}/info.log</file>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>${PATTERN}</pattern>
+            <pattern>${CONSOLE_PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
+    </appender>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${FILE_PATH}/bak/info.log.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>50MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <maxHistory>30</maxHistory>
+    <appender name="APP_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE_PATH}/application.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${FILE_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${FILE_PATH}/archived/application.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${TOTAL_SIZE_CAP}</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
     </appender>
+
+    <!-- 에러 로그 (분리) -->
+    <appender name="ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE_PATH}/error.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${FILE_PATH}/archived/error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 보안 감사 로그 -->
+    <appender name="SECURITY_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE_PATH}/security.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{requestId:-}] [%X{userId:-}] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${FILE_PATH}/archived/security.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>50MB</maxFileSize>
+            <maxHistory>180</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 비동기 앱펜더 (성능 최적화) -->
+    <appender name="ASYNC_APP" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>1024</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+        <neverBlock>true</neverBlock>
+        <appender-ref ref="APP_LOG"/>
+    </appender>
+
+    <appender name="ASYNC_ERROR" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>256</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+        <neverBlock>true</neverBlock>
+        <appender-ref ref="ERROR_LOG"/>
+    </appender>
+    <!-- 루트 로거 설정 -->
     <root level="${LOG_LEVEL}">
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="logFile"/>
+        <if condition='"${KTOR_ENV:-local}" == "local" || "${KTOR_ENV:-local}" == "test" || "${KTOR_ENV}" == "dev"'>
+            <then>
+                <appender-ref ref="STDOUT"/>
+            </then>
+        </if>
+        <appender-ref ref="ASYNC_APP"/>
+        <appender-ref ref="ASYNC_ERROR"/>
     </root>
-    <logger name="io.r2dbc.postgresql.client.ReactorNettyClient" level="INFO"/>
-    <logger name="org.eclipse.jetty" level="INFO"/>
-    <logger name="io.netty" level="INFO"/>
+
+    <!-- 보안 관련 로거 -->
+    <logger name="SECURITY" level="INFO" additivity="false">
+        <appender-ref ref="SECURITY_LOG"/>
+    </logger>
+
+    <!-- 애플리케이션 로거 -->
+    <logger name="io.allink.receipt.api" level="${LOG_LEVEL}" additivity="false">
+        <appender-ref ref="ASYNC_APP"/>
+        <appender-ref ref="ASYNC_ERROR"/>
+        <if condition='"${KTOR_ENV:-local}" == "local" || "${KTOR_ENV:-local}" == "test"'>
+            <then>
+                <appender-ref ref="STDOUT"/>
+            </then>
+        </if>
+    </logger>
+
+    <!-- 외부 라이브러리 로거 최적화 -->
+    <logger name="io.r2dbc.postgresql.client.ReactorNettyClient" level="WARN"/>
+    <logger name="org.eclipse.jetty" level="WARN"/>
+    <logger name="io.netty" level="WARN"/>
     <logger name="Exposed" level="INFO"/>
-    <logger name="io.ktor.auth.jwt" level="DEBUG"/>
+    <logger name="org.jetbrains.exposed.sql.statements" level="WARN"/>
+
+    <!-- 보안 관련 로거 (JWT, 인증) -->
+    <logger name="io.ktor.auth.jwt" level="ERROR"/>
+    <logger name="io.ktor.server.auth" level="ERROR"/>
+    <logger name="io.ktor.auth" level="ERROR"/>
+
+    <!-- 성능 관련 로거 -->
+    <logger name="io.ktor.server.engine" level="WARN"/>
+    <logger name="io.ktor.routing" level="INFO"/>
+
+    <!-- 데이터베이스 관련 로거 -->
+    <logger name="com.zaxxer.hikari" level="WARN"/>
+    <logger name="org.postgresql" level="WARN"/>
+
+    <!-- AWS SDK 로거 -->
+    <logger name="software.amazon.awssdk" level="WARN"/>
+    <logger name="com.amazonaws" level="WARN"/>
 </configuration>
