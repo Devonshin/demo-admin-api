@@ -27,6 +27,7 @@ fun Application.configureStatusPage() {
   install(StatusPages) {
 
     status(HttpStatusCode.NotFound) { call, status ->
+      logger.error("NotFound : {}", status)
       call.respond(
         status,
         Response(
@@ -39,6 +40,7 @@ fun Application.configureStatusPage() {
     }
 
     status(HttpStatusCode.Unauthorized) { call, status ->
+      logger.error("Unauthorized : {}", status)
       call.respond(
         status,
         Response(
@@ -185,6 +187,7 @@ fun Application.configureStatusPage() {
     }
 
     exception<NotFoundException> { call, cause ->
+      logger.error("HttpStatusCode.NotFoundException", cause)
       call.respond(
         HttpStatusCode.NotFound,
         Response(

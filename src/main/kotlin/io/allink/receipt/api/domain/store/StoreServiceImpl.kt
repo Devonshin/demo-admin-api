@@ -1,9 +1,10 @@
+package io.allink.receipt.api.domain.store
+
 import io.allink.receipt.api.common.BillingStatusCode
 import io.allink.receipt.api.common.StatusCode
 import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.domain.agency.bz.AgencyStatus
 import io.allink.receipt.api.domain.agency.bz.SimpleBzAgencyModel
-import io.allink.receipt.api.domain.store.*
 import io.allink.receipt.api.domain.store.npoint.NPointStoreModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreRepository
 import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceService

@@ -136,7 +136,8 @@ Each domain follows a consistent structure:
 - **Kotlinx Coroutines Test**: Coroutine testing support
 
 ### Test Naming Convention
-Follow pattern: `should_ExpectedBehavior_When_StateUnderTest`
+Follow pattern: `Should expected behavior when state under test`
+Add @DisplayName annotation and explain detail
 
 ## Important Notes
 

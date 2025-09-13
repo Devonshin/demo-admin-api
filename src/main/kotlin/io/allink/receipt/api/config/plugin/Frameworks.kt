@@ -1,6 +1,5 @@
 package io.allink.receipt.api.config.plugin
 
-import StoreServiceImpl
 import com.typesafe.config.ConfigFactory
 import io.allink.receipt.api.domain.admin.*
 import io.allink.receipt.api.domain.agency.bz.*
@@ -109,8 +108,9 @@ fun Application.configureFrameworks() {
       single<VerificationService> {
         SMSVerificationServiceImpl(get())
       }
+      single<JwtGenerator> { DefaultJwtGenerator() }
       single<LoginService> {
-        LoginServiceImpl(get(), get(), get(), get())
+        LoginServiceImpl(get(), get(), get(), get(), get())
       }
       single<UserService> {
         UserServiceImpl(get())

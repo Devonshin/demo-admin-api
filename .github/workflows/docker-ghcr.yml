@@ -2,7 +2,7 @@ name: CI Build and Deploy (Prod/Stg)
 
 on:
   push:
-    branches: [ "production", "staging" ]
+    branches: [ "development", "staging" ]
   pull_request:
     branches: [ "production", "staging" ]
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
   staging:
     if: github.ref == 'refs/heads/staging' || (github.event_name == 'pull_request' && github.base_ref == 'staging')
     runs-on: ubuntu-latest
-    environment: staging_env
+    environment: development
     concurrency:
       group: e-receipt-admin-api-stg
       cancel-in-progress: true
@@ -137,139 +137,3 @@ jobs:
             --targets "Key=tag:${{ vars.INST_TAG_KEY }},Values=${{ vars.INST_TAG_VAL }}" \
             --document-name "AWS-RunShellScript" \
             --parameters file://ssm-params.json
-
-  production:
-    if: github.ref == 'refs/heads/production' || (github.event_name == 'pull_request' && github.base_ref == 'production')
-    runs-on: ubuntu-latest
-    environment: prod_env
-    concurrency:
-      group: e-receipt-admin-api-prod
-      cancel-in-progress: true
-    env:
-      REGISTRY: ghcr.io
-      BUILD_ARG_PROFILE: "production"
-    steps:
-      - name: Set lowercase image name
-        run: |
-          echo "IMAGE_NAME=$(echo "${{ github.repository_owner }}/${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
-      - name: Print environment variables
-        run: |
-          echo "REGISTRY: ${{ env.REGISTRY }}"
-          echo "IMAGE_NAME: ${{ env.IMAGE_NAME }}"
-          echo "BUILD_ARG_PROFILE: ${{ env.BUILD_ARG_PROFILE }}"
-          echo "GITHUB_REF: ${{ github.ref }}"
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Build with Gradle (skip tests)
-        run: ./gradlew build -x test
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=latest-prod
-            type=sha
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            PROFILE=${{ env.BUILD_ARG_PROFILE }}
-            JWT_SECRET=${{secrets.JWT_SECRET}}
-            RECEIPT_DATASOURCE_PG_URL=${{secrets.RECEIPT_DATASOURCE_PG_URL}}
-            RECEIPT_DATASOURCE_DB_NAME=${{secrets.RECEIPT_DATASOURCE_DB_NAME}}
-            DB_PORT=${{secrets.DB_PORT}}
-            DB_USER=${{secrets.DB_USER}}
-            RECEIPT_API_USER_DB_PASSWORD=${{secrets.RECEIPT_API_USER_DB_PASSWORD}}
-            AWS_ACCESS_KEY_ID=${{secrets.RECEIPT_DATASOURCE_PG_URL}}
-            AWS_SECRET_KEY=${{secrets.RECEIPT_DATASOURCE_DB_NAME}}
-            AWS_REGION=${{env.AWS_REGION}}
-            S3_RECEIPT_ADMIN_BUCKET_NAME=${{secrets.S3_RECEIPT_ADMIN_BUCKET_NAME}}
-            RECEIPT_GATE_KOCES_PAY_URL=${{secrets.RECEIPT_GATE_KOCES_PAY_URL}}
-            KOCES_PAY_TOKEN=${{secrets.KOCES_PAY_TOKEN}}
-      - name: Prepare script payload
-        run: |
-          if base64 --help 2>&1 | grep -q '\-w'; then
-            B64=$(base64 -w 0 scripts/pull_and_run.sh)
-          else
-            B64=$(base64 scripts/pull_and_run.sh | tr -d '\n')
-          fi
-          echo "SCRIPT_B64=$B64" >> $GITHUB_ENV
-          echo "SCRIPT_LEN=$(printf '%s' "$B64" | wc -c)" >> $GITHUB_ENV
-
-      - name: Debug script payload length
-        run: echo "payload_length=${SCRIPT_LEN}"
-
-      - name: Prepare compose payload (production)
-        run: |
-          if base64 --help 2>&1 | grep -q '\-w'; then
-            CB64=$(base64 -w 0 docker-compose.production.yml)
-          else
-            CB64=$(base64 docker-compose.production.yml | tr -d '\n')
-          fi
-          echo "COMPOSE_B64=$CB64" >> $GITHUB_ENV
-          echo "COMPOSE_LEN=$(printf '%s' "$CB64" | wc -c)" >> $GITHUB_ENV
-
-      - name: Debug compose payload length (production)
-        run: echo "compose_payload_length=${COMPOSE_LEN}"
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ap-northeast-2
-          aws-access-key-id: ${{ secrets.AWS_MOGGY_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_MOGGY_SECRET_ACCESS_KEY }}
-
-      - name: Build SSM parameters (production)
-        run: |
-          echo "$SCRIPT_B64" > script.b64
-          echo "$COMPOSE_B64" > compose.b64
-          jq -n --rawfile S script.b64 --rawfile C compose.b64 '
-          {
-            commands: [
-              "bash -lc '\''set -e; cat > /home/ec2-user/pull_and_run.sh.b64 <<'__B64__'\n" + $S + "\n__B64__'\''",
-              "bash -lc '\''set -e; base64 --decode /home/ec2-user/pull_and_run.sh.b64 > /home/ec2-user/pull_and_run.sh'\''",
-              "bash -lc '\''chmod 755 /home/ec2-user/pull_and_run.sh && chown ec2-user:ec2-user /home/ec2-user/pull_and_run.sh && ls -l /home/ec2-user/pull_and_run.sh'\''",
-              "bash -lc '\''set -e; cat > /home/ec2-user/docker-compose.production.yml.b64 <<'__B64__'\n" + $C + "\n__B64__'\''",
-              "bash -lc '\''set -e; base64 --decode /home/ec2-user/docker-compose.production.yml.b64 > /home/ec2-user/docker-compose.production.yml'\''",
-              "bash -lc '\''chmod 644 /home/ec2-user/docker-compose.production.yml && chown ec2-user:ec2-user /home/ec2-user/docker-compose.production.yml && ls -l /home/ec2-user/docker-compose.production.yml'\''",
-              "bash -lc '\''set -e; chown -R ec2-user:ec2-user /home/ec2-user/app'\''",
-              "bash -lc '\''set -e; sudo -iu ec2-user bash -lc \"cd /home/ec2-user && ./pull_and_run.sh\"'\''",
-              "bash -lc '\''set -e; sudo rm -f /home/ec2-user/*.b64 && sync'\''"
-            ]
-          }' > ssm-params.json
-
-      - name: Deploy and Execute Script via SSM
-        run: |
-          echo "INST_TAG_KEY -> ${{ vars.INST_TAG_KEY }}"
-          echo "INST_TAG_VAL -> ${{ vars.INST_TAG_VAL }}"
-          aws ssm send-command \
-            --targets "Key=tag:${{ vars.INST_TAG_KEY }},Values=${{ vars.INST_TAG_VAL }}" \
-            --document-name "AWS-RunShellScript" \
-            --parameters file://ssm-params.json
-

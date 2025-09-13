@@ -19,13 +19,13 @@ import org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 object TransactionUtil {
   suspend fun <T> withTransaction(block: suspend () -> T): T =
     suspendTransaction(Dispatchers.IO) {
-      addLogger(StdOutSqlLogger)
+      addLogger(Slf4jSqlDebugLogger)
       block()
     }
 
   suspend fun <T> withTransactionReturn(block: suspend () -> T): T {
     return suspendTransaction(Dispatchers.IO) {
-      addLogger(StdOutSqlLogger)
+      addLogger(Slf4jSqlDebugLogger)
       block()
     }
   }

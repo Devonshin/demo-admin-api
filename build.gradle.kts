@@ -74,6 +74,8 @@ dependencies {
   implementation("io.ktor:ktor-client-cio-jvm:${ktor_version}")
   implementation("io.ktor:ktor-client-content-negotiation:${ktor_version}")
   implementation("io.ktor:ktor-serialization-kotlinx-json:${ktor_version}")
+
+  // Test deps
   testImplementation("io.mockk:mockk:1.14.0")
   testImplementation("io.ktor:ktor-server-test-host")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")
@@ -82,11 +84,22 @@ dependencies {
   testImplementation("org.assertj:assertj-core:3.11.1")
   testImplementation(kotlin("test"))
   testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+  // Ktor client mock for HTTP client tests
+  testImplementation("io.ktor:ktor-client-mock:${ktor_version}")
+  // Testcontainers for repository integration tests
+  testImplementation("org.testcontainers:junit-jupiter:1.20.2")
+  testImplementation("org.testcontainers:postgresql:1.20.2")
 }
 
 tasks.test {
   useJUnitPlatform()
-  finalizedBy(tasks.jacocoTestReport) // 테스트 후 자동으로 커버리지 리포트 생성
+  // Ensure tests run sequentially to avoid Exposed R2DBC global connection stomping across containers
+  maxParallelForks = 1
+  // Fork a fresh JVM per test class to isolate Exposed R2DBC default DB
+  forkEvery = 1
+  // Disable JUnit 5 parallel execution just in case
+  systemProperty("junit.jupiter.execution.parallel.enabled", "false")
+  finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.jacocoTestReport {
@@ -100,6 +113,13 @@ tasks.jacocoTestReport {
 
 jacoco {
   toolVersion = "0.8.12"
+}
+
+tasks.jacocoTestReport {
+  dependsOn(tasks.test)
+  reports {
+    html.required.set(true)
+  }
 }
 
 // 테스트 커버리지 검증 태스크

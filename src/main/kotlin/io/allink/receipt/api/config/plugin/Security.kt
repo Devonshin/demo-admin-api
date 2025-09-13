@@ -37,22 +37,20 @@ fun Application.configureSecurity() {
       validate { credential ->
 
         val payload = credential.payload
-        val loginUuid = payload.getClaim("lUuid").asString()
-        if (loginUuid == null) return@validate null
+        val loginUuid = payload.getClaim("lUuid").asString() ?: return@validate null
         val loginInfoRepository: LoginInfoRepository = get()
         TransactionUtil.withTransactionReturn {
-          val loginInfo = loginInfoRepository.find(UUID.fromString(loginUuid))
-          if (loginInfo == null) return@withTransactionReturn null
+          val loginInfo =
+            loginInfoRepository.find(UUID.fromString(loginUuid)) ?: return@withTransactionReturn null
           if (loginInfo.status != LoginStatus.ACTIVE) return@withTransactionReturn null
         } ?: return@validate null
 
-        val userUuid = payload.getClaim("uUuid").asString()
-        if (userUuid == null) return@validate null
+        val userUuid = payload.getClaim("uUuid").asString() ?: return@validate null
 
         val adminRepository: AdminRepository = get()
         TransactionUtil.withTransactionReturn {
-          val admin = adminRepository.findByUserUuid(UUID.fromString(userUuid))
-          if (admin == null) return@withTransactionReturn null
+          val admin =
+            adminRepository.findByUserUuid(UUID.fromString(userUuid)) ?: return@withTransactionReturn null
           if (admin.status != AdminStatus.ACTIVE) return@withTransactionReturn null
         } ?: return@validate null
 
@@ -62,17 +60,17 @@ fun Application.configureSecurity() {
           JWTPrincipal(payload)
         } else null
       }
-      challenge { defaultScheme, realm ->
-        call.respond(
-          HttpStatusCode.Unauthorized,
-          Response(
-            ErrorResponse(
-              code = "TOKEN_EXPIRED",
-              message = "Token expired"
-            )
-          )
-        )
-      }
+//      challenge { defaultScheme, realm ->
+//        call.respond(
+//          HttpStatusCode.Unauthorized,
+//          Response(
+//            ErrorResponse(
+//              code = "TOKEN_EXPIRED",
+//              message = "Token expired"
+//            )
+//          )
+//        )
+//      }
     }
   }
 }

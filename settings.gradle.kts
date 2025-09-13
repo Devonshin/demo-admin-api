@@ -1,1 +1,1 @@
-rootProject.name = "e-receipt-admin-api"
+rootProject.name = "demo-e-receipt-admin-api"

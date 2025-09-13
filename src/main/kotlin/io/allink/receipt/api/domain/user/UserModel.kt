@@ -21,11 +21,11 @@ import java.time.LocalDateTime
 @Serializable
 @Schema(title = "사용자 객체", description = "모바일 전자영수증 가입자")
 data class UserModel(
-  @Schema(title = "고유아이디", description = "사용자 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "고유아이디", description = "사용자 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String?,
-  @Schema(title = "이름", description = "사용자 이름", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "이름", description = "사용자 이름", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val name: String?,
-  @Schema(
+  @param:Schema(
     title = "회원가입 상태",
     description = "회원 가입 상태값",
     nullable = false,
@@ -117,30 +117,30 @@ enum class UserRole {
 @Serializable
 @Schema(title = "사용자 검색 필터", description = "사용자 검색 필터")
 data class UserFilter(
-  @Schema(title = "휴대폰번호", description = "Eq 검색만 가능")
+  @param:Schema(title = "휴대폰번호", description = "Eq 검색만 가능")
   val phone: String? = null,
-  @Schema(title = "이름", description = "Start with 검색")
+  @param:Schema(title = "이름", description = "Start with 검색")
   val name: String? = null,
-  @Schema(title = "닉네임", description = "Eq 검색만 가능")
+  @param:Schema(title = "닉네임", description = "Eq 검색만 가능")
   val nickName: String? = null,
-  @Schema(title = "연령대")
+  @param:Schema(title = "연령대")
   val age: Age? = null,
-  @Schema(title = "성별", example = "M|F")
+  @param:Schema(title = "성별", example = "M|F")
   val gender: String? = null,
-  @Schema(
+  @param:Schema(
     title = "정렬", exampleClasses = [Sorter::class],
     description = """정렬 필드 : name, nickname, phone, gender, birthday, localYn, email, role, regDate, joinSocialType"""
   )
   override val sort: List<Sorter>? = null,
-  @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
   override val page: Page = Page(1, 10)
 ) : BaseFilter
 
 @Serializable
 @Schema(title = "나이 대")
 data class Age(
-  @Schema(title = "시작 출생년도", description = "종료 출생년보다 빠른 값", example = "2002")
+  @param:Schema(title = "시작 출생년도", description = "종료 출생년보다 빠른 값", example = "2002")
   val from: String,
-  @Schema(title = "종료 출생년도", example = "2022")
+  @param:Schema(title = "종료 출생년도", example = "2022")
   val to: String
 )

@@ -25,7 +25,7 @@ fun Application.configureMonitoring() {
       val uri = call.request.uri
       uri != "/"
     }
-    callIdMdc("call-id")
+    callIdMdc("requestId")
     level = Level.INFO
     format { call ->
       val status = call.response.status()

@@ -19,19 +19,19 @@ import java.util.*
 @Serializable
 @Schema(name = "storeBillingTokenModel", title = "가맹점 결제 카드 토큰 정보", description = "가맹점 결제 카드 토큰 등록 정보")
 data class StoreBillingTokenModel(
-  @Schema(title = "토큰 고유아이디", description = "토큰 고유아이디")
+  @param:Schema(title = "토큰 고유아이디", description = "토큰 고유아이디")
   override var id: @Contextual UUID? = null,
-  @Schema(title = "사업자 번호", description = "사업자 번호")
+  @param:Schema(title = "사업자 번호", description = "사업자 번호")
   val businessNo: String,
-  @Schema(title = "SK결제토큰", description = "SK결제토큰")
+  @param:Schema(title = "SK결제토큰", description = "SK결제토큰")
   val token: String,
-  @Schema(title = "토큰추가정보", description = "토큰추가정보")
+  @param:Schema(title = "토큰추가정보", description = "토큰추가정보")
   val tokenInfo: String? = null,
-  @Schema(title = "상태", description = "토큰 상태")
+  @param:Schema(title = "상태", description = "토큰 상태")
   val status: StatusCode,
-  @Schema(title = "등록일시", description = "토큰 등록일시")
+  @param:Schema(title = "등록일시", description = "토큰 등록일시")
   val regDate: @Contextual LocalDateTime? = null,
-  @Schema(title = "등록인 고유아이디", description = "토큰을 등록한 사람의 고유아이디")
+  @param:Schema(title = "등록인 고유아이디", description = "토큰을 등록한 사람의 고유아이디")
   val regBy: @Contextual UUID
 ) : BaseModel<UUID>
 

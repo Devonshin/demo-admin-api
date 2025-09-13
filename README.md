@@ -1,5 +1,5 @@
-# e-receipt-admin-api
-## 올링크 모바일 전자영수증 API
+# Demo e-receipt-admin-api
+## 올링크 모바일 전자영수증 Demo API
 
 This project was created using the [Ktor Project Generator](https://start.ktor.io).
 
@@ -49,5 +49,4 @@ To build or run the project, use one of the following tasks:
 | `publishImageToLocalRegistry` | Publish the docker image locally                                     |
 | `run`                         | Run the server                                                       |
 | `runDocker`                   | Run using the local docker image                                     |
-| `jvm argument`                | -config=application.conf -config=application-{{environment}}.conf    |
-| `vm option`                   | -DKTOR_ENV={{environment}}                                           |
+

@@ -8,6 +8,7 @@ import io.allink.receipt.api.domain.store.StoreFilter
 import io.allink.receipt.api.domain.store.StoreModifyModel
 import io.allink.receipt.api.domain.store.StoreRegistModel
 import io.allink.receipt.api.domain.store.StoreSearchFilter
+import io.allink.receipt.api.domain.agency.bz.BzAgencyFilter
 import io.allink.receipt.api.util.isValidBusinessNo
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
@@ -47,7 +48,12 @@ fun Application.configureValidation() {
 
     validate<BzAgencyModel> { agency ->
       if (agency.id == null) ValidationResult.Invalid("Agency id is required")
-      businessNoValidator(agency.businessNo)
+      else businessNoValidator(agency.businessNo)
+    }
+
+    // BzAgencyFilter는 검색 필터이므로 체크섬 검증이 아닌 "형식"만 검증합니다.
+    validate<BzAgencyFilter> { filter ->
+      businessNoFormatValidator(filter.businessNo)
     }
 
     validate<StoreFilter> { storeFilter ->
@@ -81,5 +87,12 @@ fun Application.configureValidation() {
 fun businessNoValidator(businessNo: String?): ValidationResult =
   if (businessNo != null && !isValidBusinessNo(businessNo)) {
     ValidationResult.Invalid("사업자 등록 번호[$businessNo]가 유효하지 않습니다. 예)123-45-67890")
+  } else ValidationResult.Valid
+
+private val BUSINESS_NO_FORMAT_REGEX = Regex("""^\d{3}-\d{2}-\d{5}$""")
+
+fun businessNoFormatValidator(businessNo: String?): ValidationResult =
+  if (businessNo != null && !BUSINESS_NO_FORMAT_REGEX.matches(businessNo)) {
+    ValidationResult.Invalid("사업자 등록 번호[$businessNo] 형식이 올바르지 않습니다. 예)123-45-67890")
   } else ValidationResult.Valid
 

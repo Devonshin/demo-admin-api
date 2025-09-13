@@ -49,7 +49,7 @@ class SMSVerificationServiceImpl(
       .phoneNumber("+82$phoneNumber")
       .build()
 
-    // SNS 메시지 전송
+    // envoie un SMS
     val response: PublishResponse = snsClient.publish(request)
     return response.messageId()
   }
