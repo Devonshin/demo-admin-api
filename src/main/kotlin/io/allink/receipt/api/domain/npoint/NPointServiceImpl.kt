@@ -2,6 +2,7 @@ package io.allink.receipt.api.domain.npoint
 
 import io.allink.receipt.api.domain.PagedResult
 import io.allink.receipt.api.repository.TransactionUtil
+import io.r2dbc.spi.IsolationLevel.READ_COMMITTED
 
 
 class NPointServiceImpl(
@@ -10,7 +11,7 @@ class NPointServiceImpl(
 
   override suspend fun getAllNPointPay(
     nPointFilter: NPointFilter
-  ): PagedResult<NPointPayModel> = TransactionUtil.withTransaction {
+  ): PagedResult<NPointPayModel> = TransactionUtil.withTransaction(READ_COMMITTED, true) {
     nPointRepository.findAll(filter = nPointFilter)
   }
 

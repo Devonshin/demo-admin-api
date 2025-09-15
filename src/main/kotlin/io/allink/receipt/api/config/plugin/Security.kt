@@ -14,6 +14,7 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
+import io.r2dbc.spi.IsolationLevel.READ_COMMITTED
 import org.koin.ktor.ext.get
 import java.util.*
 
@@ -40,7 +41,7 @@ fun Application.configureSecurity() {
         val payload = credential.payload
         val loginUuid = payload.getClaim("lUuid").asString() ?: return@validate null
         val loginInfoRepository: LoginInfoRepository = get()
-        TransactionUtil.withTransactionReturn {
+        TransactionUtil.withTransactionReturn(READ_COMMITTED, true) {
           val loginInfo =
             loginInfoRepository.find(UUID.fromString(loginUuid)) ?: return@withTransactionReturn null
           if (loginInfo.status != LoginStatus.ACTIVE) return@withTransactionReturn null
@@ -49,7 +50,7 @@ fun Application.configureSecurity() {
         val userUuid = payload.getClaim("uUuid").asString() ?: return@validate null
 
         val adminRepository: AdminRepository = get()
-        TransactionUtil.withTransactionReturn {
+        TransactionUtil.withTransactionReturn(READ_COMMITTED, true) {
           val admin =
             adminRepository.findByUserUuid(UUID.fromString(userUuid)) ?: return@withTransactionReturn null
           if (admin.status != AdminStatus.ACTIVE) return@withTransactionReturn null

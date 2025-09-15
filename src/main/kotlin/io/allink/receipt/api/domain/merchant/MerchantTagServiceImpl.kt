@@ -6,6 +6,7 @@ import io.allink.receipt.api.domain.store.StoreService
 import io.allink.receipt.api.repository.TransactionUtil
 import io.allink.receipt.api.util.DateUtil
 import io.ktor.server.plugins.*
+import io.r2dbc.spi.IsolationLevel.READ_COMMITTED
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest
@@ -20,7 +21,7 @@ class MerchantTagServiceImpl(
 
   override suspend fun getTags(
     merchantTagFilter: MerchantTagFilter
-  ): PagedResult<SimpleMerchantTagModel> = TransactionUtil.withTransaction {
+  ): PagedResult<SimpleMerchantTagModel> = TransactionUtil.withTransaction(READ_COMMITTED, true) {
     merchantTagRepository.findAll(merchantTagFilter)
   }
 
@@ -105,7 +106,7 @@ class MerchantTagServiceImpl(
       getTag(modify.id)
     }
 
-  override suspend fun getTag(tagId: String): MerchantTagModel = TransactionUtil.withTransaction {
+  override suspend fun getTag(tagId: String): MerchantTagModel = TransactionUtil.withTransaction(READ_COMMITTED, true) {
     if (tagId.isEmpty()) throw BadRequestException("No tag id provided")
     merchantTagRepository.find(tagId) ?: throw NotFoundException("No tag found for id $tagId")
   }

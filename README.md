@@ -1,11 +1,16 @@
 # Demo e-receipt-admin-api
-## 올링크 모바일 전자영수증 Demo API
 
 ## API Docs
 Swagger UI : http://localhost:8080/swagger
 Document : http://localhost:8080/doc
 
+### Pour faciliter les tests de démonstration, la vérification du code d’authentification n’est pas réellement effectuée lors de l’obtention du JWT pendant la connexion.
+
 ---
+## Server start at localhost:8080
+```shell
+./gradlew runFatJar
+```
 
 ## Stack / 기술 스택
 - Language: Kotlin (JVM) 2.1.20
@@ -25,15 +30,14 @@ Document : http://localhost:8080/doc
 Package manager: Gradle Wrapper (./gradlew)
 
 ## Entry points / 진입점
-- Main class: io.ktor.server.netty.EngineMain (configured in build.gradle.kts)
-- Application module: io.allink.receipt.api.ApplicationKt.module
+- Main class, Application module: io.allink.receipt.api.ApplicationKt.module
   - Source: src/main/kotlin/io/allink/receipt/api/Application.kt
   - The main() function loads variables from a local .env into System properties, then delegates to EngineMain.
-- Default HTTP port: 8080 (Dockerfile exposes 8080; docker-compose maps 8080:8080)
+- Default HTTP port: 8080
 
 ## API Docs / 문서
 Configured in src/main/kotlin/io/allink/receipt/api/config/plugin/OpenApi.kt
-- OpenAPI JSON: /.allink-api.json
+- OpenAPI JSON: /.api.json
 - ReDoc UI: /doc
 - Swagger UI: /swagger (serves openapi/documentation.yaml from resources)
 
@@ -45,16 +49,9 @@ Note: The OpenAPI server list includes sample URLs (localhost:8888, dev/prod URL
 - Docker 24+ and Docker Compose (for containerized runs and Testcontainers)
 - PostgreSQL 15+ (if running database locally outside Docker)
 
-## Setup / 초기 설정
-1. Clone the repo
-2. Create and review a local environment file:
-   - There is a sample .env in the root. Replace values before use. Avoid committing real secrets.
-   - The application loads .env automatically on startup for local development.
-3. Ensure Docker is running if you plan to use docker-compose or run tests that use Testcontainers.
-
 ## Run locally / 로컬 실행
-- Using Gradle (development mode):
-  - ./gradlew run
+- Using Gradle (demo mode):
+  - ./gradlew runFatJar
 - Build all:
   - ./gradlew build
 - Run tests:
@@ -92,12 +89,12 @@ Below is the list of Ktor features/plugins included in this project (kept from t
 ## Gradle tasks / 빌드 & 실행
 Common tasks you’ll use during development:
 
-| Task                               | Description                                                          |
-|------------------------------------|----------------------------------------------------------------------|
-| `./gradlew test`                   | Run the tests                                                        |
-| `./gradlew build`                  | Build everything                                                     |
-| `./gradlew fatJar`                 | Build an executable fat JAR with all dependencies included           |
-| `./gradlew run`                    | Run the server (Ktor dev runner)                                     |
+| Task                    | Description                                                          |
+|-------------------------|----------------------------------------------------------------------|
+| `./gradlew test`        | Run the tests                                                        |
+| `./gradlew build`       | Build everything                                                     |
+| `./gradlew runFatJar`   | Build an executable fat JAR with all dependencies included           |
+| `./gradlew run`         | Run the server (Ktor dev runner)                                     |
 
 Note: Task names are provided by the Ktor Gradle plugin 3.x. Some tasks may differ if the plugin version changes.
 
@@ -137,8 +134,6 @@ High-level layout:
 - src/main/resources
   - openapi/*, cert/*, logback.xml
 - src/test/kotlin/io/allink/receipt/api (mirrors main packages; tests + testsupport)
-- Dockerfile, docker-compose.yml
-- scripts/ (deployment helper and git commit tools)
 - gradle* files and wrapper
 
 ## Acknowledgements

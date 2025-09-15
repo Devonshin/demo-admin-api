@@ -30,7 +30,7 @@ class NPointServiceImplTest {
   fun tearDown() { unmockkObject(TransactionUtil) }
 
   @Test
-  fun `should_return_paged_npoint_pays`() = runBlocking {
+  fun `Should return paged npoint pays`() = runBlocking {
     // given
     val filter = NPointFilter(
       period = PeriodFilter(
@@ -56,8 +56,10 @@ class NPointServiceImplTest {
     coEvery { repository.findAll(filter) } returns page
 
     mockkObject(TransactionUtil)
-    coEvery { TransactionUtil.withTransaction<PagedResult<NPointPayModel>>(any()) } coAnswers {
-      val block = arg<suspend () -> PagedResult<NPointPayModel>>(0)
+    TransactionUtil.init(mockk())
+
+    coEvery { TransactionUtil.withTransaction<PagedResult<NPointPayModel>>(any(),any(),any()) } coAnswers {
+      val block = arg<suspend () -> PagedResult<NPointPayModel>>(2)
       block.invoke()
     }
 

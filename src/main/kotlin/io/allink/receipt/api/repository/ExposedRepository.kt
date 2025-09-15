@@ -2,6 +2,7 @@ package io.allink.receipt.api.repository
 
 import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.domain.Sorter
+import io.r2dbc.spi.IsolationLevel
 import org.jetbrains.exposed.v1.core.Expression
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.SortOrder
@@ -28,10 +29,21 @@ object TransactionUtil {
     initialized = true
   }
 
+  suspend fun <T> withTransaction(isolationLevel: IsolationLevel, readonly: Boolean,  block: suspend () -> T): T =
+    suspendTransaction(isolationLevel, readonly, db) {
+      block()
+    }
+
   suspend fun <T> withTransaction(block: suspend () -> T): T =
     suspendTransaction(db) {
       block()
     }
+
+  suspend fun <T> withTransactionReturn(isolationLevel: IsolationLevel, readonly: Boolean, block: suspend () -> T): T {
+    return suspendTransaction(isolationLevel, readonly, db) {
+      block()
+    }
+  }
 
   suspend fun <T> withTransactionReturn(block: suspend () -> T): T {
     return suspendTransaction(db) {

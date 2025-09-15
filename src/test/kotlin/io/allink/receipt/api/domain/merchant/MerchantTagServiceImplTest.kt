@@ -1,6 +1,7 @@
 package io.allink.receipt.api.domain.merchant
 
 import io.allink.receipt.api.domain.PagedResult
+import io.allink.receipt.api.domain.store.StoreModel
 import io.allink.receipt.api.domain.store.StoreService
 import io.allink.receipt.api.repository.TransactionUtil
 import io.mockk.coEvery
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse
 import java.util.*
 
@@ -33,7 +35,7 @@ class MerchantTagServiceImplTest {
   )
 
   @Test
-  fun `should_get_tags`() {
+  fun `Should get tags`() {
     // given
     val filter = MerchantTagFilter(
       id = null, name = "", storeId = null, businessNo = null, storeName = null, franchiseCode = null,
@@ -45,8 +47,13 @@ class MerchantTagServiceImplTest {
     coEvery { merchantTagRepository.findAll(filter) } returns PagedResult(emptyList(), 0, 1, 0)
 
     mockkObject(TransactionUtil)
+    TransactionUtil.init(mockk())
     coEvery { TransactionUtil.withTransaction<PagedResult<SimpleMerchantTagModel>>(any()) } coAnswers {
       val block = arg<suspend () -> PagedResult<SimpleMerchantTagModel>>(0)
+      block.invoke()
+    }
+    coEvery { TransactionUtil.withTransaction<PagedResult<SimpleMerchantTagModel>>(any(),any(),any()) } coAnswers {
+      val block = arg<suspend () -> PagedResult<SimpleMerchantTagModel>>(2)
       block.invoke()
     }
 
@@ -59,18 +66,18 @@ class MerchantTagServiceImplTest {
   }
 
   @Test
-  fun `should_modify_tag`() {
+  fun `Should modify tag`() {
     // given
     val now = io.allink.receipt.api.util.DateUtil.nowLocalDateTime()
     val modify = MerchantTagModifyModel(id = "T-100", name = "새 태그", storeId = "S-1", deviceId = "D-9")
-    val store = io.allink.receipt.api.domain.store.StoreModel(id = "S-1", storeName = "가맹점", businessNo = "111")
+    val store = StoreModel(id = "S-1", storeName = "가맹점", businessNo = "111")
 
     coEvery { merchantTagRepository.findForUpdate("T-100") } returns null
     coEvery { merchantTagRepository.create(any()) } answers { firstArg() }
     coEvery { storeService.findStore("S-1") } returns store
     coEvery { merchantTagRepository.find("T-100") } returns MerchantTagModel(
       id = "T-100",
-      store = io.allink.receipt.api.domain.merchant.SimpleMerchantStoreDetailModel(id = "S-1", storeName = "가맹점", deleteDate = null),
+      store = SimpleMerchantStoreDetailModel(id = "S-1", storeName = "가맹점", deleteDate = null),
       merchantGroupId = store.franchiseCode,
       merchantStoreId = store.id,
       tagName = "새 태그",
@@ -83,11 +90,16 @@ class MerchantTagServiceImplTest {
     )
 
     // DynamoDB: query는 빈결과로 모킹
-    every { dynamo.query(any<software.amazon.awssdk.services.dynamodb.model.QueryRequest>()) } returns QueryResponse.builder().items(emptyList()).build()
+    every { dynamo.query(any<QueryRequest>()) } returns QueryResponse.builder().items(emptyList()).build()
 
     mockkObject(TransactionUtil)
+    TransactionUtil.init(mockk())
     coEvery { TransactionUtil.withTransaction<MerchantTagModel>(any()) } coAnswers {
       val block = arg<suspend () -> MerchantTagModel>(0)
+      block.invoke()
+    }
+    coEvery { TransactionUtil.withTransaction<MerchantTagModel>(any(),any(),any()) } coAnswers {
+      val block = arg<suspend () -> MerchantTagModel>(2)
       block.invoke()
     }
 

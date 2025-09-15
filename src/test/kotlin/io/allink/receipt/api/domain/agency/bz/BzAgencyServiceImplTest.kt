@@ -29,7 +29,7 @@ class BzAgencyServiceImplTest {
   fun tearDown() { unmockkObject(TransactionUtil) }
 
   @Test
-  fun `should_return_paged_agencies`() = runBlocking {
+  fun `Should return paged agencies`() = runBlocking {
     val filter = BzAgencyFilter(
       agencyName = "대리",
       sort = null
@@ -44,8 +44,9 @@ class BzAgencyServiceImplTest {
     coEvery { repository.findAllByFilter(filter) } returns PagedResult(listOf(item), 1, 1, 1)
 
     mockkObject(TransactionUtil)
-    coEvery { TransactionUtil.withTransaction<PagedResult<SimpleBzAgencyModel>>(any()) } coAnswers {
-      val block = arg<suspend () -> PagedResult<SimpleBzAgencyModel>>(0)
+    TransactionUtil.init(mockk())
+    coEvery { TransactionUtil.withTransaction<PagedResult<SimpleBzAgencyModel>>(any(), any(), any()) } coAnswers {
+      val block = arg<suspend () -> PagedResult<SimpleBzAgencyModel>>(2)
       block.invoke()
     }
 
@@ -54,14 +55,15 @@ class BzAgencyServiceImplTest {
   }
 
   @Test
-  fun `should_get_agency_detail_and_throw_for_invalid_id`() = runBlocking {
+  fun `Should get agency detail and throw for invalid id`() = runBlocking {
     val id = UUID.randomUUID()
     val model = BzAgencyModel(id = id, agencyName = "대리점", businessNo = "1", status = AgencyStatus.ACTIVE)
     coEvery { repository.find(id) } returns model
 
     mockkObject(TransactionUtil)
-    coEvery { TransactionUtil.withTransaction<BzAgencyModel>(any()) } coAnswers {
-      val block = arg<suspend () -> BzAgencyModel>(0)
+    TransactionUtil.init(mockk())
+    coEvery { TransactionUtil.withTransaction<BzAgencyModel>(any(), any(), any()) } coAnswers {
+      val block = arg<suspend () -> BzAgencyModel>(2)
       block.invoke()
     }
 

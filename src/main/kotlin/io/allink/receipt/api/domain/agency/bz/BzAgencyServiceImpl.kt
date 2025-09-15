@@ -7,6 +7,7 @@ import io.allink.receipt.api.domain.admin.BzAgencyMasterRole
 import io.allink.receipt.api.repository.TransactionUtil
 import io.allink.receipt.api.util.DateUtil
 import io.ktor.server.plugins.*
+import io.r2dbc.spi.IsolationLevel.READ_COMMITTED
 import kotlinx.coroutines.flow.filterNot
 import org.slf4j.Logger
 import java.time.LocalDateTime
@@ -26,11 +27,11 @@ class BzAgencyServiceImpl(
   val logger: Logger = org.slf4j.LoggerFactory.getLogger(this.javaClass.name)
 
   override suspend fun getAgencies(filter: BzAgencyFilter): PagedResult<SimpleBzAgencyModel> =
-    TransactionUtil.withTransaction {
+    TransactionUtil.withTransaction(READ_COMMITTED, true) {
       bzAgencyRepository.findAllByFilter(filter)
     }
 
-  override suspend fun getAgency(agencyId: String): BzAgencyModel = TransactionUtil.withTransaction {
+  override suspend fun getAgency(agencyId: String): BzAgencyModel = TransactionUtil.withTransaction(READ_COMMITTED, true) {
     if (agencyId.isEmpty()) throw BadRequestException("No agency id provided")
     try {
       val uuid = UUID.fromString(agencyId)

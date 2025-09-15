@@ -2,6 +2,8 @@ package io.allink.receipt.api.domain.store
 
 import io.allink.receipt.api.common.BillingStatusCode
 import io.allink.receipt.api.common.StatusCode
+import io.allink.receipt.api.domain.PagedResult
+import io.allink.receipt.api.domain.npoint.NPointPayModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceRegistModel
 import io.allink.receipt.api.domain.store.npoint.NPointStoreServiceService
@@ -49,8 +51,12 @@ class StoreServiceImplTest {
   fun setUp() {
     // TransactionUtil.withTransaction 블록을 실제 트랜잭션 없이 바로 실행하도록 목킹
     mockkObject(TransactionUtil)
+    TransactionUtil.init(mockk())
     coEvery { TransactionUtil.withTransaction(any<suspend () -> Any>()) } coAnswers {
       firstArg<suspend () -> Any>().invoke()
+    }
+    coEvery { TransactionUtil.withTransaction(any(), any(), any<suspend () -> Any>()) } coAnswers {
+      arg<suspend () -> Any>(2).invoke()
     }
   }
 

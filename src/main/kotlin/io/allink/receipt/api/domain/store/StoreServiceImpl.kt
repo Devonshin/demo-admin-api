@@ -12,6 +12,7 @@ import io.allink.receipt.api.domain.store.npoint.PointRenewalType
 import io.allink.receipt.api.repository.TransactionUtil
 import io.allink.receipt.api.util.DateUtil
 import io.ktor.server.plugins.*
+import io.r2dbc.spi.IsolationLevel.READ_COMMITTED
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
@@ -36,7 +37,7 @@ class StoreServiceImpl(
   override suspend fun findAllAgencyStore(
     filter: StoreFilter,
     agencyId: UUID
-  ): PagedResult<StoreSearchModel> = TransactionUtil.withTransaction {
+  ): PagedResult<StoreSearchModel> = TransactionUtil.withTransaction(READ_COMMITTED, true) {
     storeRepository.findAll(filter, agencyId)
   }
 
@@ -46,20 +47,20 @@ class StoreServiceImpl(
     storeRepository.findAll(filter)
   }
 
-  override suspend fun findStore(id: String): StoreModel? = TransactionUtil.withTransaction {
+  override suspend fun findStore(id: String): StoreModel? = TransactionUtil.withTransaction(READ_COMMITTED, true) {
     val store = storeRepository.find(id)
     store?.copy(
       npointStoreServices = nPointStoreServiceService.getStoreServices(id),
-      storeBillingTokens = findAllBillingToken(store.businessNo ?: "")
+      storeBillingTokens = storeBillingTokenRepository.findAllByBusinessNo(store.businessNo ?: "")
     )
   }
 
   override suspend fun findAllBillingToken(businessNo: String): List<StoreBillingTokenModel>? =
-    TransactionUtil.withTransaction {
+    TransactionUtil.withTransaction(READ_COMMITTED, true) {
       storeBillingTokenRepository.findAllByBusinessNo(businessNo)
     }
 
-  override suspend fun findStore(id: String, agencyId: UUID): StoreModel? = TransactionUtil.withTransaction {
+  override suspend fun findStore(id: String, agencyId: UUID): StoreModel? = TransactionUtil.withTransaction(READ_COMMITTED, true) {
     val store = storeRepository.find(id, agencyId)
     store?.copy(
       npointStoreServices = nPointStoreServiceService.getStoreServices(id),

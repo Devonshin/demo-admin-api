@@ -28,7 +28,7 @@ class IssueReceiptServiceImplTest {
   private val service: IssueReceiptService = IssueReceiptServiceImpl(repository)
 
   @Test
-  fun `should_return_paged_receipts`() = runBlocking {
+  fun `Should return paged receipts`() = runBlocking {
     // given
     val filter = ReceiptFilter(
       period = PeriodFilter(LocalDateTime.parse("2025-06-01T00:00:00"), LocalDateTime.parse("2025-06-30T23:59:59")),
@@ -51,8 +51,10 @@ class IssueReceiptServiceImplTest {
     coEvery { repository.findAll(filter) } returns pageResult
 
     mockkObject(TransactionUtil)
-    coEvery { TransactionUtil.withTransaction<PagedResult<SimpleIssueReceiptModel>>(any()) } coAnswers {
-      val block = arg<suspend () -> PagedResult<SimpleIssueReceiptModel>>(0)
+    TransactionUtil.init(mockk())
+
+    coEvery { TransactionUtil.withTransaction<PagedResult<SimpleIssueReceiptModel>>(any(),any(),any()) } coAnswers {
+      val block = arg<suspend () -> PagedResult<SimpleIssueReceiptModel>>(2)
       block.invoke()
     }
 
@@ -66,7 +68,7 @@ class IssueReceiptServiceImplTest {
   }
 
   @Test
-  fun `should_return_receipt_by_user_and_id`() = runBlocking {
+  fun `Should return receipt by user and id`() = runBlocking {
     // given
     val model = IssueReceiptModel(
       id = "R-1",
@@ -85,8 +87,9 @@ class IssueReceiptServiceImplTest {
     coEvery { repository.findByIdAndUserId("U-1", "R-1") } returns model
 
     mockkObject(TransactionUtil)
-    coEvery { TransactionUtil.withTransaction<IssueReceiptModel?>(any()) } coAnswers {
-      val block = arg<suspend () -> IssueReceiptModel?>(0)
+    TransactionUtil.init(mockk())
+    coEvery { TransactionUtil.withTransaction<IssueReceiptModel?>(any(),any(), any()) } coAnswers {
+      val block = arg<suspend () -> IssueReceiptModel?>(2)
       block.invoke()
     }
 
@@ -104,7 +107,7 @@ class IssueReceiptServiceImplTest {
   }
 
   @Test
-  fun `should_return_empty_page_when_no_data`() = runBlocking {
+  fun `Should return empty page when no data`() = runBlocking {
     // given
     val filter = ReceiptFilter(
       period = PeriodFilter(
@@ -119,8 +122,9 @@ class IssueReceiptServiceImplTest {
     coEvery { repository.findAll(filter) } returns PagedResult(emptyList(), totalCount = 0, currentPage = 1, totalPages = 0)
 
     mockkObject(TransactionUtil)
-    coEvery { TransactionUtil.withTransaction<PagedResult<SimpleIssueReceiptModel>>(any()) } coAnswers {
-      val block = arg<suspend () -> PagedResult<SimpleIssueReceiptModel>>(0)
+    TransactionUtil.init(mockk())
+    coEvery { TransactionUtil.withTransaction<PagedResult<SimpleIssueReceiptModel>>(any(),any(),any()) } coAnswers {
+      val block = arg<suspend () -> PagedResult<SimpleIssueReceiptModel>>(2)
       block.invoke()
     }
 
@@ -134,13 +138,14 @@ class IssueReceiptServiceImplTest {
   }
 
   @Test
-  fun `should_return_null_when_receipt_not_found`() = runBlocking {
+  fun `Should return null when receipt not found`() = runBlocking {
     // given
     coEvery { repository.findByIdAndUserId("U-404", "R-404") } returns null
 
     mockkObject(TransactionUtil)
-    coEvery { TransactionUtil.withTransaction<IssueReceiptModel?>(any()) } coAnswers {
-      val block = arg<suspend () -> IssueReceiptModel?>(0)
+
+    coEvery { TransactionUtil.withTransaction<IssueReceiptModel?>(any(), any(), any()) } coAnswers {
+      val block = arg<suspend () -> IssueReceiptModel?>(2)
       block.invoke()
     }
 
