@@ -33,9 +33,9 @@ fun Route.storeRoutes(
   route("/stores") {
     post("", {
       operationId = "stores"
-      tags = listOf("가맹점 관리")
-      summary = "가맹점 목록 조회"
-      description = "가맹점 목록을 조회합니다."
+      tags = listOf("Gestion des commerçants")
+      summary = "Consulter la liste des commerçants"
+      description = "Récupère la liste des commerçants."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<StoreFilter>(storeListRequest())
@@ -60,13 +60,13 @@ fun Route.storeRoutes(
 
     get("/detail/{storeId}", {
       operationId = "store-detail"
-      tags = listOf("가맹점 관리")
-      summary = "가맹점 상세 조회"
-      description = "가맹점 상세 정보를 조회합니다."
+      tags = listOf("Gestion des commerçants")
+      summary = "Consulter le détail du commerçant"
+      description = "Récupère les informations détaillées du commerçant."
       securitySchemeNames = listOf("auth-jwt")
       request {
         pathParameter<String>("storeId") {
-          description = "가맹점 id"
+          description = "Identifiant du commerçant"
         }
       }
       response {
@@ -93,9 +93,9 @@ fun Route.storeRoutes(
 
     post("/search", {
       operationId = "stores-search"
-      tags = listOf("가맹점 관리")
-      summary = "매핑 용 가맹점 목록 조회"
-      description = "매핑 용 가맹점 목록을 조회합니다. 예) 태그 등록 시"
+      tags = listOf("Gestion des commerçants")
+      summary = "Consulter la liste des commerçants pour le mapping"
+      description = "Récupère la liste des commerçants à des fins de mapping, p.ex. lors de l’enregistrement d’un tag."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<StoreSearchFilter>(storeSearchRequest())
@@ -120,10 +120,10 @@ fun Route.storeRoutes(
     * */
     post("/regist", {
       operationId = "store-regist"
-      tags = listOf("가맹점 관리")
-      summary = "가맹점 등록"
+      tags = listOf("Gestion des commerçants")
+      summary = "Enregistrer un commerçant"
       description =
-        "새로운 가맹점을 등록합니다. 이용 서비스가 있을 경우 결제 정보는 필수입니다. 등록과 즉시 결제가 이루어지며 결제 실패 시 modify 인터페이스로 재결제 요청을 보내야 합니다."
+        "Enregistre un nouveau commerçant. Si des services sont utilisés, les informations de paiement sont obligatoires. L’enregistrement entraîne un paiement immédiat; en cas d’échec du paiement, vous devez envoyer une demande de nouveau paiement via l’interface modify."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<StoreRegistModel>(storeRegisterRequest())
@@ -159,10 +159,10 @@ fun Route.storeRoutes(
     * */
     post("/modify", {
       operationId = "store-modify"
-      tags = listOf("가맹점 관리")
-      summary = "가맹점 수정"
+      tags = listOf("Gestion des commerçants")
+      summary = "Modifier un commerçant"
       description =
-        "가맹점 정보를 수정합니다. 이용 서비스가 변경된 경우 변경된 서비스는 결제정보의 상태가 STANDBY: 즉시 결제, PENDING:  익월 1일 결제. 서비스는 결제 성공 후에 반영이 됩니다."
+        "Modifie les informations du commerçant. Si les services utilisés changent: STANDBY = paiement immédiat, PENDING = paiement le 1er du mois suivant. Les services ne sont appliqués qu’après réussite du paiement."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<StoreModifyModel>(storeModifyRequest())
@@ -197,13 +197,13 @@ fun Route.storeRoutes(
 
     get("/billing-tokens/{businiessNo}", {
       operationId = "store-detail"
-      tags = listOf("가맹점 관리")
-      summary = "사업자 번호로 카드 토큰 조회"
-      description = "사업자 번호로 카드 정보를 조회합니다."
+      tags = listOf("Gestion des commerçants")
+      summary = "Rechercher les jetons de carte par numéro d’entreprise"
+      description = "Récupère les informations de carte à partir du numéro d’entreprise."
       securitySchemeNames = listOf("auth-jwt")
       request {
         pathParameter<String>("businiessNo") {
-          description = "사업자번호"
+          description = "Numéro d’entreprise"
           example("businessNo") {
             value = "123-45-67890"
           }

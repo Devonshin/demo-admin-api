@@ -2,12 +2,15 @@ package io.allink.receipt.api.repository
 
 import io.allink.receipt.api.domain.BaseModel
 import io.allink.receipt.api.domain.Sorter
-import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.core.Expression
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.SortOrder
+import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
 import org.jetbrains.exposed.v1.core.statements.UpdateStatement
 import org.jetbrains.exposed.v1.r2dbc.Query
+import org.jetbrains.exposed.v1.r2dbc.R2dbcDatabase
 import org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 
 /**
@@ -17,15 +20,21 @@ import org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
  */
 
 object TransactionUtil {
+  lateinit var db: R2dbcDatabase
+  var initialized = false
+  fun init(db: R2dbcDatabase) {
+    if(initialized) return
+    this.db = db
+    initialized = true
+  }
+
   suspend fun <T> withTransaction(block: suspend () -> T): T =
-    suspendTransaction(Dispatchers.IO) {
-      addLogger(Slf4jSqlDebugLogger)
+    suspendTransaction(db) {
       block()
     }
 
   suspend fun <T> withTransactionReturn(block: suspend () -> T): T {
-    return suspendTransaction(Dispatchers.IO) {
-      addLogger(Slf4jSqlDebugLogger)
+    return suspendTransaction(db) {
       block()
     }
   }

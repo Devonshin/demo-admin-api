@@ -20,24 +20,23 @@ import java.util.*
  * Date: 22/05/2025
  */
 
-@Serializable
-@Schema(name = "bzAgencyModel", title = "대리점 정보", description = "대리점 정보를 나타내는 객체, ")
+@Serializable @Schema(name = "bzAgencyModel", title = "Informations de l'agence", description = "Objet représentant les informations de l'agence")
 data class BzAgencyModel(
-  @Schema(title = "고유 아이디", description = "대리점 고유 식별자", readOnly = true)
+  @param:Schema(title = "Identifiant unique", description = "Identifiant unique de l'agence", readOnly = true)
   override var id: @Contextual UUID?,
-  @Schema(title = "대리점명", description = "대리점 이름", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Nom de l'agence", description = "Nom de l'agence", requiredMode = RequiredMode.REQUIRED)
   val agencyName: String? = null,
-  @Schema(title = "사업자번호", description = "대리점 사업자 번호", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Numéro d'entreprise", description = "Numéro d'entreprise de l'agence", requiredMode = RequiredMode.REQUIRED)
   val businessNo: String? = null,
-  @Schema(title = "주소 1", description = "대리점 주소 (상세주소가 아닌 기본주소)")
+  @param:Schema(title = "Adresse 1", description = "Adresse de l'agence (adresse de base, pas l'adresse détaillée)")
   val addr1: String? = null,
-  @Schema(title = "주소 2", description = "대리점 상세 주소")
+  @param:Schema(title = "Adresse 2", description = "Adresse détaillée de l'agence")
   val addr2: String? = null,
-  @Schema(title = "전화번호", description = "대리점 전화번호")
+  @param:Schema(title = "Téléphone", description = "Numéro de téléphone de l'agence")
   val tel: String? = null,
-  @Schema(title = "대표자 이름", description = "대리점 대표자 이름")
+  @Schema(title = "Nom du représentant", description = "Nom du représentant de l'agence")
   val ceoName: String? = null,
-  @Schema(title = "대표자 전화번호", description = "대리점 대표자 전화번호")
+  @Schema(title = "Téléphone du représentant", description = "Numéro de téléphone du représentant de l'agence")
   val ceoPhone: String? = null,
   @Schema(title = "담당자", description = "담당자(시스템 사용자)")
   val staffs: List<BzAgencyAdminModel>? = listOf(),
@@ -188,20 +187,20 @@ object BzAgencyTable : UUIDTable(name = "bz_agency", columnName = "uuid") {
 @Serializable
 @Schema(name = "bzAgencyFilter", title = "대리점 검색 필터", description = "대리점 검색 필터")
 data class BzAgencyFilter(
-  @Schema(title = "대리점 아이디", description = "대리점 고유아이디, EQ 검색")
+  @param:Schema(title = "대리점 아이디", description = "대리점 고유아이디, EQ 검색")
   val id: String? = null,
-  @Schema(
+  @param:Schema(
     title = "사업자 번호",
     description = "사업자 번호, EQ 검색",
     example = "123-45-67890",
 
     )
   val businessNo: String? = null,
-  @Schema(title = "대리점명", description = "Start with 검색")
+  @param:Schema(title = "대리점명", description = "Start with 검색")
   val agencyName: String? = null,
-  @Schema(title = "상태", description = "EQ 검색")
+  @param:Schema(title = "상태", description = "EQ 검색")
   val status: AgencyStatus? = null,
-  @Schema(
+  @param:Schema(
     title = "정렬", exampleClasses = [Sorter::class], description = """
     정렬 필드 : id, agencyName, businessNo, latestLoginAt 
   """

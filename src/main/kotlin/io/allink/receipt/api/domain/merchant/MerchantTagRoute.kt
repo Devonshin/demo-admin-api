@@ -24,9 +24,9 @@ fun Route.merchantTagRoutes(
   route("/tags") {
     post("", {
       operationId = "tags"
-      tags = listOf("태그 관리")
-      summary = "태그 목록 조회"
-      description = "태그 목록을 조회합니다."
+      tags = listOf("Gestion des tags")
+      summary = "Consulter la liste des tags"
+      description = "Récupère la liste des tags."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<MerchantTagFilter>(tagListRequest())
@@ -49,13 +49,13 @@ fun Route.merchantTagRoutes(
 
     get("/detail/{tagId}", {
       operationId = "tags-detail"
-      tags = listOf("태그 관리")
-      summary = "태그 상세 조회"
-      description = "태그 상세 정보를 조회합니다."
+      tags = listOf("Gestion des tags")
+      summary = "Consulter le détail du tag"
+      description = "Récupère les informations détaillées du tag."
       securitySchemeNames = listOf("auth-jwt")
       request {
         pathParameter<String>("tagId") {
-          description = "태그 아이디"
+          description = "Identifiant du tag"
         }
       }
       response {
@@ -70,9 +70,9 @@ fun Route.merchantTagRoutes(
 
     post("/modify", {
       operationId = "tags-modify"
-      tags = listOf("태그 관리")
-      summary = "태그 등록/수정"
-      description = "태그 정보를 등록/수정합니다."
+      tags = listOf("Gestion des tags")
+      summary = "Enregistrer/modifier un tag"
+      description = "Enregistre ou modifie les informations d’un tag."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<MerchantTagModifyModel>(tagModifyRequest())

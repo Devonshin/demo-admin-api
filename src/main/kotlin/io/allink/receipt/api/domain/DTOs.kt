@@ -9,16 +9,13 @@ import kotlinx.serialization.Serializable
  * Date: 13/04/2025
  */
 
-@Serializable
-@Schema(description = "응답 래퍼", nullable = false)
+@Serializable @Schema(description = "응답 래퍼", nullable = false)
 data class Response<T>(val data: T)
 
-@Serializable
-@Schema(description = "요청 래퍼", nullable = false)
+@Serializable @Schema(description = "요청 래퍼", nullable = false)
 data class Request<T>(val data: T)
 
-@Serializable
-@Schema(description = "에러 응답 객체", nullable = false, name = "ErrorResponse", title = "Error Response")
+@Serializable @Schema(description = "에러 응답 객체", nullable = false, name = "ErrorResponse", title = "Error Response")
 data class ErrorResponse(
   val code: String,
   val message: String

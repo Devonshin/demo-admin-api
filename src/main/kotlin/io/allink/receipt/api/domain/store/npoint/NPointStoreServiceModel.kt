@@ -19,49 +19,47 @@ import java.util.*
  * Date: 16/04/2025
  */
 
-@Serializable
-@Schema(name = "nPointStoreServiceModel", title = "NPoint 서비스 정보", description = "NPoint 가맹점 관련 서비스 정보")
+@Serializable @Schema(name = "nPointStoreServiceModel", title = "NPoint 서비스 정보", description = "NPoint 가맹점 관련 서비스 정보")
 data class NPointStoreServiceModel(
-  @Schema(title = "가맹점 서비스 등록 아이디", description = "가맹점 서비스 등록 아이디")
+  @param:Schema(title = "가맹점 서비스 등록 아이디", description = "가맹점 서비스 등록 아이디")
   override var id: NPointStoreServiceId?,
-  @Schema(title = "연결된 서비스 정보", description = "연결된 서비스 정보")
+  @param:Schema(title = "연결된 서비스 정보", description = "연결된 서비스 정보")
   val service: ServiceCodeModel? = null,
-  @Schema(title = "서비스 기본료", description = "서비스 기본 요금")
+  @param:Schema(title = "서비스 기본료", description = "서비스 기본 요금")
   val serviceCharge: Int,
-  @Schema(title = "보증금", description = "서비스 이용을 위한 보증금")
+  @param:Schema(title = "보증금", description = "서비스 이용을 위한 보증금")
   val rewardDeposit: Int? = null,
-  @Schema(title = "지급 포인트", description = "서비스에 따라 지급된 포인트")
+  @param:Schema(title = "지급 포인트", description = "서비스에 따라 지급된 포인트")
   val rewardPoint: Int? = null,
-  @Schema(title = "수수료", description = "서비스 수수료")
+  @param:Schema(title = "수수료", description = "서비스 수수료")
   val serviceCommission: Int? = null,
-  @Schema(title = "상태", description = "서비스 상태")
+  @param:Schema(title = "상태", description = "서비스 상태")
   val status: StatusCode = StatusCode.PENDING,
-  @Schema(title = "등록일시", description = "서비스 등록 일시")
+  @param:Schema(title = "등록일시", description = "서비스 등록 일시")
   val regDate: @Contextual LocalDateTime,
-  @Schema(title = "수정일시", description = "서비스 수정 일시")
+  @param:Schema(title = "수정일시", description = "서비스 수정 일시")
   val modDate: @Contextual LocalDateTime? = null,
-  @Schema(title = "등록자 고유아이디", description = "서비스 등록을 한 사람의 고유아이디")
+  @param:Schema(title = "등록자 고유아이디", description = "서비스 등록을 한 사람의 고유아이디")
   val regBy: @Contextual UUID,
-  @Schema(title = "수정자 고유아이디", description = "서비스 수정을 한 사람의 고유아이디")
+  @param:Schema(title = "수정자 고유아이디", description = "서비스 수정을 한 사람의 고유아이디")
   val modBy: @Contextual UUID? = null,
 ) : BaseModel<NPointStoreServiceId>
 
-@Serializable
-@Schema(name = "nPointStoreServiceModifyModel", title = "NPoint 서비스 등록/수정 정보", description = "NPoint 가맹점 관련 서비스 정보")
+@Serializable @Schema(name = "nPointStoreServiceModifyModel", title = "NPoint 서비스 등록/수정 정보", description = "NPoint 가맹점 관련 서비스 정보")
 data class NPointStoreServiceRegistModel(
-  @Schema(
+  @param:Schema(
     title = "서비스 코드",
     description = "서비스 고유 코드",
     example = "광고:ADVERTIZE, 전자영수증:ERECEIPT, 네이버 999+리뷰:REVIEWPRJ, 네이버 리뷰 리워드: REVIEWPT, 배달리뷰 리워드: DLVRVIEWPT"
   )
   val serviceCode: String,
-  @Schema(title = "기본료", description = "기본 요금")
+  @param:Schema(title = "기본료", description = "기본 요금")
   val serviceCharge: Int? = 0,
-  @Schema(title = "보증금", description = "포인트 보증금")
+  @param:Schema(title = "보증금", description = "포인트 보증금")
   val rewardDeposit: Int? = null,
-  @Schema(title = "리워드 포인트", description = "지급할 포인트")
+  @param:Schema(title = "리워드 포인트", description = "지급할 포인트")
   val rewardPoint: Int? = null,
-  @Schema(title = "리워드 수수료", description = "서비스 리워드 수수료")
+  @param:Schema(title = "리워드 수수료", description = "서비스 리워드 수수료")
   val serviceCommission: Int? = null
 )
 

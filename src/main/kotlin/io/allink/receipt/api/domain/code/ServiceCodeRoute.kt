@@ -22,9 +22,9 @@ fun Route.serviceCodeRoutes(
 
   get("/service-code/franchise", {
     operationId = "service-code-franchise"
-    tags = listOf("서비스 코드 관리")
-    summary = "프랜차이즈 코드 목록 조회"
-    description = "프랜차이즈 코드 목록을 조회합니다."
+    tags = listOf("Gestion des codes de service")
+    summary = "Consulter la liste des codes de franchise"
+    description = "Récupère la liste des codes de franchise."
     securitySchemeNames = listOf("auth-jwt")
 
     response {
@@ -42,9 +42,9 @@ fun Route.serviceCodeRoutes(
 
   get("/service-code/banks", {
     operationId = "service-code-banks"
-    tags = listOf("서비스 코드 관리")
-    summary = "은행 코드 목록 조회"
-    description = "은행 코드 목록을 조회합니다."
+    tags = listOf("Gestion des codes de service")
+    summary = "Consulter la liste des codes bancaires"
+    description = "Récupère la liste des codes bancaires."
     securitySchemeNames = listOf("auth-jwt")
 
     response {
@@ -62,9 +62,9 @@ fun Route.serviceCodeRoutes(
 
   get("/service-code/vendors", {
     operationId = "service-code-vendors"
-    tags = listOf("서비스 코드 관리")
-    summary = "밴더사 목록 조회"
-    description = "밴더사 코드 목록을 조회합니다."
+    tags = listOf("Gestion des codes de service")
+    summary = "Consulter la liste des fournisseurs (vendors)"
+    description = "Récupère la liste des codes des fournisseurs (vendors)."
     securitySchemeNames = listOf("auth-jwt")
 
     response {

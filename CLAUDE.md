@@ -38,7 +38,8 @@ This is the **Allink Mobile E-Receipt API** (올링크 모바일 전자영수증
 ### Environment Configuration
 - Use JVM arguments: `-config=application.conf -config=application-{environment}.conf`
 - Use VM options: `-DKTOR_ENV={environment}`
-- Environments: `local`, `test`, `prod`, `production`
+- Environments: `demo`
+[//]: # (- Environments: `local`, `test`, `prod`, `production`)
 
 ## Architecture Overview
 

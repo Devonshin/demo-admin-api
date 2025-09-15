@@ -8,8 +8,10 @@ import io.allink.receipt.api.domain.store.StoreTable
 import io.allink.receipt.api.domain.user.UserTable
 import io.allink.receipt.api.domain.user.review.UserPointReviewTable
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toList
 import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.alias
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.stringLiteral
 import org.jetbrains.exposed.v1.r2dbc.andWhere
 import org.jetbrains.exposed.v1.r2dbc.select
@@ -34,6 +36,7 @@ class IssueReceiptRepositoryImpl(
       stringLiteral("kakao").alias("sender")
     ).where { KakaoBillTable.userId eq userId }
       .andWhere { KakaoBillTable.receiptUuid eq receiptId }
+      .toList()
       .firstOrNull()?.let {
         SimpleEdocModel(
           id = it[stringLiteral("kakao")],
@@ -50,7 +53,7 @@ class IssueReceiptRepositoryImpl(
         stringLiteral("naver").alias("sender")
       ).where { NaverBillTable.userId eq userId }
         .andWhere { NaverBillTable.receiptUuid eq receiptId }
-        .firstOrNull()?.let {
+        .toList().firstOrNull()?.let {
           SimpleEdocModel(
             id = it[stringLiteral("naver")],
             envelopId = it[NaverBillTable.envelopId],
@@ -120,7 +123,7 @@ class IssueReceiptRepositoryImpl(
       .andWhere {
         table.userUid eq userId
       }
-      .firstOrNull()?.let {
+      .toList().firstOrNull()?.let {
         toModel(it).apply { this.edoc = edoc }
       }
   }

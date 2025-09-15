@@ -2,7 +2,7 @@ package io.allink.receipt.api.domain.code
 
 import io.allink.receipt.api.repository.TransactionUtil
 import kotlinx.coroutines.flow.toList
-import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.r2dbc.selectAll
 
 class ServiceCodeRepositoryImpl(

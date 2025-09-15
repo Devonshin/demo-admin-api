@@ -25,9 +25,9 @@ fun Route.issueReceiptRoutes(
   route("/receipts") {
     post("", {
       operationId = "issue-receipts"
-      tags = listOf("전자영수증 관리")
-      summary = "전자영수증 목록 조회"
-      description = "전자영수증 목록을 조회합니다."
+      tags = listOf("Gestion des e-reçus")
+      summary = "Consulter la liste des e‑reçus"
+      description = "Récupère la liste des e‑reçus."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<ReceiptFilter>(issueReceiptListRequest())
@@ -49,16 +49,16 @@ fun Route.issueReceiptRoutes(
 
     get("/detail/{userId}/{receiptId}", {
       operationId = "receipt-issue-detail"
-      tags = listOf("전자영수증 관리")
-      summary = "전자영수증 상세 조회"
-      description = "전자영수증 상세 정보를 조회합니다."
+      tags = listOf("Gestion des e-reçus")
+      summary = "Consulter le détail de l’e‑reçu"
+      description = "Récupère les informations détaillées de l’e‑reçu."
       securitySchemeNames = listOf("auth-jwt")
       request {
         pathParameter<String>("userId") {
-          description = "사용자 id"
+          description = "Identifiant utilisateur"
         }
         pathParameter<String>("receiptId") {
-          description = "영수증 고유 id"
+          description = "Identifiant unique du reçu"
         }
       }
       response {

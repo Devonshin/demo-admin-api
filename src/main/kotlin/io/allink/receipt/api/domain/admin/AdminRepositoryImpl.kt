@@ -3,9 +3,10 @@ package io.allink.receipt.api.domain.admin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.r2dbc.deleteWhere
 import org.jetbrains.exposed.v1.r2dbc.insertAndGetId
+import org.jetbrains.exposed.v1.r2dbc.mapLazy
 import org.jetbrains.exposed.v1.r2dbc.selectAll
 import org.jetbrains.exposed.v1.r2dbc.update
 import java.util.*
@@ -44,11 +45,12 @@ class AdminRepositoryImpl(
   }
 
   override suspend fun findByPhone(phone: String): AdminModel? {
-    return table.selectAll().where {
+    val firstOrNull = table.selectAll().where {
       table.phone eq phone
     }.limit(1).map {
       toModel(it)
     }.firstOrNull()
+    return firstOrNull
   }
 
   override suspend fun findByUserUuid(uUID: UUID): AdminModel? {

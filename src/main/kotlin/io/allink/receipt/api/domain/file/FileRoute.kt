@@ -39,14 +39,14 @@ fun Route.fileRoutes(
 
     post("/preview", {
       operationId = "file-preview-url"
-      tags = listOf("파일 관리", "가맹점 관리", "영업 대리점 관리")
-      summary = "파일 미리보기 임시 URL"
-      description = "파일을 미리보기 혹은 다운로드 할 수 있는 임시 URL을 생성합니다. 임시 URL은 생성 후 15분간 유효합니다."
+      tags = listOf("Gestion des fichiers", "Gestion des commerçants", "Gestion des agences commerciales")
+      summary = "URL temporaire d’aperçu du fichier"
+      description = "Génère une URL temporaire pour prévisualiser ou télécharger un fichier. L’URL est valable 15 minutes après sa création."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<Request<String>> {
           required = true
-          description = "파일 경로"
+          description = "Chemin du fichier"
           example("file-path") {
             value = Request(data = "/bz-agencies/1234-1234-1234-1234/id.png")
           }
@@ -67,40 +67,40 @@ fun Route.fileRoutes(
 
     post("/upload/{menu}/{field}/{id}", {
       operationId = "file-upload"
-      tags = listOf("파일 관리", "가맹점 관리", "영업 대리점 관리")
-      summary = "파일 업로드"
-      description = "한번에 하나의 파일을 업로드를 합니다. 파일을 업로드 후 응답으로 생성되는 파일 경로를 대상 필드의 값으로 설정 후 저장해야 합니다."
+      tags = listOf("Gestion des fichiers", "Gestion des commerçants", "Gestion des agences commerciales")
+      summary = "Téléversement de fichier"
+      description = "Téléverse un seul fichier à la fois. Après le téléversement, utilisez le chemin de fichier renvoyé pour renseigner la valeur du champ cible puis enregistrez."
       securitySchemeNames = listOf("auth-jwt")
       request {
         pathParameter<String>("menu") {
-          description = "메뉴 아이디"
+          description = "Identifiant du menu"
           required = true
           example("menu") {
-            description = "파일을 등록하는 메뉴"
+            description = "Menu où le fichier est enregistré"
             value = "bz-agencies|stores|advertisements|..."
           }
         }
         pathParameter<String>("field") {
-          description = "필드명"
+          description = "Nom du champ"
           required = true
           example("field") {
-            description = "파일을 등록하는 필드명"
+            description = "Nom du champ où le fichier est enregistré"
             value = """
-          영업 대리점: [bz|id|bank|application]
-          가맹점: [bz|id|bank|application|coupon|logo|banner]
-          광고: [banner]
+          Agence commerciale: [bz|id|bank|application]
+          Commerçant: [bz|id|bank|application|coupon|logo|banner]
+          Publicité: [banner]
         """.trimIndent()
           }
         }
         pathParameter<String>("id") {
-          description = "파일을 등록하는 대상의 고유 아이디"
+          description = "Identifiant unique de la cible pour laquelle le fichier est enregistré"
           required = true
           example("id") {
-            description = "파일을 등록하는 대상의 고유 아이디 ( EX. 가맹점 고유아이디, 대리점 고유아이디.. )"
+            description = "Identifiant unique de la cible (ex. identifiant du commerçant, identifiant de l’agence, etc.)"
           }
         }
         multipartBody {
-          description = "업로드 파일, png, pdf, xlsx 만 가능"
+          description = "Fichier à téléverser; formats acceptés: png, pdf, xlsx uniquement"
           required = true
           part("file", type = SwaggerTypeDescriptor(BinarySchema())) {
             required = true
@@ -143,14 +143,14 @@ fun Route.fileRoutes(
     /*태그 등록 파일 다운로드 url 생성*/
     get("/download/batch-file/tag", {
       operationId = "file-download-tag"
-      tags = listOf("태그 관리")
-      summary = "태그 일괄 등록 파일 다운로드 URL"
-      description = "태그 일괄 등록용 파일을 다운로드 할 수 있는 임시 URL을 생성합니다. 임시 URL은 생성 후 15분간 유효합니다."
+      tags = listOf("Gestion des tags")
+      summary = "URL de téléchargement du fichier d’import des tags"
+      description = "Génère une URL temporaire pour télécharger le fichier d’import des tags. Valable 15 minutes après création."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<Request<String>> {
           required = true
-          description = "파일 경로"
+          description = "Chemin du fichier"
           example("file-path") {
             value = Request(data = "/batch-files/templates/tag.xlsx")
           }
@@ -171,9 +171,9 @@ fun Route.fileRoutes(
     /*태그 배치 등록*/
     post("/upload/batch/tags", {
       operationId = "tags-batch-upload"
-      tags = listOf("태그 관리")
-      summary = "태그 일괄 등록 파일 업로드"
-      description = "태그 일괄 등록용 파일을 업로드 합니다."
+      tags = listOf("Gestion des tags")
+      summary = "Téléversement du fichier d’import des tags"
+      description = "Téléverse le fichier d’import des tags."
       securitySchemeNames = listOf("auth-jwt")
       request {
         multipartBody {
@@ -186,9 +186,9 @@ fun Route.fileRoutes(
       }
       response {
         code(HttpStatusCode.OK, {
-          description = "성공 응답"
+          description = "Réponse réussie"
           body<Response<String>> {
-            example("파일 업로드 응답") {
+            example("Réponse du téléversement de fichier") {
               value = Response(data = "/tag-batch-status/1234-1234-1234-1234")
             }
           }
@@ -221,9 +221,9 @@ fun Route.fileRoutes(
     /*가맹점 배치 등록*/
     post("/upload/batch/stores", {
       operationId = "stores-batch-upload"
-      tags = listOf("가맹점 관리")
-      summary = "가맹점 배치 파일 업로드"
-      description = "가맹점 일괄 등록용 배치 파일을 업로드 합니다."
+      tags = listOf("Gestion des commerçants")
+      summary = "Téléversement du fichier d’import des commerçants"
+      description = "Téléverse le fichier d’import pour l’enregistrement en masse des commerçants."
       securitySchemeNames = listOf("auth-jwt")
       request {
         multipartBody {
@@ -236,9 +236,9 @@ fun Route.fileRoutes(
       }
       response {
         code(HttpStatusCode.OK, {
-          description = "성공 응답"
+          description = "Réponse réussie"
           body<Response<String>> {
-            example("파일 업로드 응답") {
+            example("Réponse du téléversement de fichier") {
               value = Response(data = "/store-batch/1234-1234-1234-1234")
             }
           }
@@ -270,14 +270,14 @@ fun Route.fileRoutes(
     /*태그 등록 파일 다운로드 url 생성*/
     get("/download/batch-file/stores", {
       operationId = "file-download-store"
-      tags = listOf("가맹점 관리")
-      summary = "가맹점 다운로드 URL"
-      description = "가맹점 일괄 등록용 파일을 다운로드 할 수 있는 임시 URL을 생성합니다. 임시 URL은 생성 후 15분간 유효합니다."
+      tags = listOf("Gestion des commerçants")
+      summary = "URL de téléchargement des commerçants"
+      description = "Génère une URL temporaire pour télécharger le fichier d’import des commerçants. Valable 15 minutes après création."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<Request<String>> {
           required = true
-          description = "파일 경로"
+          description = "Chemin du fichier"
           example("file-path") {
             value = Request(data = "/batch-files/templates/store.xlsx")
           }
@@ -311,7 +311,7 @@ fun validate(menu: String?, field: String?, fileName: String?, extension: String
   if (menu == null || field == null || fileName == null || extension == null || id == null || fileBytes == null) {
     throw InvalidFileUploadException(
       """
-          파일 업로드 실패:  
+          Échec du téléversement de fichier:  
             menu: $menu, 
             field: $field, 
             id: $id, 
@@ -324,34 +324,34 @@ fun validate(menu: String?, field: String?, fileName: String?, extension: String
   if (!checkAcceptFileField(menu, field)) {
     throw InvalidFileUploadException(
       """
-          파일 업로드 실패: 요청하신 메뉴명[$menu]과, 필드[$field]를 확인 해주세요. 
-          요청 가능 메뉴와 필드 목록 : $ACCEPT_FILE_FIELDS
+          Échec du téléversement de fichier: veuillez vérifier le nom de menu [$menu] et le champ [$field]. 
+          Listes de menus et champs autorisés : $ACCEPT_FILE_FIELDS
         """.trimIndent()
     )
   }
   if (!checkAcceptFileType(fileName)) {
     throw InvalidFileUploadException(
       """
-          파일 업로드 실패: 업로드 불가 파일  
-          업로드 가능한 파일 확장자 : $ACCEPT_FILE_TYPE
+          Échec du téléversement de fichier: type de fichier non autorisé  
+          Extensions de fichier autorisées : $ACCEPT_FILE_TYPE
         """.trimIndent()
     )
   }
 }
 
 fun agencyFileUploadResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
+  description = "Réponse réussie"
   body<Response<String>> {
-    example("파일 업로드 경로 응답") {
+    example("Réponse avec le chemin du fichier téléversé") {
       value = Response(data = "/bz-agencies/1234-1234-1234-1234/id.png")
     }
   }
 }
 
 fun agencyFilePreviewResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
+  description = "Réponse réussie"
   body<Response<String>> {
-    example("파일 경로 응답") {
+    example("Réponse avec le chemin du fichier") {
       value = Response(data = "https://bz-agencies/1234-1234-1234-1234/id.png")
     }
   }

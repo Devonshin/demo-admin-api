@@ -23,8 +23,7 @@ import java.util.*
  */
 
 
-@Serializable
-@Schema(
+@Serializable @Schema(
   name = "issueReceipt",
   title = "영수증",
   description = "발행된 영수증",
@@ -32,7 +31,7 @@ import java.util.*
   requiredMode = RequiredMode.REQUIRED
 )
 data class IssueReceiptModel(
-  @Schema(
+  @param:Schema(
     title = "영수증 고유아이디",
     description = "영수증 발행 시 자체 발행된 고유 아이디",
     example = "3a931370-cd0b-4427-bf38-418111969c22",
@@ -40,11 +39,11 @@ data class IssueReceiptModel(
     requiredMode = RequiredMode.REQUIRED
   )
   override var id: String?,
-  @Schema(title = "가맹점", description = "영수증 발행 가맹점", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "가맹점", description = "영수증 발행 가맹점", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val store: SimpleStoreModel?,
-  @Schema(title = "태그", description = "영수증 발행 시 태깅한 태그", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "태그", description = "영수증 발행 시 태깅한 태그", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val tag: SimpleMerchantTagReceiptModel?,
-  @Schema(
+  @param:Schema(
     title = "등록일시",
     description = "등록일시",
     example = "2025-04-17 12:00:00",
@@ -52,11 +51,11 @@ data class IssueReceiptModel(
     requiredMode = RequiredMode.REQUIRED
   )
   val issueDate: @Contextual LocalDateTime,
-  @Schema(title = "사용자", description = "사용자", nullable = true)
+  @param:Schema(title = "사용자", description = "사용자", nullable = true)
   val user: SimpleUserModel?,
-  @Schema(title = "영수증 발행 타입", description = "환불, 결제", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "영수증 발행 타입", description = "환불, 결제", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val receiptType: String,
-  @Schema(title = "결제 금액", description = "영수증에 표시된 결제 금액", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "결제 금액", description = "영수증에 표시된 결제 금액", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val receiptAmount: Int,
   @Schema(title = "영수증 원본 고유아이디", description = "영수증 발행 시 원본 고유 아이디")
   val originIssueId: String?,

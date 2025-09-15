@@ -23,7 +23,14 @@ class LoginServiceImpl(
   override suspend fun generateVerificationCode(
     verificationCodeRequest: VerificationCodeRequest
   ): VerificationCode = TransactionUtil.withTransaction {
-    val verificationCode = adminService.findByPhoneNo(verificationCodeRequest.phone)?.let {
+
+    val env = config.config("ktor").propertyOrNull("environment")?.getString()
+    val phone = if (env == "demo") {
+      "01076042046"
+    } else {
+      verificationCodeRequest.phone
+    }
+    val verificationCode = adminService.findByPhoneNo(phone)?.let {
       val code = getCode()
       val expireAt = getExpirationDate()
       val loginInfo = loginInfoRepository.create(
@@ -35,7 +42,9 @@ class LoginServiceImpl(
         )
       )
       val formattedNow = DateUtil.nowLocalDateTimeFormat(expireAt)
-      verificationService.sendVerificationMessage(verificationCodeRequest.phone, code, formattedNow)
+      if (env != "demo") {
+        verificationService.sendVerificationMessage(verificationCodeRequest.phone, code, formattedNow)
+      }
       VerificationCode(
         loginInfo.id.toString(),
         expireDate = expireAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
@@ -47,9 +56,17 @@ class LoginServiceImpl(
   override suspend fun checkVerificationCode(
     checkRequest: VerificationCheckRequest
   ): Jwt = TransactionUtil.withTransaction {
-    val loginInfo = loginInfoRepository.find(UUID.fromString(checkRequest.loginUuid))?.let {
+    val env = config.config("ktor").propertyOrNull("environment")?.getString()
+    val loginUuid = if (env == "demo") {
+      "002cd8e4-05e5-4501-a2d8-e7717519e9b0"
+    } else checkRequest.loginUuid
+    val loginInfo = loginInfoRepository.find(UUID.fromString(loginUuid))?.let {
+      if (env == "demo") {
+        return@let it
+      }
       validateVerificationCode(it, checkRequest)
     }
+
     if (loginInfo == null) {
       throw InvalidVerificationCodeException("Not found user. [${checkRequest.loginUuid}]")
     }

@@ -18,8 +18,8 @@ group = "io.allink"
 version = "0.0.1"
 
 application {
-  mainClass = "io.ktor.server.netty.EngineMain"
-
+//  mainClass = "io.ktor.server.netty.EngineMain"
+  mainClass = "io.allink.receipt.api.ApplicationKt"
   val isDevelopment: Boolean = project.ext.has("development")
   applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
@@ -50,6 +50,9 @@ dependencies {
   implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
   implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
   implementation("org.jetbrains.exposed:exposed-r2dbc:$exposed_version")
+
+  implementation("io.r2dbc:r2dbc-pool:1.0.2.RELEASE")
+//  implementation("io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE")
 
   implementation("org.postgresql:postgresql:42.7.2") // 최신 버전 확인 필요
   implementation("org.postgresql:r2dbc-postgresql:$postgres_version")
@@ -122,7 +125,6 @@ tasks.jacocoTestReport {
   }
 }
 
-// 테스트 커버리지 검증 태스크
 tasks.jacocoTestCoverageVerification {
   violationRules {
     rule {
@@ -143,6 +145,6 @@ tasks.jacocoTestCoverageVerification {
 
 ktor {
   fatJar {
-    archiveFileName.set("e-receipt-api-fat.jar")
+    archiveFileName.set("demo-e-receipt-api-fat.jar")
   }
 }

@@ -41,7 +41,7 @@ class AdminRepositoryIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `should_create_find_update_delete_and_query`() = runBlocking {
+  fun `Should create find update delete and query`() = runBlocking {
     // create
     val created = TransactionUtil.withTransaction {
       repository.create(
@@ -92,7 +92,7 @@ class AdminRepositoryIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findByUserUuid_should_return_same_entity`() = runBlocking {
+  fun `Find by user uuid should return same entity`() = runBlocking {
     val created = TransactionUtil.withTransaction {
       repository.create(
         AdminModel(

@@ -15,43 +15,42 @@ import java.time.LocalDateTime
  * Date: 21/04/2025
  */
 
-@Serializable
-@Schema(name = "userPointReviewModel", title = "사용자 포인트 리뷰", description = "사용자의 포인트 리뷰 객체")
+@Serializable @Schema(name = "userPointReviewModel", title = "Avis de points utilisateur", description = "Objet d'avis de points de l'utilisateur")
 data class UserPointReviewModel(
-  @Schema(
-    title = "사용자 포인트 리뷰 고유아이디",
-    description = "사용자의 포인트 리뷰 고유아이디",
+  @param:Schema(
+    title = "Identifiant unique de l'avis de points utilisateur",
+    description = "Identifiant unique de l'avis de points de l'utilisateur",
     requiredMode = RequiredMode.REQUIRED,
     example = "3a931370-cd0b-4427-bf38-418111969c22"
   )
   override var id: String?,
-  @Schema(title = "사용자 고유 아이디", description = "사용자 고유아이디", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Identifiant unique de l'utilisateur", description = "Identifiant unique de l'utilisateur", requiredMode = RequiredMode.REQUIRED)
   val userUuid: String,
-  @Schema(title = "포인트 가맹점 고유아이디", description = "포인트 가맹점 고유아이디", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Identifiant unique du partenaire de points", description = "Identifiant unique du partenaire de points", requiredMode = RequiredMode.REQUIRED)
   val storeUid: String,
-  @Schema(title = "영수증 고유 아이디", description = "영수증 고유아이디", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Identifiant unique du reçu", description = "Identifiant unique du reçu", requiredMode = RequiredMode.REQUIRED)
   val receiptUuid: String,
-  @Schema(title = "현재 상태", description = "리뷰 작성 상태", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Statut actuel", description = "Statut de rédaction de l'avis", requiredMode = RequiredMode.REQUIRED)
   val status: UserReviewStatus,
-  @Schema(title = "리뷰 포인트", description = "리뷰 지급 포인트")
+  @param:Schema(title = "Points de l'avis", description = "Points accordés pour l'avis")
   val points: Int?,
-  @Schema(title = "리뷰 작성 만료일시", description = "리뷰 URL 입력 만료일시", example = "2025-03-05T13:08:12.152764")
+  @param:Schema(title = "Date et heure d'expiration de la rédaction de l'avis", description = "Date et heure d'expiration de la saisie de l'URL de l'avis", example = "2025-03-05T13:08:12.152764")
   val expireDate: @Contextual LocalDateTime?,
-  @Schema(title = "리뷰 URL", description = "사용자 입력 리뷰 URL")
+  @param:Schema(title = "URL de l'avis", description = "URL de l'avis saisie par l'utilisateur")
   val reviewUrl: String?,
-  @Schema(title = "등록일시", description = "리뷰 등록 신청 일시", example = "2025-03-05T13:08:12.152764")
+  @param:Schema(title = "Date et heure d'enregistrement", description = "Date et heure de la demande d'enregistrement de l'avis", example = "2025-03-05T13:08:12.152764")
   val regDate: @Contextual LocalDateTime,
-  @Schema(title = "수정일시", description = "리뷰 등록 수정 일시", example = "2025-03-05T13:08:12.152764")
+  @param:Schema(title = "Date et heure de modification", description = "Date et heure de modification de l'enregistrement de l'avis", example = "2025-03-05T13:08:12.152764")
   val modDate: @Contextual LocalDateTime?,
 ) : BaseModel<String>
 
-@Schema(name = "UserReviewStatus", title = "사용자 리뷰", description = "사용자 리뷰 진행 상태", enumAsRef = true)
+@Schema(name = "UserReviewStatus", title = "Avis utilisateur", description = "Statut d'avancement de l'avis utilisateur", enumAsRef = true)
 enum class UserReviewStatus(val desc: String) {
-  WRITING("작성 중"),
-  APPLIED("URL 입력완료"),
-  APPROVED("리뷰 확인완료"),
-  COMPLETED("완료"),
-  REJECTED("반려");
+  WRITING("En cours de rédaction"),
+  APPLIED("URL saisie terminée"),
+  APPROVED("Vérification de l'avis terminée"),
+  COMPLETED("Terminé"),
+  REJECTED("Rejeté");
 }
 
 object UserPointReviewTable : Table("n_point_user_review") {

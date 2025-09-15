@@ -18,37 +18,35 @@ import java.time.LocalDateTime
  * Date: 20/05/2025
  */
 
-@Serializable
-@Schema(name = "nPointPayModel", title = "포인트 지급 내역 객체", description = "포인트 지급 내역 정보 객체")
+@Serializable @Schema(name = "nPointPayModel", title = "포인트 지급 내역 객체", description = "포인트 지급 내역 정보 객체")
 data class NPointPayModel(
-  @Schema(title = "고유 아이디", description = "지급 이력 고유 아이디 (시퀀스)", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "고유 아이디", description = "지급 이력 고유 아이디 (시퀀스)", requiredMode = RequiredMode.REQUIRED)
   override var id: Long?,
-  @Schema(title = "포인트 적립 금액", description = "포인트 적립 금액", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "포인트 적립 금액", description = "포인트 적립 금액", requiredMode = RequiredMode.REQUIRED)
   val point: Int?,
-  @Schema(title = "포인트 적립 상태", description = "포인트 적립 연동 결과 값")
+  @param:Schema(title = "포인트 적립 상태", description = "포인트 적립 연동 결과 값")
   val status: String?,
-  @Schema(title = "사용자", description = "포인트 적립 사용자", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "사용자", description = "포인트 적립 사용자", requiredMode = RequiredMode.REQUIRED)
   val user: NPointUserModel,
-  @Schema(title = "가맹점", description = "포인트 제공 가맹점", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "가맹점", description = "포인트 제공 가맹점", requiredMode = RequiredMode.REQUIRED)
   val store: SimpleStoreModel,
-  @Schema(title = "적립 케이스", description = "포인트 적립 케이스", example = "리뷰|이벤트", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "적립 케이스", description = "포인트 적립 케이스", example = "리뷰|이벤트", requiredMode = RequiredMode.REQUIRED)
   val provideCase: String,
-  @Schema(title = "포인트 거래번호", description = "포인트 거래번호", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "포인트 거래번호", description = "포인트 거래번호", requiredMode = RequiredMode.REQUIRED)
   val pointTrNo: String?,
-  @Schema(title = "적립 거래번호", description = "적립 거래번호", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "적립 거래번호", description = "적립 거래번호", requiredMode = RequiredMode.REQUIRED)
   val pointPayNo: String?,
-  @Schema(title = "적립 거래번호", description = "적립 거래번호", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "적립 거래번호", description = "적립 거래번호", requiredMode = RequiredMode.REQUIRED)
   val regDate: @Contextual LocalDateTime?
 ) : BaseModel<Long>
 
-@Serializable
-@Schema(name = "pointUserModel", title = "사용자 객체", description = "모바일 전자영수증 가입자")
+@Serializable @Schema(name = "pointUserModel", title = "사용자 객체", description = "모바일 전자영수증 가입자")
 data class NPointUserModel(
-  @Schema(title = "고유아이디", description = "사용자 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "고유아이디", description = "사용자 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String?,
-  @Schema(title = "이름", description = "사용자 이름", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "이름", description = "사용자 이름", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val name: String?,
-  @Schema(
+  @param:Schema(
     title = "휴대폰번호",
     description = "휴대폰번호",
     nullable = false,
@@ -56,7 +54,7 @@ data class NPointUserModel(
     example = "01012349876"
   )
   val phone: String?,
-  @Schema(title = "성별", description = "성별", nullable = false, requiredMode = RequiredMode.REQUIRED, example = "F|M")
+  @param:Schema(title = "성별", description = "성별", nullable = false, requiredMode = RequiredMode.REQUIRED, example = "F|M")
   val gender: String?,
   @Schema(title = "생년월일", description = "생년월일", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val birthday: String?,

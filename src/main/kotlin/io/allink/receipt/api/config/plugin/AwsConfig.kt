@@ -30,8 +30,6 @@ fun configureAwsDynamoDb(config: ApplicationConfig): DynamoDbClient {
   val accessKeyId = ${?AWS_ACCESS_KEY_ID}.property("accessKeyId").getString()
   val secretKey = ${?AWS_SECRET_KEY}.property("secretKey").getString()
 
-  logger.info("Connecting to AWS DynamoDB with accessKeyId $accessKeyId")
-
   val credentials = StaticCredentialsProvider.create(
     AwsBasicCredentials.create(accessKeyId, secretKey)
   )

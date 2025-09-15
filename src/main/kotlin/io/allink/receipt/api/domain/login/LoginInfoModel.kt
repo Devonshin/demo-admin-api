@@ -43,50 +43,45 @@ enum class LoginStatus {
   PENDING,
 }
 
-@Serializable
-@Schema(description = "인증 코드 요청 객체", nullable = false, requiredMode = RequiredMode.REQUIRED)
+@Serializable @Schema(description = "인증 코드 요청 객체", nullable = false, requiredMode = RequiredMode.REQUIRED)
 data class VerificationCode(
-  @Schema(description = "인증코드 고유 아이디 - 인증코드와 같이 로그인 요청 시 전송")
+  @param:Schema(description = "인증코드 고유 아이디 - 인증코드와 같이 로그인 요청 시 전송")
   val loginUuid: String,
-  @Schema(description = "인증코드 만료일시")
+  @param:Schema(description = "인증코드 만료일시")
   val expireDate: String
 )
 
-@Serializable
-@Schema(description = "아이디,패스워드 로그인 객체", nullable = false, requiredMode = RequiredMode.REQUIRED)
+@Serializable @Schema(description = "아이디,패스워드 로그인 객체", nullable = false, requiredMode = RequiredMode.REQUIRED)
 data class LoginRequest(
-  @Schema(description = "아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(description = "아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val username: String,
-  @Schema(description = "패스워드", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(description = "패스워드", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val password: String
 )
 
-@Serializable
-@Schema(description = "인증 코드 확인 객체", nullable = false, requiredMode = RequiredMode.REQUIRED)
+@Serializable @Schema(description = "인증 코드 확인 객체", nullable = false, requiredMode = RequiredMode.REQUIRED)
 data class VerificationCheckRequest(
-  @Schema(description = "인증코드 고유 아이디 - 인증 코드 요청 시 받은 고유값")
+  @param:Schema(description = "인증코드 고유 아이디 - 인증 코드 요청 시 받은 고유값")
   val loginUuid: String,
-  @Schema(description = "인증코드")
+  @param:Schema(description = "인증코드")
   val verificationCode: String
 )
 
-@Serializable
-@Schema(description = "인증 코드 요청 객체", nullable = false, requiredMode = RequiredMode.REQUIRED)
+@Serializable @Schema(description = "인증 코드 요청 객체", nullable = false, requiredMode = RequiredMode.REQUIRED)
 data class VerificationCodeRequest(
-  @Schema(description = "인증 코드를 수신할 휴대폰 번호", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(description = "인증 코드를 수신할 휴대폰 번호", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val phone: String
 )
 
-@Serializable
-@Schema(description = "Jwt 객체", nullable = false, requiredMode = RequiredMode.REQUIRED)
+@Serializable @Schema(description = "Jwt 객체", nullable = false, requiredMode = RequiredMode.REQUIRED)
 data class Jwt(
-  @Schema(description = "Jwt 데이터", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(description = "Jwt 데이터", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val jwt: String,
-  @Schema(description = "만료일시", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(description = "만료일시", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val expireDate: String,
-  @Schema(description = "사용자명", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(description = "사용자명", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val username: String,
-  @Schema(description = "권한", nullable = false, requiredMode = RequiredMode.REQUIRED, example = "")
+  @param:Schema(description = "권한", nullable = false, requiredMode = RequiredMode.REQUIRED, example = "")
   @Polymorphic
   val role: Role,
 )

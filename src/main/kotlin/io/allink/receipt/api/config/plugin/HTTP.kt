@@ -11,9 +11,7 @@ import org.slf4j.LoggerFactory
 
 fun Application.configureHTTP() {
   val logger: Logger = LoggerFactory.getLogger(this.javaClass.name)
-  val env = environment.config.propertyOrNull("ktor.environment")?.getString()?.let {
-    it.lowercase()
-  }
+  val env = environment.config.propertyOrNull("ktor.environment")?.getString()?.lowercase()
   install(CORS) {
     allowMethod(HttpMethod.Options)
     allowMethod(HttpMethod.Post)
@@ -23,7 +21,6 @@ fun Application.configureHTTP() {
     allowHeader(HttpHeaders.Authorization)
     allowHeader(HttpHeaders.ContentType)
 
-    logger.info("env = $env")
     if (env != null && !env.equals("production", ignoreCase = true)) {
       anyHost()
     } else {

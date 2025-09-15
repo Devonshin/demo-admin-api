@@ -16,8 +16,7 @@ import java.util.*
  * Date: 18/04/2025
  */
 
-@Serializable
-@Schema(name = "storeBillingTokenModel", title = "가맹점 결제 카드 토큰 정보", description = "가맹점 결제 카드 토큰 등록 정보")
+@Serializable @Schema(name = "storeBillingTokenModel", title = "가맹점 결제 카드 토큰 정보", description = "가맹점 결제 카드 토큰 등록 정보")
 data class StoreBillingTokenModel(
   @param:Schema(title = "토큰 고유아이디", description = "토큰 고유아이디")
   override var id: @Contextual UUID? = null,

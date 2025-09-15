@@ -38,7 +38,7 @@ class LoginInfoRepositoryIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `create_find_update_delete should work`() = runBlocking {
+  fun `Create find update delete should work`() = runBlocking {
     val user = UUID.randomUUID()
     val now = LocalDateTime.parse("2025-06-02T00:00:00")
     val model = LoginInfoModel(

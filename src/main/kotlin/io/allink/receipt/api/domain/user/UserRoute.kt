@@ -30,9 +30,9 @@ fun Route.userRoutes(
 
     post("", {
       operationId = "users"
-      tags = listOf("사용자 관리")
-      summary = "사용자 목록 조회"
-      description = "사용자 목록을 조회합니다."
+      tags = listOf("Gestion des utilisateurs")
+      summary = "Consulter la liste des utilisateurs"
+      description = "Récupère la liste des utilisateurs."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<UserFilter>(userListRequest())
@@ -54,13 +54,13 @@ fun Route.userRoutes(
 
     get("/detail/{userId}", {
       operationId = "user-detail"
-      tags = listOf("사용자 관리")
-      summary = "사용자 상세 조회"
-      description = "사용자 상세 정보를 조회합니다."
+      tags = listOf("Gestion des utilisateurs")
+      summary = "Consulter le détail de l'utilisateur"
+      description = "Récupère les informations détaillées de l'utilisateur."
       securitySchemeNames = listOf("auth-jwt")
       request {
         pathParameter<String>("userId") {
-          description = "사용자 id"
+          description = "Identifiant de l'utilisateur"
         }
       }
 

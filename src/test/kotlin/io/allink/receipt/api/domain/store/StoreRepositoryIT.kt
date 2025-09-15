@@ -45,7 +45,7 @@ class StoreRepositoryIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `find_should_return_store`() = runBlocking {
+  fun `Find should return store`() = runBlocking {
     // given
     runJdbc { stmt ->
       stmt.execute(
@@ -66,7 +66,7 @@ class StoreRepositoryIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_filter_by_name_and_period_and_sort`() = runBlocking {
+  fun `Find all should filter by name and period and sort`() = runBlocking {
     // given 3개 데이터
     fun ins(id: String, name: String, reg: String) {
       runJdbc { stmt ->
@@ -104,7 +104,7 @@ class StoreRepositoryIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_with_agency_filter_should_return_only_that_agency`() = runBlocking {
+  fun `Find all with agency filter should return only that agency`() = runBlocking {
     // given: 두 개 매장, 하나는 특정 대리점 UUID와 매핑
     val agencyId = UUID.randomUUID()
     runJdbc { stmt ->
@@ -132,7 +132,7 @@ class StoreRepositoryIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findByNameAndBzNo_should_match_exact_and_return_null_when_not_found`() = runBlocking {
+  fun `Find by name and bz no should match exact and return null when not found`() = runBlocking {
     // given
     runJdbc { stmt ->
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name, business_no) VALUES ('s-100', 'A상점', '100-10-10000')")
@@ -150,7 +150,7 @@ class StoreRepositoryIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `find_with_agencyId_should_enforce_agency_scope`() = runBlocking {
+  fun `Find with agency id should enforce agency scope`() = runBlocking {
     // given
     val agencyId = UUID.randomUUID()
     val otherAgency = UUID.randomUUID()
@@ -172,7 +172,7 @@ class StoreRepositoryIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_filter_by_franchise_and_businessNo_and_period_boundary`() = runBlocking {
+  fun `Find all should filter by franchise and business no and period boundary`() = runBlocking {
     // given
     runJdbc { stmt ->
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name, franchise_code, business_no, reg_date) VALUES ('s-300', '경계상점1', 'FZ-1', '123-45-67890', '2025-06-01T00:00:00')")

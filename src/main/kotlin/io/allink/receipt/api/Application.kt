@@ -1,9 +1,9 @@
 package io.allink.receipt.api
 
 import io.allink.receipt.api.config.plugin.*
+import io.github.cdimascio.dotenv.dotenv
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
-import io.github.cdimascio.dotenv.dotenv
 
 
 fun main(args: Array<String>) {
@@ -13,6 +13,8 @@ fun main(args: Array<String>) {
   dotenv.entries().forEach {
     System.setProperty(it.key, it.value)
   }
+  System.setProperty("java.net.preferIPv4Stack", "true")
+  System.setProperty("java.net.preferIPv6Addresses", "false")
   EngineMain.main(args)
 }
 

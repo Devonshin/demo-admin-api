@@ -2,6 +2,8 @@ package io.allink.receipt.api.domain.store
 
 import io.allink.receipt.api.common.BillingStatusCode
 import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.r2dbc.update
 
 /**

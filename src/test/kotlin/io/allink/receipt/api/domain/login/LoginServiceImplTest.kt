@@ -3,18 +3,13 @@ package io.allink.receipt.api.domain.login
 import io.allink.receipt.api.domain.admin.*
 import io.allink.receipt.api.domain.sns.VerificationService
 import io.allink.receipt.api.repository.TransactionUtil
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.config.*
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.unmockkObject
+import io.mockk.*
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.*
@@ -37,7 +32,7 @@ class LoginServiceImplTest {
     "jwt.secret" to "test-secret"
   )
 
-private val jwtGenerator: JwtGenerator = mockk(relaxed = true)
+  private val jwtGenerator: JwtGenerator = mockk(relaxed = true)
 
   private val service: LoginService = LoginServiceImpl(
     loginInfoRepository, adminService, verificationService, config, jwtGenerator
@@ -61,7 +56,7 @@ private val jwtGenerator: JwtGenerator = mockk(relaxed = true)
   }
 
   @Test
-  fun `should_generate_verification_code_for_existing_admin`() = runBlocking {
+  fun `Should generate verification code for existing admin`() = runBlocking {
     // given
     val adminId = UUID.randomUUID()
     val admin = AdminModel(
@@ -90,7 +85,7 @@ private val jwtGenerator: JwtGenerator = mockk(relaxed = true)
   }
 
   @Test
-  fun `should_check_verification_code_and_return_jwt`() = runBlocking {
+  fun `Should check verification code and return jwt`() = runBlocking {
     // given
     val loginUuid = UUID.randomUUID()
     val adminId = UUID.randomUUID()
@@ -116,7 +111,7 @@ private val jwtGenerator: JwtGenerator = mockk(relaxed = true)
 
     coEvery { loginInfoRepository.find(loginUuid) } returns loginInfo
     coEvery { adminService.findByUserUuId(adminId) } returns admin
-coEvery { loginInfoRepository.update(any()) } returns 1
+    coEvery { loginInfoRepository.update(any()) } returns 1
     coEvery { jwtGenerator.fromLogin(any(), any(), any()) } returns Jwt(
       jwt = "token",
       expireDate = "2025-12-31 23:59:59",

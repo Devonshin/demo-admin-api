@@ -71,7 +71,9 @@ node_modules/
 # OS specific
 src/main/resources/rebel.xml
 
-WARP.md
-
-local-doc/
+/local-doc
+*.md
+!CLAUDE.md
+!README.md
+!CHANGELOG.md
 /htmlReport/

@@ -33,7 +33,7 @@ fun Application.configureRouting() {
   routing {
 
     get("/") {
-      call.respond("Allink receipt api")
+      call.respond("Demo receipt admin api")
     }
 
     loginRoutes(get())
@@ -59,11 +59,11 @@ fun Application.configureRouting() {
       fileRoutes(get())
     }
 
-    sse("/hello") {
-      send(ServerSentEvent("world"))
-      sleep(1000)
-      send(ServerSentEvent("world2"))
-    }
+//    sse("/hello") {
+//      send(ServerSentEvent("world"))
+//      sleep(1000)
+//      send(ServerSentEvent("world2"))
+//    }
   }
 }
 
@@ -84,10 +84,7 @@ val RoleAuthorizationPlugin = createRouteScopedPlugin(
 }
 
 private suspend fun checkRoleAuthorization(call: ApplicationCall, roleProvider: (ApplicationCall) -> Role?) {
-  val role = roleProvider(call)
-  if (role == null) {
-    return
-  }
+  val role = roleProvider(call) ?: return
   val requestedUri = call.request.uri.trimStart('/')
 
   if (!role.menus.any { it.path.equals(requestedUri, ignoreCase = true) }) {

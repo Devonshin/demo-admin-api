@@ -14,8 +14,7 @@ import org.jetbrains.exposed.v1.javatime.datetime
  */
 
 
-@Serializable
-@Schema(name = "kakaoEdocModel", title = "카카오 전자문서", description = "카카오 전자문서로 발송된 영수증")
+@Serializable @Schema(name = "kakaoEdocModel", title = "카카오 전자문서", description = "카카오 전자문서로 발송된 영수증")
 data class KakaoEdocModel(
   @Schema(
     title = "사용자 영수증 고유아이디",

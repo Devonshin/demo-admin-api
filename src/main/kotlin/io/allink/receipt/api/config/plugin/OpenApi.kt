@@ -19,7 +19,6 @@ fun Application.configureOpenApi() {
     tags {
       tag("Receipt Admin API") {
         description = "Receipt Admin API"
-
       }
     }
 
@@ -52,27 +51,19 @@ fun Application.configureOpenApi() {
 
     info {
 
-      title = "Allink Receipt API"
+      title = "Demo Receipt API"
       version = "1.0.0"
       description = "API for the allink receipt administration."
       contact {
-        name = "Allink"
+        name = "Demo"
         url = "https://allink.io"
-        email = "dev@allink.io"
+        email = "dw.shin@allink.io"
       }
     }
 
     server {
       description = "로컬"
-      url = "http://localhost:8888"
-    }
-    server {
-      description = "개발서버"
-      url = "https://dev-receipt-api.allink.io"
-    }
-    server {
-      description = "운영서버"
-      url = "https://receipt-api.allink.io"
+      url = "http://localhost:8080"
     }
 
     schemas {
@@ -84,12 +75,12 @@ fun Application.configureOpenApi() {
 
   routing {
 
-    route(".allink-api.json") {
+    route(".api.json") {
       openApi()
     }
 
     route("/doc") {
-      redoc("/.allink-api.json", {
+      redoc("/.api.json", {
         hideDownloadButton = true
         showObjectSchemaExamples = true
       })

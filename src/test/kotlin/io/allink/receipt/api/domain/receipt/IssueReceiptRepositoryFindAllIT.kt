@@ -76,7 +76,7 @@ class IssueReceiptRepositoryFindAllIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_filter_by_storeName_phone_and_sort`() = runBlocking {
+  fun `Find all should filter by store name phone and sort`() = runBlocking {
     // given
     val encPhoneA = AES256Util.encrypt("01011112222", Constant.AES256_KEY)
     val encNickA = AES256Util.encrypt("길동", Constant.AES256_KEY)
@@ -133,7 +133,7 @@ class IssueReceiptRepositoryFindAllIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_filter_by_userNickName`() = runBlocking {
+  fun `Find all should filter by user nick name`() = runBlocking {
     // given
     val encPhoneA = AES256Util.encrypt("01033334444", Constant.AES256_KEY)
     val encNickA = AES256Util.encrypt("길동", Constant.AES256_KEY)
@@ -174,7 +174,7 @@ class IssueReceiptRepositoryFindAllIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_filter_by_userName_prefix`() = runBlocking {
+  fun `Find all should filter by user name prefix`() = runBlocking {
     runJdbc { stmt ->
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name) VALUES ('S-20', '가게20')")
       stmt.execute("INSERT INTO \"user\" (uuid, name) VALUES ('U-20', '홍길동')")
@@ -208,7 +208,7 @@ class IssueReceiptRepositoryFindAllIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_filter_by_franchiseCode_and_businessNo`() = runBlocking {
+  fun `Find all should filter by franchise code and business no`() = runBlocking {
     runJdbc { stmt ->
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name, franchise_code, business_no) VALUES ('S-30', 'A', 'F-1', '111')")
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name, franchise_code, business_no) VALUES ('S-31', 'B', 'F-2', '222')")
@@ -243,7 +243,7 @@ class IssueReceiptRepositoryFindAllIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_filter_by_tagUid_and_storeId`() = runBlocking {
+  fun `Find all should filter by tag uid and store id`() = runBlocking {
     runJdbc { stmt ->
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name) VALUES ('S-40', 'A')")
       stmt.execute("INSERT INTO \"user\" (uuid, name) VALUES ('U-40', '사용자1')")
@@ -276,7 +276,7 @@ class IssueReceiptRepositoryFindAllIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_paginate_with_sort_desc`() = runBlocking {
+  fun `Find all should paginate with sort desc`() = runBlocking {
     runJdbc { stmt ->
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name) VALUES ('S-50', 'A')")
       stmt.execute("INSERT INTO \"user\" (uuid, name) VALUES ('U-50', '사용자1')")
@@ -312,7 +312,7 @@ class IssueReceiptRepositoryFindAllIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_ignore_unknown_sort_and_use_valid_one`() = runBlocking {
+  fun `Find all should ignore unknown sort and use valid one`() = runBlocking {
     runJdbc { stmt ->
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name) VALUES ('S-60', '상점60')")
       stmt.execute("INSERT INTO \"user\" (uuid, name) VALUES ('U-60', '사용자60')")
@@ -339,7 +339,7 @@ class IssueReceiptRepositoryFindAllIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_apply_multi_sort_receiptAmount_desc_then_issueDate_asc`() = runBlocking {
+  fun `Find all should apply multi sort receipt amount desc then issue date asc`() = runBlocking {
     runJdbc { stmt ->
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name) VALUES ('S-61', '상점61')")
       stmt.execute("INSERT INTO \"user\" (uuid, name) VALUES ('U-61', '사용자61')")
@@ -370,7 +370,7 @@ class IssueReceiptRepositoryFindAllIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_return_empty_when_page_out_of_range`() = runBlocking {
+  fun `Find all should return empty when page out of range`() = runBlocking {
     runJdbc { stmt ->
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name) VALUES ('S-62', '상점62')")
       stmt.execute("INSERT INTO \"user\" (uuid, name) VALUES ('U-62', '사용자62')")
@@ -397,7 +397,7 @@ class IssueReceiptRepositoryFindAllIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_include_period_bounds`() = runBlocking {
+  fun `Find all should include period bounds`() = runBlocking {
     runJdbc { stmt ->
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name) VALUES ('S-63', '상점63')")
       stmt.execute("INSERT INTO \"user\" (uuid, name) VALUES ('U-63', '사용자63')")
@@ -423,7 +423,7 @@ class IssueReceiptRepositoryFindAllIT : PostgresContainerBase() {
   }
 
   @Test
-  fun `findAll_should_filter_by_userId_only`() = runBlocking {
+  fun `Find all should filter by user id only`() = runBlocking {
     runJdbc { stmt ->
       stmt.execute("INSERT INTO \"store\" (store_uid, store_name) VALUES ('S-70', '상점70')")
       stmt.execute("INSERT INTO \"user\" (uuid, name) VALUES ('U-70', '사용자70')")

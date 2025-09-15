@@ -17,8 +17,7 @@ import java.util.*
  * Date: 18/04/2025
  */
 
-@Serializable
-@Schema(name = "merchantTag", title = "머천트 태그", description = "실물 태그의 등록 정보")
+@Serializable @Schema(name = "merchantTag", title = "머천트 태그", description = "실물 태그의 등록 정보")
 data class MerchantTagModel(
   @Schema(
     title = "태그아이디",

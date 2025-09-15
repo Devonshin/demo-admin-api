@@ -21,6 +21,7 @@ fun Application.configureSecurity() {
   val config = environment.config
   val jwtAudience = config.property("jwt.audience").getString()
   val jwtDomain = config.property("jwt.domain").getString()
+  val jwtIssuer = config.property("jwt.issuer").getString()
   val jwtRealm = config.property("jwt.realm").getString()
   val jwtSecret = config.property("jwt.secret").getString()
 
@@ -31,7 +32,7 @@ fun Application.configureSecurity() {
         JWT
           .require(Algorithm.HMAC256(jwtSecret))
           .withAudience(jwtAudience)
-          .withIssuer(jwtDomain)
+          .withIssuer(jwtIssuer)
           .build()
       )
       validate { credential ->

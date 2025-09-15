@@ -28,9 +28,9 @@ import java.util.*
 
 
 fun errorResponse(): ResponseConfig.() -> Unit = {
-  description = "실패 응답"
+  description = "Réponse d'échec"
   body<Response<ErrorResponse>> {
-    example("실패 응답") {
+    example("Réponse d'échec") {
       value = Response(
         ErrorResponse(
           message = "Bad Request", code = "400"
@@ -41,10 +41,10 @@ fun errorResponse(): ResponseConfig.() -> Unit = {
 }
 
 fun verificationCodeCheckResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
+  description = "Réponse réussie"
   body<Response<Jwt>> {
-    example("성공 응답") {
-      description = "API 이용에 사용할 JWT"
+    example("Réponse réussie") {
+      description = "JWT à utiliser pour l'API"
       value = Response(data = Jwt("jwt.payload.signature", "2022-01-01 00:00:00", "김대협", role = MasterRole()))
     }
   }
@@ -58,9 +58,9 @@ fun verificationCodeRequest(): SimpleBodyConfig.() -> Unit = {
 }
 
 fun verificationCodeResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
+  description = "Réponse réussie"
   body<Response<VerificationCode>>() {
-    example("성공 응답") {
+    example("Réponse réussie") {
       value = Response(
         VerificationCode(
           loginUuid = "loginUuid", expireDate = "2022-01-01 00:00:00"
@@ -71,7 +71,7 @@ fun verificationCodeResponse(): ResponseConfig.() -> Unit = {
 }
 
 fun verificationCodeCheckRequest(): SimpleBodyConfig.() -> Unit = {
-  description = "인증코드 확인 요청"
+  description = "Demande de vérification du code d'authentification"
   required = true
   example("verification-request") {
     value = VerificationCheckRequest(
@@ -81,7 +81,7 @@ fun verificationCodeCheckRequest(): SimpleBodyConfig.() -> Unit = {
 }
 
 fun userListRequest(): SimpleBodyConfig.() -> Unit = {
-  description = "목록 조회 요청"
+  description = "Demande de consultation de la liste des utilisateurs"
   required = true
   example("user-list-request") {
     value = UserFilter(
@@ -100,9 +100,9 @@ fun userListRequest(): SimpleBodyConfig.() -> Unit = {
 
 
 fun userListResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
+  description = "Réponse réussie"
   body<Response<PagedResult<UserModel>>>() {
-    example("사용자 목록 응답") {
+    example("Réponse de la liste des utilisateurs") {
       value = Response(
         data = PagedResult(
           items = listOf(exampleUser),
@@ -136,10 +136,10 @@ private val exampleUser = UserModel(
 )
 
 fun userDetailResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
+  description = "Réponse réussie"
   body<Response<UserModel>> {
-    example("사용자 상세 데이터 응답") {
-      description = "사용자 상세 데이터"
+    example("Réponse des données détaillées de l'utilisateur") {
+      description = "Données détaillées de l'utilisateur"
       value = Response(
         data = exampleUser
       )
@@ -173,7 +173,7 @@ private val pointPayExample = NPointPayModel(
 )
 
 fun pointListRequest(): SimpleBodyConfig.() -> Unit = {
-  description = "포인트 목록 조회 요청"
+  description = "Demande de consultation de la liste des points"
   required = true
   example("point-list-request") {
     value = NPointFilter(
@@ -197,9 +197,9 @@ fun pointListRequest(): SimpleBodyConfig.() -> Unit = {
 }
 
 fun pointListResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
+  description = "Réponse réussie"
   body<Response<PagedResult<NPointPayModel>>> {
-    example("포인트 지급 목록 응답") {
+    example("Réponse de la liste des attributions de points") {
       value = Response(
         data = PagedResult(
           items = listOf(pointPayExample),
@@ -213,7 +213,7 @@ fun pointListResponse(): ResponseConfig.() -> Unit = {
 }
 
 fun franchiseCodeListResponse(): ResponseConfig.() -> Unit = {
-  description = "프랜차이즈 코드 목록 응답"
+  description = "Réponse de la liste des codes de franchise"
   body<Response<List<ServiceCodeModel>>> {
     example("franchise-code-list-response") {
       value = listOf(
@@ -231,7 +231,7 @@ fun franchiseCodeListResponse(): ResponseConfig.() -> Unit = {
 }
 
 fun bankCodeListResponse(): ResponseConfig.() -> Unit = {
-  description = "은행 코드 목록 응답"
+  description = "Réponse de la liste des codes bancaires"
   body<Response<List<ServiceCodeModel>>> {
     example("bank-code-list-response") {
       value = listOf(
@@ -249,7 +249,7 @@ fun bankCodeListResponse(): ResponseConfig.() -> Unit = {
 }
 
 fun vendorCodeListResponse(): ResponseConfig.() -> Unit = {
-  description = "밴더사 코드 목록 응답"
+  description = "Réponse de la liste des codes des fournisseurs"
   body<Response<List<ServiceCodeModel>>> {
     example("vendor-code-list-response") {
       value = listOf(
@@ -268,7 +268,7 @@ fun vendorCodeListResponse(): ResponseConfig.() -> Unit = {
 
 
 fun issueReceiptListRequest(): SimpleBodyConfig.() -> Unit = {
-  description = "전자영수증 목록 조회 요청"
+  description = "Demande de consultation de la liste des reçus électroniques"
   required = true
   example("issue-receipt-list-request") {
     value = ReceiptFilter(
@@ -294,9 +294,9 @@ fun issueReceiptListRequest(): SimpleBodyConfig.() -> Unit = {
 
 
 fun issueReceiptListResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
+  description = "Réponse réussie"
   body<Response<PagedResult<SimpleIssueReceiptModel>>> {
-    example("전자영수증 목록 응답") {
+    example("Réponse de la liste des reçus électroniques") {
       value = Response(
         data = PagedResult(
           items = listOf(
@@ -330,9 +330,9 @@ fun issueReceiptListResponse(): ResponseConfig.() -> Unit = {
 }
 
 fun issueReceiptDetailResponse(): ResponseConfig.() -> Unit = {
-  description = "성공 응답"
+  description = "Réponse réussie"
   body<Response<IssueReceiptModel>> {
-    example("전자영수증 상세 응답") {
+    example("Réponse détaillée du reçu électronique") {
       value = Response(
         IssueReceiptModel(
           id = "ed6843f8-67cd-454e-a843-f867cd454ee5",

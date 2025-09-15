@@ -15,8 +15,7 @@ import java.time.LocalDateTime
  * Date: 18/04/2025
  */
 
-@Serializable
-@Schema(name = "MerchantGroup", title = "머천트(브랜드) 그룹", description = "실물 태그의 그룹 등록 정보")
+@Serializable @Schema(name = "MerchantGroup", title = "머천트(브랜드) 그룹", description = "실물 태그의 그룹 등록 정보")
 data class MerchantGroupModel(
   @Schema(title = "인증키", description = "외부 접속 시 사용할 키", nullable = false, requiredMode = RequiredMode.REQUIRED)
   val tokenKey: String,

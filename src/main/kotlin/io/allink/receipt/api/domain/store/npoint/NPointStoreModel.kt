@@ -16,34 +16,33 @@ import java.util.*
  * Date: 16/04/2025
  */
 
-@Serializable
-@Schema(name = "nPointStore", title = "NPoint 가맹점 정보", description = "NPoint 가맹점 정보")
+@Serializable @Schema(name = "nPointStore", title = "NPoint 가맹점 정보", description = "NPoint 가맹점 정보")
 data class NPointStoreModel(
-  @Schema(title = "가맹점 고유아이디", description = "가맹점 고유아이디")
+  @param:Schema(title = "가맹점 고유아이디", description = "가맹점 고유아이디")
   override var id: String? = null,
-  @Schema(title = "적립 포인트", description = "포인트 지급 용 적립 포인트", defaultValue = "0")
+  @param:Schema(title = "적립 포인트", description = "포인트 지급 용 적립 포인트", defaultValue = "0")
   var reservedPoints: Int? = 0,
-  @Schema(title = "리뷰 포인트", description = "리뷰 작성 시 지급할 포인트", defaultValue = "0")
+  @param:Schema(title = "리뷰 포인트", description = "리뷰 작성 시 지급할 포인트", defaultValue = "0")
   var reviewPoints: Int = 0,
-  @Schema(title = "누적 적립 포인트", description = "누적 적립된 포인트", defaultValue = "0")
+  @param:Schema(title = "누적 적립 포인트", description = "누적 적립된 포인트", defaultValue = "0")
   var cumulativePoints: Int = 0,
-  @Schema(title = "정기결제 요금액", description = "정기결제 요금액")
+  @param:Schema(title = "정기결제 요금액", description = "정기결제 요금액")
   var regularPaymentAmounts: Int = 0,
-  @Schema(title = "상태", description = "계약 상태 - PENDING 상태로 기본값 설정")
+  @param:Schema(title = "상태", description = "계약 상태 - PENDING 상태로 기본값 설정")
   val status: StatusCode = StatusCode.PENDING,
-  @Schema(title = "서비스 시작일시", description = "서비스 시작일시")
+  @param:Schema(title = "서비스 시작일시", description = "서비스 시작일시")
   var serviceStartAt: @Contextual LocalDateTime? = null,
-  @Schema(title = "서비스 종료일시", description = "서비스 종료일시")
+  @param:Schema(title = "서비스 종료일시", description = "서비스 종료일시")
   var serviceEndAt: @Contextual LocalDateTime? = null,
-  @Schema(title = "포인트 소진 시 갱신 타입", description = "포인트 소진 시 적용할 갱신 타입 (기본값: AUTO_RENEWAL)")
+  @param:Schema(title = "포인트 소진 시 갱신 타입", description = "포인트 소진 시 적용할 갱신 타입 (기본값: AUTO_RENEWAL)")
   var pointRenewalType: PointRenewalType = PointRenewalType.AUTO_RENEWAL,
-  @Schema(title = "등록일시", description = "계약 생성일", defaultValue = "CURRENT_TIMESTAMP")
+  @param:Schema(title = "등록일시", description = "계약 생성일", defaultValue = "CURRENT_TIMESTAMP")
   val regDate: @Contextual LocalDateTime,
-  @Schema(title = "수정일시", description = "계약 정보 수정일")
+  @param:Schema(title = "수정일시", description = "계약 정보 수정일")
   var modDate: @Contextual LocalDateTime? = null,
-  @Schema(title = "등록자 고유아이디", description = "계약 정보를 등록한 사람의 고유아이디")
+  @param:Schema(title = "등록자 고유아이디", description = "계약 정보를 등록한 사람의 고유아이디")
   val regBy: @Contextual UUID,
-  @Schema(title = "수정자 고유아이디", description = "계약 정보를 수정한 사람의 고유아이디")
+  @param:Schema(title = "수정자 고유아이디", description = "계약 정보를 수정한 사람의 고유아이디")
   var modBy: @Contextual UUID? = null,
 ) : BaseModel<String>
 

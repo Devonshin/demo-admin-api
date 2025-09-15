@@ -23,327 +23,327 @@ import java.util.*
  * Date: 16/04/2025
  */
 @Serializable
-@Schema(name = "storeModel", title = "가맹점", description = "가맹점 등록 정보")
+@Schema(name = "storeModel", title = "Magasin affilié", description = "Informations d'enregistrement du magasin")
 data class StoreModel(
-  @Schema(title = "고유아이디", description = "가맹점 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Identifiant unique", description = "Identifiant unique du magasin", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String? = null,
-  @Schema(title = "가맹점명", description = "가맹점명", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Nom du magasin", description = "Nom du magasin", requiredMode = RequiredMode.REQUIRED)
   val storeName: String,
-  @Schema(title = "프랜차이즈코드", description = "프랜차이즈 코드")
+  @param:Schema(title = "Code de franchise", description = "Code de franchise")
   val franchiseCode: String? = null,
-  @Schema(title = "지역코드", description = "지역코드")
+  @param:Schema(title = "Code de zone", description = "Code de zone")
   val zoneCode: String? = null,
-  @Schema(title = "도로명, 지번 주소", description = "도로명, 지번 주소")
+  @param:Schema(title = "Adresse (rue/lotissement)", description = "Adresse (rue/lotissement)")
   val addr1: String? = null,
-  @Schema(title = "상세 주소", description = "상세 주소")
+  @param:Schema(title = "Adresse détaillée", description = "Adresse détaillée")
   val addr2: String? = null,
-  @Schema(title = "지도 url", description = "지도 url")
+  @param:Schema(title = "URL de la carte", description = "URL de la carte")
   val mapUrl: String? = null,
-  @Schema(title = "위도 좌표", description = "위도 좌표")
+  @param:Schema(title = "Latitude", description = "Latitude")
   val lat: String? = null,
-  @Schema(title = "경도 좌표", description = "경도 좌표")
+  @param:Schema(title = "Longitude", description = "Longitude")
   val lon: String? = null,
-  @Schema(title = "대표자 전화번호", description = "대표자 전화번호")
+  @param:Schema(title = "Téléphone du représentant", description = "Téléphone du représentant")
   val tel: String? = null,
-  @Schema(title = "담당자 번호", description = "담당자 번호")
+  @param:Schema(title = "Numéro du contact", description = "Numéro du contact")
   val mobile: String? = null,
-  @Schema(title = "담당자명", description = "담당자명")
+  @param:Schema(title = "Nom du contact", description = "Nom du contact")
   val managerName: String? = null,
-  @Schema(title = "사이트 주소", description = "사이트 주소")
+  @param:Schema(title = "Adresse du site", description = "Adresse du site")
   val siteLink: String? = null,
-  @Schema(title = "워크타입", description = "워크타입")
+  @param:Schema(title = "Type de travail", description = "Type de travail")
   val workType: String? = null,
-  @Schema(title = "사업자 등록번호", description = "사업자 등록번호")
+  @param:Schema(title = "Numéro d'immatriculation de l'entreprise", description = "Numéro d'immatriculation de l'entreprise")
   val businessNo: String? = null,
-  @Schema(title = "법인 등록번호", description = "법인 등록번호")
+  @param:Schema(title = "Numéro d'immatriculation de la société", description = "Numéro d'immatriculation de la société")
   val businessNoLaw: String? = null,
-  @Schema(title = "대표자명", description = "대표자명")
+  @param:Schema(title = "Nom du représentant", description = "Nom du représentant")
   val ceoName: String? = null,
-  @Schema(title = "업종", description = "업종")
+  @param:Schema(title = "Secteur d'activité", description = "Secteur d'activité")
   val businessType: String? = null,
-  @Schema(title = "업태", description = "업태")
+  @param:Schema(title = "Type d'activité", description = "Type d'activité")
   val eventType: String? = null,
-  @Schema(title = "이메일", description = "이메일")
+  @param:Schema(title = "E-mail", description = "E-mail")
   val email: String? = null,
-  @Schema(title = "가맹점 타입", description = "가맹점 타입")
+  @param:Schema(title = "Type de magasin", description = "Type de magasin")
   val storeType: String? = null,
-  @Schema(title = "아이콘 URL", description = "아이콘 URL")
+  @param:Schema(title = "URL de l'icône", description = "URL de l'icône")
   val iconUrl: String? = null,
-  @Schema(title = "로고 URL", description = "로고 URL")
+  @param:Schema(title = "URL du logo", description = "URL du logo")
   val logoUrl: String? = null,
-  @Schema(title = "영수증 너비 인치", description = "영수증 너비 인치")
+  @param:Schema(title = "Largeur du reçu (pouces)", description = "Largeur du reçu (pouces)")
   val receiptWidthInch: String? = null,
-  @Schema(
+  @param:Schema(
     name = "status",
-    title = "가맹점 상태",
-    description = "가맹점 상태코드",
-    example = "ACTIVE,NORMAL: 정상, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제",
+    title = "Statut du magasin",
+    description = "Code de statut du magasin",
+    example = "ACTIVE,NORMAL: normal, INACTIVE: arrêté, PENDING: en attente, DELETED: supprimé",
     requiredMode = RequiredMode.REQUIRED,
     allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"]
   )
   val status: StatusCode? = null,
-  @Schema(title = "가맹점 로그인 아이디", description = "가맹점 로그인 아이디")
+  @param:Schema(title = "ID de connexion du magasin", description = "ID de connexion du magasin")
   val partnerLoginId: String? = null,
-  @Schema(title = "가맹점 로그인 패스워드", description = "가맹점 로그인 패스워드", hidden = true)
+  @param:Schema(title = "Mot de passe de connexion du magasin", description = "Mot de passe de connexion du magasin", hidden = true)
   @Transient
   val partnerLoginPassword: String? = null,
-  @Schema(
-    title = "신청서 파일 경로",
-    description = "값의 유무에 따라 대리점 신청서 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de la demande",
+    description = "Détermine l'enregistrement de la demande d'agence selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/application.pdf | null"
   )
   val applicationFilePath: String? = null,
-  @Schema(
-    title = "사업자 등록증 파일 경로",
-    description = "값의 유무에 따라 사업자 등록증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de l'extrait d'immatriculation",
+    description = "Détermine l'enregistrement du fichier d'immatriculation selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bz.pdf | null"
   )
   val bzFilePath: String? = null,
-  @Schema(
-    title = "대표자 신분증 파일 경로",
-    description = "값의 유무에 따라 대표자 신분증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de la pièce d'identité du représentant",
+    description = "Détermine l'enregistrement du fichier d'identité du représentant selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/id.pdf"
   )
   val idFilePath: String? = null,
-  @Schema(
-    title = "통장사본 파일 경로",
-    description = "값의 유무에 따라 통장 사본 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de la copie du relevé bancaire",
+    description = "Détermine l'enregistrement de la copie du relevé bancaire selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bank.pdf | null"
   )
   val bankFilePath: String? = null,
-  @Schema(title = "포인트 가맹점 정보", description = "포인트 가맹점 정보")
+  @param:Schema(title = "Informations du magasin de points", description = "Informations du magasin de points")
   val nPointStore: NPointStoreModel? = null,
-  @Schema(title = "등록일시", description = "등록일시", example = "2025-04-17 12:00:00.213123")
+  @param:Schema(title = "Date d'enregistrement", description = "Date d'enregistrement", example = "2025-04-17 12:00:00.213123")
   val regDate: @Contextual LocalDateTime? = null,
-  @Schema(title = "수정일시", description = "수정일시", example = "2025-04-17 12:00:00.213123")
+  @param:Schema(title = "Date de modification", description = "Date de modification", example = "2025-04-17 12:00:00.213123")
   val modDate: @Contextual LocalDateTime? = null,
-  @Schema(title = "삭제일시", description = "삭제일시", example = "2025-04-17 12:00:00.213123")
+  @param:Schema(title = "Date de suppression", description = "Date de suppression", example = "2025-04-17 12:00:00.213123")
   val deleteDate: @Contextual LocalDateTime? = null,
-  @Schema(title = "등록인 아이디", description = "등록인 아이디")
+  @param:Schema(title = "ID de l'enregistreur", description = "ID de l'enregistreur")
   val regBy: @Contextual UUID? = null,
-  @Schema(title = "수정인 아이디", description = "수정인 아이디")
+  @param:Schema(title = "ID du modificateur", description = "ID du modificateur")
   val modBy: @Contextual UUID? = null,
-  @Schema(title = "네이버 포인트 리뷰 서비스", description = "네이버 포인트 리뷰 서비스")
+  @param:Schema(title = "Service d'avis Naver Points", description = "Service d'avis Naver Points")
   val npointStoreServices: List<NPointStoreServiceModel>? = null,
-  @Schema(title = "쿠폰 광고", description = "가맹점의 쿠폰 광고 여부, 쿠폰 이미지 등록 필수", example = "true|false")
+  @param:Schema(title = "Publicité de coupon", description = "Indique si le magasin fait de la publicité par coupon; l'image du coupon est requise", example = "true|false")
   val couponAdYn: Boolean? = false,
-  @Schema(title = "가맹점 등록된 카드 토큰 목록", description = "가맹점의 카드 토큰 정보 목록")
+  @param:Schema(title = "Liste des jetons de carte enregistrés du magasin", description = "Liste des informations de jeton de carte du magasin")
   val storeBillingTokens: List<StoreBillingTokenModel>? = null,
-  @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보")
+  @param:Schema(title = "Informations de paiement du service du magasin", description = "Informations de paiement du service du magasin")
   var storeBilling: StoreBillingModel? = null,
-  @Schema(title = "가맹점 영업 대리점", description = "해당 가맹점의 영업 대리점")
+  @param:Schema(title = "Agence commerciale du magasin", description = "Agence commerciale du magasin")
   val bzAgency: SimpleBzAgencyModel? = null,
 ) : BaseModel<String>
 
 @Serializable
-@Schema(name = "simpleStoreModel", title = "가맹점", description = "가맹점 약식 정보")
+@Schema(name = "simpleStoreModel", title = "Magasin affilié", description = "Informations succinctes du magasin")
 data class SimpleStoreModel(
-  @Schema(title = "가맹점 고유아이디", description = "가맹점 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Identifiant unique du magasin", description = "Identifiant unique du magasin", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String? = null,
-  @Schema(title = "가맹점명", description = "가맹점명", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Nom du magasin", description = "Nom du magasin", requiredMode = RequiredMode.REQUIRED)
   val storeName: String,
-  @Schema(title = "프랜차이즈코드", description = "프랜차이즈 코드")
+  @param:Schema(title = "Code de franchise", description = "Code de franchise")
   val franchiseCode: String? = null,
-  @Schema(title = "사업자 등록번호", description = "사업자 등록번호")
+  @param:Schema(title = "Numéro d'immatriculation de l'entreprise", description = "Numéro d'immatriculation de l'entreprise")
   val businessNo: String? = null,
-  @Schema(title = "대표자명", description = "대표자명")
+  @param:Schema(title = "Nom du représentant", description = "Nom du représentant")
   val ceoName: String? = null,
 ) : BaseModel<String>
 
 
 @Serializable
-@Schema(name = "storeSearchModel", title = "가맹점", description = "가맹점 매핑 용 약식 정보")
+@Schema(name = "storeSearchModel", title = "Magasin affilié", description = "Informations succinctes pour le mappage du magasin")
 data class StoreSearchModel(
-  @Schema(title = "가맹점 고유아이디", description = "가맹점 고유아이디", nullable = false, requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Identifiant unique du magasin", description = "Identifiant unique du magasin", nullable = false, requiredMode = RequiredMode.REQUIRED)
   override var id: String? = null,
-  @Schema(title = "가맹점명", description = "가맹점명", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Nom du magasin", description = "Nom du magasin", requiredMode = RequiredMode.REQUIRED)
   val storeName: String,
-  @Schema(title = "프랜차이즈코드", description = "프랜차이즈 코드")
+  @param:Schema(title = "Code de franchise", description = "Code de franchise")
   val franchiseCode: String? = null,
-  @Schema(title = "사업자 등록번호", description = "사업자 등록번호")
+  @param:Schema(title = "Numéro d'immatriculation de l'entreprise", description = "Numéro d'immatriculation de l'entreprise")
   val businessNo: String? = null,
-  @Schema(title = "대표자명", description = "대표자명")
+  @param:Schema(title = "Nom du représentant", description = "Nom du représentant")
   val ceoName: String? = null,
-  @Schema(title = "대표 전화번호", description = "대표 전화번호")
+  @param:Schema(title = "Téléphone principal", description = "Téléphone principal")
   val tel: String? = null,
-  @Schema(title = "업종", description = "업종")
+  @param:Schema(title = "Secteur d'activité", description = "Secteur d'activité")
   val businessType: String? = null,
-  @Schema(title = "업태", description = "업태")
+  @param:Schema(title = "Type d'activité", description = "Type d'activité")
   val eventType: String? = null,
-  @Schema(title = "단말기 구분", description = "단말기 구분", example = "CAT, OKPOS,...")
+  @param:Schema(title = "Type d'appareil", description = "Type d'appareil", example = "CAT, OKPOS,...")
   val deviceType: String? = null,
-  @Schema(
+  @param:Schema(
     name = "status",
-    title = "가맹점 상태",
-    description = "가맹점 상태코드",
-    example = "ACTIVE,NORMAL: 정상, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제",
+    title = "Statut du magasin",
+    description = "Code de statut du magasin",
+    example = "ACTIVE,NORMAL: normal, INACTIVE: arrêté, PENDING: en attente, DELETED: supprimé",
     requiredMode = RequiredMode.REQUIRED,
     allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"]
   )
   val status: StatusCode? = null,
-  @Schema(title = "등록일시", description = "등록일시", example = "2025-04-17 12:00:00.213123")
+  @param:Schema(title = "Date d'enregistrement", description = "Date d'enregistrement", example = "2025-04-17 12:00:00.213123")
   val regDate: @Contextual LocalDateTime? = null,
 ) : BaseModel<String>
 
 
 @Serializable
-@Schema(name = "storeRegistModel", title = "가맹점", description = "가맹점 등록 요청 정보")
+@Schema(name = "storeRegistModel", title = "Magasin affilié", description = "Informations de demande d'enregistrement du magasin")
 data class StoreRegistModel(
-  @Schema(title = "가맹점명", description = "가맹점명", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Nom du magasin", description = "Nom du magasin", requiredMode = RequiredMode.REQUIRED)
   val storeName: String,
-  @Schema(title = "프랜차이즈코드", description = "프랜차이즈 코드", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Code de franchise", description = "Code de franchise", requiredMode = RequiredMode.REQUIRED)
   val franchiseCode: String? = null,
-  @Schema(title = "도로명, 지번 주소", description = "도로명, 지번 주소", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Adresse (rue/lotissement)", description = "Adresse (rue/lotissement)", requiredMode = RequiredMode.REQUIRED)
   val addr1: String? = null,
-  @Schema(title = "상세 주소", description = "상세 주소")
+  @param:Schema(title = "Adresse détaillée", description = "Adresse détaillée")
   val addr2: String? = null,
-  @Schema(title = "대표자 전화번호", description = "대표자 전화번호", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Téléphone du représentant", description = "Téléphone du représentant", requiredMode = RequiredMode.REQUIRED)
   val tel: String? = null,
-  @Schema(title = "담당자 번호", description = "담당자 번호")
+  @param:Schema(title = "Numéro du contact", description = "Numéro du contact")
   val mobile: String? = null,
-  @Schema(title = "담당자명", description = "담당자명")
+  @param:Schema(title = "Nom du contact", description = "Nom du contact")
   val managerName: String? = null,
-  @Schema(title = "워크타입", description = "워크타입")
+  @param:Schema(title = "Type de travail", description = "Type de travail")
   val workType: String? = null,
-  @Schema(title = "사업자 등록번호", description = "사업자 등록번호", requiredMode = RequiredMode.REQUIRED, example = "123-45-67890")
+  @param:Schema(title = "Numéro d'immatriculation de l'entreprise", description = "Numéro d'immatriculation de l'entreprise", requiredMode = RequiredMode.REQUIRED, example = "123-45-67890")
   val businessNo: String,
-  @Schema(title = "법인 등록번호", description = "법인 등록번호")
+  @param:Schema(title = "Numéro d'immatriculation de la société", description = "Numéro d'immatriculation de la société")
   val businessNoLaw: String? = null,
-  @Schema(title = "대표자명", description = "대표자명", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Nom du représentant", description = "Nom du représentant", requiredMode = RequiredMode.REQUIRED)
   val ceoName: String? = null,
-  @Schema(title = "업종", description = "업종")
+  @param:Schema(title = "Secteur d'activité", description = "Secteur d'activité")
   val businessType: String? = null,
-  @Schema(title = "업태", description = "업태")
+  @param:Schema(title = "Type d'activité", description = "Type d'activité")
   val eventType: String? = null,
-  @Schema(title = "이메일", description = "이메일")
+  @param:Schema(title = "E-mail", description = "E-mail")
   val email: String? = null,
-  @Schema(
-    title = "신청서 파일 경로",
-    description = "값의 유무에 따라 대리점 신청서 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de la demande",
+    description = "Détermine l'enregistrement de la demande d'agence selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/application.pdf | null"
   )
   val applicationFilePath: String? = null,
-  @Schema(
-    title = "사업자 등록증 파일 경로",
-    description = "값의 유무에 따라 사업자 등록증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de l'extrait d'immatriculation",
+    description = "Détermine l'enregistrement du fichier d'immatriculation selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bz.pdf | null"
   )
   val bzFilePath: String? = null,
-  @Schema(
-    title = "대표자 신분증 파일 경로",
-    description = "값의 유무에 따라 대표자 신분증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de la pièce d'identité du représentant",
+    description = "Détermine l'enregistrement du fichier d'identité du représentant selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/id.pdf"
   )
   val idFilePath: String? = null,
-  @Schema(
-    title = "통장사본 파일 경로",
-    description = "값의 유무에 따라 통장 사본 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de la copie du relevé bancaire",
+    description = "Détermine l'enregistrement de la copie du relevé bancaire selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bank.pdf | null"
   )
   val bankFilePath: String? = null,
-  @Schema(
+  @param:Schema(
     name = "status",
-    title = "가맹점 상태",
-    description = "가맹점 상태코드",
+    title = "Statut du magasin",
+    description = "Code de statut du magasin",
     requiredMode = RequiredMode.REQUIRED,
-    example = "ACTIVE,NORMAL: 정상, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제",
+    example = "ACTIVE,NORMAL: normal, INACTIVE: arrêté, PENDING: en attente, DELETED: supprimé",
     allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"]
   )
   val status: StatusCode? = null,
-  @Schema(
-    title = "가맹점에서 사용할 서비스",
-    description = "가맹점에서 사용할 서비스, 중요 사항 : 결제 정보(storeBilling) 필수, npointStoreServices 데이터가 전달될 시 결제 정보도 같이 전달되야 합니다. "
+  @param:Schema(
+    title = "Services à utiliser par le magasin",
+    description = "Services à utiliser par le magasin. Point important : informations de paiement (storeBilling) requises. Si npointStoreServices est fourni, les informations de paiement doivent aussi être fournies."
   )
   val npointStoreServices: List<NPointStoreServiceRegistModel>? = null,
-  @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보, 개발환경에서는 무조건 성공 처리 됩니다. 실제 테스트는 운영환경에서만 가능합니다.")
+  @param:Schema(title = "Informations de paiement du service du magasin", description = "En environnement de développement, toujours traité avec succès. Les tests réels ne sont possibles qu'en production.")
   val storeBilling: StoreBillingRegistModel? = null,
-  @Schema(title = "쿠폰 광고", description = "가맹점의 쿠폰 광고 여부, 쿠폰 이미지 등록 필수", example = "true|false")
+  @param:Schema(title = "Publicité de coupon", description = "Indique si le magasin fait de la publicité par coupon; l'image du coupon est requise", example = "true|false")
   val couponAdYn: Boolean? = false,
-  @Schema(title = "가맹점 영업 대리점 고유아이디", description = "해당 가맹점의 영업 대리점의 고유아이디")
+  @param:Schema(title = "Identifiant unique de l'agence commerciale du magasin", description = "Identifiant unique de l'agence commerciale du magasin")
   val bzAgencyId: String? = null,
 )
 
 @Serializable
-@Schema(name = "storeModifyModel", title = "가맹점 수정 요청 정보", description = "가맹점 수정 요청 정보")
+@Schema(name = "storeModifyModel", title = "Informations de demande de modification du magasin", description = "Informations de demande de modification du magasin")
 data class StoreModifyModel(
-  @Schema(
-    title = "가맹점 고유아이디",
-    description = "사용자의 영수증 고유아이디",
+  @param:Schema(
+    title = "Identifiant unique du magasin",
+    description = "Identifiant unique du reçu de l'utilisateur",
     requiredMode = RequiredMode.REQUIRED,
     example = "3a931370-cd0b-4427-bf38-418111969c22"
   )
   val id: String,
-  @Schema(title = "가맹점명", description = "가맹점명", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Nom du magasin", description = "Nom du magasin", requiredMode = RequiredMode.REQUIRED)
   val storeName: String,
-  @Schema(title = "프랜차이즈코드", description = "프랜차이즈 코드", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Code de franchise", description = "Code de franchise", requiredMode = RequiredMode.REQUIRED)
   val franchiseCode: String? = null,
-  @Schema(title = "도로명, 지번 주소", description = "도로명, 지번 주소", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Adresse (rue/lotissement)", description = "Adresse (rue/lotissement)", requiredMode = RequiredMode.REQUIRED)
   val addr1: String? = null,
-  @Schema(title = "상세 주소", description = "상세 주소")
+  @param:Schema(title = "Adresse détaillée", description = "Adresse détaillée")
   val addr2: String? = null,
-  @Schema(title = "대표자 전화번호", description = "대표자 전화번호", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Téléphone du représentant", description = "Téléphone du représentant", requiredMode = RequiredMode.REQUIRED)
   val tel: String? = null,
-  @Schema(title = "담당자 번호", description = "담당자 번호")
+  @param:Schema(title = "Numéro du contact", description = "Numéro du contact")
   val mobile: String? = null,
-  @Schema(title = "담당자명", description = "담당자명")
+  @param:Schema(title = "Nom du contact", description = "Nom du contact")
   val managerName: String? = null,
-  @Schema(title = "워크타입", description = "워크타입")
+  @param:Schema(title = "Type de travail", description = "Type de travail")
   val workType: String? = null,
-  @Schema(title = "사업자 등록번호", description = "사업자 등록번호", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Numéro d'immatriculation de l'entreprise", description = "Numéro d'immatriculation de l'entreprise", requiredMode = RequiredMode.REQUIRED)
   val businessNo: String? = null,
-  @Schema(title = "법인 등록번호", description = "법인 등록번호")
+  @param:Schema(title = "Numéro d'immatriculation de la société", description = "Numéro d'immatriculation de la société")
   val businessNoLaw: String? = null,
-  @Schema(title = "대표자명", description = "대표자명", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Nom du représentant", description = "Nom du représentant", requiredMode = RequiredMode.REQUIRED)
   val ceoName: String? = null,
-  @Schema(title = "업종", description = "업종")
+  @param:Schema(title = "Secteur d'activité", description = "Secteur d'activité")
   val businessType: String? = null,
-  @Schema(title = "업태", description = "업태")
+  @param:Schema(title = "Type d'activité", description = "Type d'activité")
   val eventType: String? = null,
-  @Schema(title = "이메일", description = "이메일")
+  @param:Schema(title = "E-mail", description = "E-mail")
   val email: String? = null,
-  @Schema(
-    title = "신청서 파일 경로",
-    description = "값의 유무에 따라 대리점 신청서 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de la demande",
+    description = "Détermine l'enregistrement de la demande d'agence selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/application.pdf | null"
   )
   val applicationFilePath: String? = null,
-  @Schema(
-    title = "사업자 등록증 파일 경로",
-    description = "값의 유무에 따라 사업자 등록증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de l'extrait d'immatriculation",
+    description = "Détermine l'enregistrement du fichier d'immatriculation selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bz.pdf | null"
   )
   val bzFilePath: String? = null,
-  @Schema(
-    title = "대표자 신분증 파일 경로",
-    description = "값의 유무에 따라 대표자 신분증 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de la pièce d'identité du représentant",
+    description = "Détermine l'enregistrement du fichier d'identité du représentant selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/id.pdf | null"
   )
   val idFilePath: String? = null,
-  @Schema(
-    title = "통장사본 파일 경로",
-    description = "값의 유무에 따라 통장 사본 파일 등록 여부 결정, null 이면 등록 안됌, 파일 업로드 후 응답 받은 값을 설정",
+  @param:Schema(
+    title = "Chemin du fichier de la copie du relevé bancaire",
+    description = "Détermine l'enregistrement de la copie du relevé bancaire selon la présence de la valeur; si null, non enregistré; définir la valeur reçue après le téléversement du fichier",
     example = "/stores/c7f0d23e-eceb-4434-b489-668c0b61a7f9/bank.pdf | null"
   )
   val bankFilePath: String? = null,
-  @Schema(
+  @param:Schema(
     name = "status",
-    title = "가맹점 상태",
-    description = "가맹점 상태코드",
-    example = "ACTIVE,NORMAL: 정상, INACTIVE: 중지, PENDING: 대기, DELETED: 삭제",
+    title = "Statut du magasin",
+    description = "Code de statut du magasin",
+    example = "ACTIVE,NORMAL: normal, INACTIVE: arrêté, PENDING: en attente, DELETED: supprimé",
     requiredMode = RequiredMode.REQUIRED,
     allowableValues = ["ACTIVE", "NORMAL", "INACTIVE", "PENDING", "DELETED"]
   )
   val status: StatusCode? = null,
-  @Schema(
-    title = "가맹점에서 사용할 서비스",
-    description = "중요 사항 : 결제 정보(storeBilling) 필수, npointStoreServices 데이터가 전달될 시 결제 정보도 같이 전달되야 합니다. 서비스나 결제 정보의 변경이 필요한 경우만 값을 세팅하고, 기존 상태를 유지할 시에는 null로 설정하세요. 가맹점 수정 시 같이 전달된 서비스 목록과 결제 정보는 익월 1일부터 반영됩니다."
+  @param:Schema(
+    title = "Services à utiliser par le magasin",
+    description = "Important : informations de paiement (storeBilling) requises. Si npointStoreServices est fourni, les informations de paiement doivent aussi être fournies. Renseignez ces valeurs uniquement si des modifications sont nécessaires; laissez à null pour conserver l'état actuel. Les services et informations de paiement envoyés lors de la modification seront appliqués à partir du 1er du mois suivant."
   )
   val npointStoreServices: List<NPointStoreServiceRegistModel>? = listOf(),
-  @Schema(title = "가맹점 서비스 결제 정보", description = "가맹점의 서비스 결제 정보, 개발환경에서는 무조건 성공 처리 됩니다. 실제 테스트는 운영환경에서만 가능합니다.")
+  @param:Schema(title = "Informations de paiement du service du magasin", description = "En environnement de développement, toujours traité avec succès. Les tests réels ne sont possibles qu'en production.")
   val storeBilling: StoreBillingRegistModel? = null,
-  @Schema(title = "쿠폰 광고", description = "가맹점의 쿠폰 광고 여부, 쿠폰 이미지 등록 필수", example = "true|false")
+  @param:Schema(title = "Publicité de coupon", description = "Indique si le magasin fait de la publicité par coupon; l'image du coupon est requise", example = "true|false")
   val couponAdYn: Boolean? = false,
-  @Schema(title = "가맹점 영업 대리점 고유아이디", description = "해당 가맹점의 영업 대리점의 고유아이디")
+  @param:Schema(title = "Identifiant unique de l'agence commerciale du magasin", description = "Identifiant unique de l'agence commerciale du magasin")
   val bzAgencyId: String? = null
 )
 
@@ -390,70 +390,70 @@ object StoreTable : Table("store") {
 }
 
 @Serializable
-@Schema(name = "searchStoreFilter", title = "매핑 용 가맹점 검색 필터", description = "매핑 용 가맹점 검색 필터, 예) 태그 등록 시")
+@Schema(name = "searchStoreFilter", title = "Filtre de recherche de magasin pour mappage", description = "Filtre de recherche de magasin pour mappage, p. ex. lors de l'enregistrement de balises")
 data class StoreSearchFilter(
-  @Schema(
-    title = "가맹점 고유아이디",
-    description = "가맹점 고유아이디, EQ 검색",
+  @param:Schema(
+    title = "Identifiant unique du magasin",
+    description = "Identifiant unique du magasin, recherche EQ",
     example = "store-123-45-67890",
   )
   val id: String? = null,
-  @Schema(
-    title = "사업자 번호",
-    description = "사업자 번호, EQ 검색",
+  @param:Schema(
+    title = "Numéro d'immatriculation de l'entreprise",
+    description = "Numéro d'immatriculation de l'entreprise, recherche EQ",
     example = "123-45-67890",
   )
   val businessNo: String? = null,
-  @Schema(title = "가맹점명", description = "Start with 검색")
+  @param:Schema(title = "Nom du magasin", description = "Recherche \"commence par\"")
   val name: String? = null,
-  @Schema(
-    title = "프랜차이즈 코드",
-    description = "프랜차이즈 코드, EQ 검색",
+  @param:Schema(
+    title = "Code de franchise",
+    description = "Code de franchise, recherche EQ",
     example = "EDIYA",
   )
   val franchiseCode: String? = null,
-  @Schema(
-    title = "정렬", exampleClasses = [Sorter::class], description = """
-    정렬 필드 : id, businessNo, name, franchiseCode
+  @param:Schema(
+    title = "Tri", exampleClasses = [Sorter::class], description = """
+    Champs de tri : id, businessNo, name, franchiseCode
   """
   )
   override val sort: List<Sorter>? = null,
-  @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Pagination", requiredMode = RequiredMode.REQUIRED)
   override val page: Page = Page(1, 10)
 ) : BaseFilter
 
 @Serializable
-@Schema(name = "storeFilter", title = "가맹점 검색 필터", description = "가맹점 검색 필터")
+@Schema(name = "storeFilter", title = "Filtre de recherche de magasin", description = "Filtre de recherche de magasin")
 data class StoreFilter(
-  @Schema(title = "가맹점 아이디", description = "가맹점 고유아이디, EQ 검색")
+  @param:Schema(title = "ID du magasin", description = "Identifiant unique du magasin, recherche EQ")
   val id: String? = null,
-  @Schema(
-    title = "사업자 번호",
-    description = "사업자 번호, EQ 검색",
+  @param:Schema(
+    title = "Numéro d'immatriculation de l'entreprise",
+    description = "Numéro d'immatriculation de l'entreprise, recherche EQ",
     example = "123-45-67890",
   )
   val businessNo: String? = null,
-  @Schema(title = "가맹점명", description = "Start with 검색")
+  @param:Schema(title = "Nom du magasin", description = "Recherche \"commence par\"")
   val name: String? = null,
-  @Schema(
-    title = "프랜차이즈 코드",
-    description = "EQ 검색, 서비스코드 조회에서 가져온 프랜차이즈 코드",
+  @param:Schema(
+    title = "Code de franchise",
+    description = "Recherche EQ, code de franchise obtenu à partir de la consultation du code de service",
     example = "EDIYA",
   )
   val franchiseCode: String? = null,
-  @Schema(
-    title = "검색 기간",
-    description = "검색할 기간의 시작과 끝의 범위",
+  @param:Schema(
+    title = "Période de recherche",
+    description = "Intervalle de début et de fin de la période à rechercher",
     example = """{"from: "2025-04-17T12:00:00", "to: "2025-05-17T12:00:00"}"""
   )
   val period: PeriodFilter,
-  @Schema(
-    title = "정렬", exampleClasses = [Sorter::class], description = """
-    정렬 필드 : id, businessNo, name, franchiseCode, regDate, modDate, addr1, managerName, ceoName
+  @param:Schema(
+    title = "Tri", exampleClasses = [Sorter::class], description = """
+    Champs de tri : id, businessNo, name, franchiseCode, regDate, modDate, addr1, managerName, ceoName
   """
   )
   override val sort: List<Sorter>? = null,
-  @Schema(title = "페이징", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "Pagination", requiredMode = RequiredMode.REQUIRED)
   override val page: Page = Page(1, 10)
 ) : BaseFilter
 

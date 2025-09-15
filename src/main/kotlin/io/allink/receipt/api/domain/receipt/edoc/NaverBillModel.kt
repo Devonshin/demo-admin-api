@@ -15,10 +15,9 @@ import java.time.LocalDateTime
  * Date: 20/04/2025
  */
 
-@Serializable
-@Schema(name = "naverEdocModel", title = "네이버 전자문서", description = "네이버 전자문서로 발송된 영수증")
+@Serializable @Schema(name = "naverEdocModel", title = "네이버 전자문서", description = "네이버 전자문서로 발송된 영수증")
 data class NaverEdocModel(
-  @Schema(
+  @param:Schema(
     title = "사용자 영수증 고유아이디",
     description = "사용자의 영수증 고유아이디",
     requiredMode = RequiredMode.REQUIRED,
@@ -26,26 +25,26 @@ data class NaverEdocModel(
   )
   override var id: String?,
   /*partnerReqUuid*/
-  @Schema(
+  @param:Schema(
     title = "영수증 고유아이디",
     description = "영수증 고유아이디",
     requiredMode = RequiredMode.REQUIRED,
     example = "1234faa-cd0b-4427-bf38-418111969c22"
   )
   val receiptUuid: String,
-  @Schema(title = "전자문서 아이디", description = "네이버에서 발행한 전자문서 고유아이디", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "전자문서 아이디", description = "네이버에서 발행한 전자문서 고유아이디", requiredMode = RequiredMode.REQUIRED)
   val envelopId: String,
   /*naverDocId*/
-  @Schema(title = "전송 결과 코드", description = "네이버에서 발행한 전송 결과 코드", requiredMode = RequiredMode.REQUIRED)
+  @param:Schema(title = "전송 결과 코드", description = "네이버에서 발행한 전송 결과 코드", requiredMode = RequiredMode.REQUIRED)
   val responseCode: String,
-  @Schema(
+  @param:Schema(
     title = "발송일시",
     description = "전자문서 발송 요청일시",
     requiredMode = RequiredMode.REQUIRED,
     example = "2025-03-05T13:08:12.152764"
   )
   val regDate: @Contextual LocalDateTime,
-  @Schema(
+  @param:Schema(
     title = "사용자 고유이이디",
     description = "영수증 사용자 고유아이디",
     requiredMode = RequiredMode.REQUIRED,

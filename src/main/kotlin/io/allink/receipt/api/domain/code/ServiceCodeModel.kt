@@ -12,25 +12,24 @@ import org.jetbrains.exposed.v1.core.Table
  * Date: 17/04/2025
  */
 
-@Serializable
-@Schema(name = "serviceCode", title = "서비스 코드", description = "각종 코드입니다")
+@Serializable @Schema(name = "serviceCode", title = "서비스 코드", description = "각종 코드입니다")
 data class ServiceCodeModel(
-  @Schema(title = "코드값", description = "코드값", requiredMode = RequiredMode.REQUIRED, example = "EDIYA")
+  @param:Schema(title = "코드값", description = "코드값", requiredMode = RequiredMode.REQUIRED, example = "EDIYA")
   override var id: String?,
-  @Schema(
+  @param:Schema(
     title = "코드 그룹",
     description = "코드 그룹",
     requiredMode = RequiredMode.REQUIRED,
     example = "FRANCHISE | MERT_SVC"
   )
   val serviceGroup: String,
-  @Schema(title = "코드명", description = "코드명", requiredMode = RequiredMode.REQUIRED, example = "EDIYA")
+  @param:Schema(title = "코드명", description = "코드명", requiredMode = RequiredMode.REQUIRED, example = "EDIYA")
   val serviceName: String,
-  @Schema(title = "금액", description = "금액")
+  @param:Schema(title = "금액", description = "금액")
   val price: Int?,
-  @Schema(title = "상태", description = "상태", allowableValues = ["ACTIVE", "INACTIVE"])
+  @param:Schema(title = "상태", description = "상태", allowableValues = ["ACTIVE", "INACTIVE"])
   val status: ServiceCodeStatus?,
-  @Schema(title = "서비스 타입", description = "서비스 타입")
+  @param:Schema(title = "서비스 타입", description = "서비스 타입")
   val serviceType: String?,
 ) : BaseModel<String>
 

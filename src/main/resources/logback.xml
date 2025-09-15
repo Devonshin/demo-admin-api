@@ -7,38 +7,14 @@
     <property name="TOTAL_SIZE_CAP" value="${TOTAL_SIZE_CAP:-1GB}"/>
 
     <!-- 로그 패턴 최적화 -->
-    <property name="CONSOLE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{requestId:-}] [%thread] %-5level %logger{36} [%method:%line] - %msg%n"/>
-    <property name="FILE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{requestId:-}] [%thread] %-5level %logger{36} [%method:%line] - %msg%n"/>
-
-    <!-- Ktor 환경별 세부 설정 -->
-    <if condition='"${KTOR_ENV:-local}" == "local" || "${KTOR_ENV:-local}" == "test"'>
-        <then>
-            <property name="LOG_LEVEL" value="DEBUG"/>
-        </then>
-    </if>
-
-    <if condition='"${KTOR_ENV}" == "dev" || "${KTOR_ENV}" == "staging"'>
-        <then>
-            <property name="FILE_PATH" value="/app/logs"/>
-            <property name="LOG_LEVEL" value="INFO"/>
-        </then>
-    </if>
-
-    <if condition='"${KTOR_ENV}" == "production" || "${KTOR_ENV}" == "prod"'>
-        <then>
-            <property name="FILE_PATH" value="/app/logs"/>
-            <property name="LOG_LEVEL" value="WARN"/>
-            <property name="MAX_FILE_SIZE" value="50MB"/>
-            <property name="TOTAL_SIZE_CAP" value="2GB"/>
-        </then>
-    </if>
+    <property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{requestId:-}] [%thread] %-5level %logger{36} [%method:%line] - %msg%n"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>DEBUG</level>
         </filter>
         <encoder>
-            <pattern>${CONSOLE_PATTERN}</pattern>
+            <pattern>${PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
@@ -46,7 +22,7 @@
     <appender name="APP_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${FILE_PATH}/application.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>${FILE_PATTERN}</pattern>
+            <pattern>${PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -67,7 +43,7 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <encoder>
-            <pattern>${FILE_PATTERN}</pattern>
+            <pattern>${PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -111,11 +87,7 @@
     </appender>
     <!-- 루트 로거 설정 -->
     <root level="${LOG_LEVEL}">
-        <if condition='"${KTOR_ENV:-local}" == "local" || "${KTOR_ENV:-local}" == "test" || "${KTOR_ENV}" == "dev"'>
-            <then>
-                <appender-ref ref="STDOUT"/>
-            </then>
-        </if>
+        <appender-ref ref="STDOUT"/>
         <appender-ref ref="ASYNC_APP"/>
         <appender-ref ref="ASYNC_ERROR"/>
     </root>
@@ -128,25 +100,19 @@
     <!-- 애플리케이션 로거 -->
     <logger name="io.allink.receipt.api" level="${LOG_LEVEL}" additivity="false">
         <appender-ref ref="ASYNC_APP"/>
-        <appender-ref ref="ASYNC_ERROR"/>
-        <if condition='"${KTOR_ENV:-local}" == "local" || "${KTOR_ENV:-local}" == "test"'>
-            <then>
-                <appender-ref ref="STDOUT"/>
-            </then>
-        </if>
     </logger>
 
     <!-- 외부 라이브러리 로거 최적화 -->
     <logger name="io.r2dbc.postgresql.client.ReactorNettyClient" level="WARN"/>
     <logger name="org.eclipse.jetty" level="WARN"/>
     <logger name="io.netty" level="WARN"/>
-    <logger name="Exposed" level="INFO"/>
+    <logger name="Exposed" level="${LOG_LEVEL}"/>
     <logger name="org.jetbrains.exposed.sql.statements" level="WARN"/>
 
     <!-- 보안 관련 로거 (JWT, 인증) -->
-    <logger name="io.ktor.auth.jwt" level="ERROR"/>
-    <logger name="io.ktor.server.auth" level="ERROR"/>
-    <logger name="io.ktor.auth" level="ERROR"/>
+    <logger name="io.ktor.auth.jwt" level="${LOG_LEVEL}"/>
+    <logger name="io.ktor.server.auth" level="${LOG_LEVEL}"/>
+    <logger name="io.ktor.auth" level="${LOG_LEVEL}"/>
 
     <!-- 성능 관련 로거 -->
     <logger name="io.ktor.server.engine" level="WARN"/>

@@ -25,9 +25,9 @@ fun Route.agencyRoutes(
 
     post("", {
       operationId = "bz-agencies"
-      tags = listOf("영업 대리점 관리")
-      summary = "영업 대리점 목록 조회"
-      description = "영업 대리점 목록을 조회합니다."
+      tags = listOf("Gestion des agences commerciales")
+      summary = "Consulter la liste des agences commerciales"
+      description = "Récupère la liste des agences commerciales."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<BzAgencyFilter>(agencyListRequest())
@@ -43,13 +43,13 @@ fun Route.agencyRoutes(
 
     get("/detail/{agencyId}", {
       operationId = "bz-agencies-detail"
-      tags = listOf("영업 대리점 관리")
-      summary = "영업 대리점 상세 조회"
-      description = "영업 대리점 상세 정보를 조회합니다."
+      tags = listOf("Gestion des agences commerciales")
+      summary = "Consulter le détail d'une agence commerciale"
+      description = "Récupère les informations détaillées d'une agence commerciale."
       securitySchemeNames = listOf("auth-jwt")
       request {
         pathParameter<String>("agencyId") {
-          description = "영업 대리점 아이디"
+          description = "Identifiant de l'agence commerciale"
         }
       }
       response {
@@ -63,15 +63,15 @@ fun Route.agencyRoutes(
 
     post("/init", {
       operationId = "bz-agencies-init"
-      tags = listOf("영업 대리점 관리")
-      summary = "영업 대리점 uuid 생성"
-      description = "영업 대리점의 uuid 를 생성합니다. 영업 대리점 신규 생성 시 반드시 선행 되어야 합니다."
+      tags = listOf("Gestion des agences commerciales")
+      summary = "Générer l'UUID de l'agence commerciale"
+      description = "Génère l'UUID de l'agence commerciale. Cette étape doit précéder toute création d'une nouvelle agence."
       securitySchemeNames = listOf("auth-jwt")
       response {
         code(HttpStatusCode.OK, {
-          description = "성공 응답"
+          description = "Réponse réussie"
           body<Response<String>> {
-            example("실패 응답") {
+            example("Exemple de réussite") {
               value = Response(
                 data = "uuid-value-123-456"
               )
@@ -89,9 +89,9 @@ fun Route.agencyRoutes(
 
     post("/modify", {
       operationId = "bz-agencies-modify"
-      tags = listOf("영업 대리점 관리")
-      summary = "영업 대리점 정보 등록/수정"
-      description = "영업 대리점 정보를 등록/수정합니다."
+      tags = listOf("Gestion des agences commerciales")
+      summary = "Enregistrer/mettre à jour les informations de l'agence commerciale"
+      description = "Enregistre ou met à jour les informations de l'agence commerciale."
       securitySchemeNames = listOf("auth-jwt")
       request {
         body<BzAgencyModel>(agencyCreate())

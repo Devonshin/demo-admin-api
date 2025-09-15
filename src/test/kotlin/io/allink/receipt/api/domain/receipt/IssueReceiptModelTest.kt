@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 class IssueReceiptModelTest {
 
   @Test
-  fun `should_create_simple_issue_receipt_model`() {
+  fun `Should create simple issue receipt model`() {
     val model = SimpleIssueReceiptModel(
       id = "R-1",
       store = SimpleStoreModel(id = "S-1", storeName = "매장", franchiseCode = null, businessNo = null, ceoName = null),
@@ -36,7 +36,7 @@ class IssueReceiptModelTest {
   }
 
   @Test
-  fun `should_attach_edoc_to_issue_receipt_model`() {
+  fun `Should attach edoc to issue receipt model`() {
     val issue = IssueReceiptModel(
       id = "R-2",
       store = SimpleStoreModel(id = "S-2", storeName = "상점", franchiseCode = null, businessNo = null, ceoName = null),

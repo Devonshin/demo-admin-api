@@ -28,9 +28,9 @@ fun Route.loginRoutes(
   route("/login") {
     post("/verification-code-request", {
       operationId = "login-verification-code-request"
-      tags = listOf("로그인")
-      summary = "휴대폰으로 인증코드 요청"
-      description = "등록된 휴대폰으로 로그인용 인증코드로 발송합니다."
+      tags = listOf("Connexion")
+      summary = "Demander un code de vérification par téléphone mobile"
+      description = "Envoie un code de vérification pour la connexion au numéro de téléphone enregistré."
       request {
         body<VerificationCodeRequest>(verificationCodeRequest())
       }
@@ -54,9 +54,9 @@ fun Route.loginRoutes(
 
     post("/verification-code-check", {
       operationId = "login-verification-code-check"
-      tags = listOf("로그인")
-      summary = "인증 코드로 JWT 요청"
-      description = "휴대폰으로 수신한 인증코드를 전송하여 JWT를 획득합니다."
+      tags = listOf("Connexion")
+      summary = "Demander un JWT avec le code de vérification"
+      description = "Envoyez le code de vérification reçu sur votre téléphone pour obtenir un JWT."
       request {
         body<VerificationCheckRequest>(verificationCodeCheckRequest())
       }
@@ -80,11 +80,11 @@ fun Route.loginRoutes(
 
     authenticate("auth-jwt") {
       get("/jwt-renewal-request", {
-        tags = listOf("로그인")
+        tags = listOf("Connexion")
         securitySchemeNames = listOf("auth-jwt")
         operationId = "jwt-renewal-request"
-        summary = "JWT 갱신"
-        description = "JWT 가 만료되기 전에 갱신 요청을 할 수 있습니다."
+        summary = "Renouvellement du JWT"
+        description = "Permet de demander le renouvellement du JWT avant son expiration."
         response {
           code(HttpStatusCode.OK, verificationCodeCheckResponse())
           code(HttpStatusCode.BadRequest, errorResponse())
