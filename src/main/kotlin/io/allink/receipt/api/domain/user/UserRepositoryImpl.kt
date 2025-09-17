@@ -8,6 +8,7 @@ import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greaterEq
 import org.jetbrains.exposed.v1.core.lessEq
 import org.jetbrains.exposed.v1.core.like
+import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.r2dbc.andWhere
 import org.jetbrains.exposed.v1.r2dbc.selectAll
 
@@ -44,6 +45,7 @@ class UserRepositoryImpl(
         select.andWhere { table.birthday lessEq to.toString() }
       }
     }
+    select.andWhere { table.role eq UserRole.USER }
     columnSort(select, filter.sort, columnConvert)
     val totalCount = select.count().toInt()
     val items = select.limit(filter.page.pageSize)
